@@ -509,6 +509,19 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-sm);
   margin: 20px 0;
   overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #c9d1d9;
+  white-space: pre-wrap;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.code-block:has(.code-block-header) {
+  white-space: normal;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .code-block-header {
