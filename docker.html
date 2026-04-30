@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link active">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle r="12" cx="16" cy="16"/>
+        <circle class="progress-fill" r="12" cx="16" cy="16" style="stroke-dasharray:75.4; stroke-dashoffset:75.4;"/>
+      </svg>
+      <div class="pct progress-pct">0%</div>
+    </div>
+    <span class="progress-pct">0%</span> done
+  </div>
+</nav>
+
+<div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+  <div class="curriculum-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">🐳 Docker Curriculum</div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 1 — Core Concepts</div>
+
+        <div class="sidebar-item" data-lesson="docker-what-is">
+          <div class="check-icon"></div> What is Docker?
+        </div>
+        <div class="sidebar-item" data-lesson="docker-architecture">
+          <div class="check-icon"></div> Docker Architecture
+        </div>
+        <div class="sidebar-item" data-lesson="docker-install">
+          <div class="check-icon"></div> Installation & First Run
+        </div>
+        <div class="sidebar-item" data-lesson="docker-images">
+          <div class="check-icon"></div> Images & Containers
+        </div>
+        <div class="sidebar-item" data-lesson="docker-run">
+          <div class="check-icon"></div> docker run Deep Dive
+        </div>
+        <div class="sidebar-item" data-lesson="docker-dockerfile">
+          <div class="check-icon"></div> Writing Dockerfiles
+        </div>
+        <div class="sidebar-item" data-lesson="docker-build">
+          <div class="check-icon"></div> Building & Tagging Images
+        </div>
+        <div class="sidebar-item" data-lesson="docker-layers">
+          <div class="check-icon"></div> Layer Caching & Optimization
+        </div>
+        <div class="sidebar-item" data-lesson="docker-multistage">
+          <div class="check-icon"></div> Multi-Stage Builds
+        </div>
+        <div class="sidebar-item" data-lesson="docker-networking">
+          <div class="check-icon"></div> Docker Networking
+        </div>
+        <div class="sidebar-item" data-lesson="docker-volumes">
+          <div class="check-icon"></div> Volumes & Bind Mounts
+        </div>
+        <div class="sidebar-item" data-lesson="docker-compose">
+          <div class="check-icon"></div> Docker Compose
+        </div>
+        <div class="sidebar-item" data-lesson="docker-env">
+          <div class="check-icon"></div> Environment Variables & Secrets
+        </div>
+        <div class="sidebar-item" data-lesson="docker-security">
+          <div class="check-icon"></div> Docker Security Best Practices
+        </div>
+        <div class="sidebar-item" data-lesson="docker-ecr">
+          <div class="check-icon"></div> Push to AWS ECR
+        </div>
+        <div class="sidebar-item" data-lesson="docker-lab1">
+          <div class="check-icon"></div> 🔬 Lab: Full Node.js App
+        </div>
+        <div class="sidebar-item" data-lesson="docker-lab2">
+          <div class="check-icon"></div> 🔬 Lab: Python + Redis + Postgres
+        </div>
+        <div class="sidebar-item" data-lesson="docker-quiz">
+          <div class="check-icon"></div> 🧠 Knowledge Check
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="lesson-content">
+
+      <!-- ===== LESSON: WHAT IS DOCKER ===== -->
+      <div class="lesson-panel" data-panel="docker-what-is">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>What is Docker?</h1>
+            <p>Understand the problem Docker solves and why the industry adopted it universally.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-blue">Beginner</span>
+            <span class="badge badge-green">~20 min</span>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <h2>The Problem Before Docker</h2>
+          <p>Before Docker, deploying software was painful. A developer would build an app on their Mac, it would work perfectly — then it would fail in production on Linux because of different Python versions, missing libraries, or different OS configurations. "It works on my machine" was a constant refrain.</p>
+
+          <div class="arch-diagram">
+            <svg width="700" height="180" viewBox="0 0 700 180" style="max-width:100%">
+              <!-- Without Docker -->
+              <text x="160" y="20" fill="#8b949e" font-size="13" text-anchor="middle" font-family="sans-serif">❌ WITHOUT DOCKER</text>
+              <rect x="20" y="30" width="120" height="60" rx="8" fill="#1c2128" stroke="#ff7b72" stroke-width="1.5"/>
+              <text x="80" y="55" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="sans-serif">Dev Machine</text>
+              <text x="80" y="72" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">Python 3.11 / macOS</text>
+              <text x="160" y="65" fill="#ff7b72" font-size="20" text-anchor="middle">→</text>
+              <rect x="200" y="30" width="120" height="60" rx="8" fill="#1c2128" stroke="#ff7b72" stroke-width="1.5"/>
+              <text x="260" y="55" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="sans-serif">Production</text>
+              <text x="260" y="72" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">Python 3.8 / Ubuntu</text>
+              <text x="200" y="115" fill="#ff7b72" font-size="12" font-family="sans-serif">💥 ModuleNotFoundError!</text>
+
+              <!-- With Docker -->
+              <text x="520" y="20" fill="#8b949e" font-size="13" text-anchor="middle" font-family="sans-serif">✅ WITH DOCKER</text>
+              <rect x="380" y="30" width="120" height="60" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="440" y="52" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="sans-serif">Container Image</text>
+              <text x="440" y="68" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">App + ALL deps inside</text>
+              <text x="515" y="65" fill="#3fb950" font-size="20" text-anchor="middle">→</text>
+              <rect x="540" y="30" width="130" height="60" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="605" y="52" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="sans-serif">Any Machine</text>
+              <text x="605" y="68" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">Mac / Linux / AWS</text>
+              <text x="390" y="115" fill="#3fb950" font-size="12" font-family="sans-serif">✓ Runs identically everywhere!</text>
+            </svg>
+          </div>
+
+          <h2>Container vs Virtual Machine</h2>
+          <p>Containers and VMs both isolate applications, but they work very differently. This is a fundamental concept you <strong>will be asked about in interviews</strong>.</p>
+
+          <table class="compare-table">
+            <thead><tr><th>Feature</th><th>Container (Docker)</th><th>Virtual Machine</th></tr></thead>
+            <tbody>
+              <tr><td>Startup time</td><td>Milliseconds</td><td>Minutes</td></tr>
+              <tr><td>Size</td><td>Megabytes</td><td>Gigabytes</td></tr>
+              <tr><td>OS isolation</td><td>Shares host OS kernel</td><td>Full OS per VM</td></tr>
+              <tr><td>Resource overhead</td><td>Very low</td><td>High (full OS)</td></tr>
+              <tr><td>Security isolation</td><td>Process-level namespaces</td><td>Hardware-level hypervisor</td></tr>
+              <tr><td>Portability</td><td>Run anywhere Docker exists</td><td>Hypervisor-dependent</td></tr>
+              <tr><td>Use case</td><td>Microservices, CI/CD, scaling</td><td>Full OS needed, legacy apps</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview Answer: Containers vs VMs</div>
+              <div class="callout-text">Say: "Containers share the host OS kernel and use Linux namespaces and cgroups for isolation. VMs run a full guest OS on a hypervisor. Containers are faster and smaller, but VMs offer stronger isolation. In practice, AWS uses both — EC2 nodes run VMs, and inside those nodes, Kubernetes runs containers."</div>
+            </div>
+          </div>
+
+          <h2>How Docker Works — The 3 Core Concepts</h2>
+
+          <h3>1. Dockerfile</h3>
+          <p>A text file with instructions to <strong>build</strong> an image. Think of it as a recipe.</p>
+
+          <h3>2. Image</h3>
+          <p>A read-only snapshot of your application + all dependencies. Built from a Dockerfile. Stored in a registry (Docker Hub, AWS ECR). Like a class in OOP.</p>
+
+          <h3>3. Container</h3>
+          <p>A running instance of an image. You can have many containers from one image. Like an object (instance) of a class.</p>
+
+          <div class="arch-diagram">
+            <svg width="600" height="100" viewBox="0 0 600 100" style="max-width:100%">
+              <rect x="20" y="20" width="120" height="60" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="80" y="48" fill="#58a6ff" font-size="12" text-anchor="middle" font-family="monospace">Dockerfile</text>
+              <text x="80" y="64" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">Recipe / Blueprint</text>
+
+              <text x="165" y="55" fill="#8b949e" font-size="24">→</text>
+
+              <rect x="190" y="20" width="120" height="60" rx="8" fill="#1c2128" stroke="#a371f7" stroke-width="1.5"/>
+              <text x="250" y="48" fill="#a371f7" font-size="12" text-anchor="middle" font-family="monospace">Image</text>
+              <text x="250" y="64" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">Snapshot (read-only)</text>
+
+              <text x="335" y="55" fill="#8b949e" font-size="24">→</text>
+
+              <rect x="360" y="5" width="100" height="40" rx="6" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="410" y="30" fill="#3fb950" font-size="11" text-anchor="middle" font-family="monospace">Container 1</text>
+              <rect x="360" y="55" width="100" height="40" rx="6" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="410" y="80" fill="#3fb950" font-size="11" text-anchor="middle" font-family="monospace">Container 2</text>
+
+              <text x="490" y="32" fill="#8b949e" font-size="10" font-family="sans-serif">Running instances</text>
+              <text x="490" y="82" fill="#8b949e" font-size="10" font-family="sans-serif">of same image</text>
+            </svg>
+          </div>
+
+          <h2>Try It: Your First Docker Command</h2>
+          <p>Type this command in the terminal below to see Docker in action:</p>
+
+          <div id="term-what-is" data-terminal="docker"></div>
+
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Type these commands to practice:</div>
+              <div class="callout-text">
+                <code>docker run hello-world</code> — runs your first container<br>
+                <code>docker version</code> — check Docker version<br>
+                <code>docker info</code> — system-wide information
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-footer">
+          <a href="#" onclick="document.querySelector('[data-lesson=docker-architecture]').click(); return false;" class="btn btn-secondary">← Previous</a>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-what-is')">✓ Mark Complete & Continue</button>
+          <a href="#" onclick="document.querySelector('[data-lesson=docker-architecture]').click(); return false;" class="btn btn-primary">Next: Architecture →</a>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: ARCHITECTURE ===== -->
+      <div class="lesson-panel" data-panel="docker-architecture">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Docker Architecture</h1>
+            <p>How Docker Daemon, Client, Images, and Registry work together.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-blue">Core Concept</span>
+            <span class="badge badge-orange">Interview Must-Know</span>
+          </div>
+        </div>
+        <div class="content-body">
+          <h2>The Docker Client-Server Model</h2>
+          <p>Docker uses a client-server architecture. When you type <code>docker run nginx</code>, here is exactly what happens step by step:</p>
+
+          <div class="arch-diagram">
+            <svg width="700" height="260" viewBox="0 0 700 260" style="max-width:100%">
+              <!-- Client -->
+              <rect x="10" y="60" width="130" height="140" rx="10" fill="#1a2332" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="75" y="85" fill="#58a6ff" font-size="12" text-anchor="middle" font-family="sans-serif" font-weight="bold">Docker CLI</text>
+              <text x="75" y="102" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">(Your terminal)</text>
+              <rect x="25" y="115" width="100" height="24" rx="4" fill="#0d1117" stroke="#30363d"/>
+              <text x="75" y="132" fill="#f0883e" font-size="10" text-anchor="middle" font-family="monospace">docker run nginx</text>
+              <rect x="25" y="148" width="100" height="24" rx="4" fill="#0d1117" stroke="#30363d"/>
+              <text x="75" y="165" fill="#f0883e" font-size="10" text-anchor="middle" font-family="monospace">docker ps</text>
+              <rect x="25" y="180" width="100" height="24" rx="4" fill="#0d1117" stroke="#30363d"/>
+              <text x="75" y="197" fill="#f0883e" font-size="10" text-anchor="middle" font-family="monospace">docker build .</text>
+
+              <!-- REST API arrow -->
+              <line x1="140" y1="130" x2="195" y2="130" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr)"/>
+              <text x="167" y="122" fill="#58a6ff" font-size="9" text-anchor="middle" font-family="sans-serif">REST API</text>
+              <text x="167" y="148" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">/var/run/docker.sock</text>
+
+              <defs>
+                <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto">
+                  <path d="M0,0 L0,4 L8,2 z" fill="#58a6ff"/>
+                </marker>
+              </defs>
+
+              <!-- Daemon -->
+              <rect x="195" y="30" width="200" height="200" rx="10" fill="#1a2332" stroke="#a371f7" stroke-width="1.5"/>
+              <text x="295" y="55" fill="#a371f7" font-size="12" text-anchor="middle" font-family="sans-serif" font-weight="bold">Docker Daemon</text>
+              <text x="295" y="72" fill="#8b949e" font-size="10" text-anchor="middle" font-family="sans-serif">(dockerd — runs as root)</text>
+
+              <rect x="215" y="85" width="160" height="35" rx="6" fill="#0d1117" stroke="#30363d"/>
+              <text x="295" y="103" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="sans-serif">Image Management</text>
+              <text x="295" y="116" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">pull, build, cache layers</text>
+
+              <rect x="215" y="130" width="160" height="35" rx="6" fill="#0d1117" stroke="#30363d"/>
+              <text x="295" y="148" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="sans-serif">Container Runtime</text>
+              <text x="295" y="161" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">containerd → runc</text>
+
+              <rect x="215" y="175" width="160" height="35" rx="6" fill="#0d1117" stroke="#30363d"/>
+              <text x="295" y="193" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="sans-serif">Network & Volume</text>
+              <text x="295" y="206" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">bridge, overlay, bind mounts</text>
+
+              <!-- Registry arrow -->
+              <line x1="395" y1="100" x2="450" y2="100" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr2)"/>
+              <text x="422" y="92" fill="#3fb950" font-size="9" text-anchor="middle" font-family="sans-serif">pull/push</text>
+              <defs>
+                <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto">
+                  <path d="M0,0 L0,4 L8,2 z" fill="#3fb950"/>
+                </marker>
+              </defs>
+
+              <!-- Registry -->
+              <rect x="450" y="50" width="230" height="150" rx="10" fill="#1a2332" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="565" y="75" fill="#3fb950" font-size="12" text-anchor="middle" font-family="sans-serif" font-weight="bold">Container Registry</text>
+
+              <rect x="465" y="85" width="95" height="50" rx="6" fill="#0d1117" stroke="#30363d"/>
+              <text x="512" y="108" fill="#0db7ed" font-size="10" text-anchor="middle" font-family="sans-serif">Docker Hub</text>
+              <text x="512" y="123" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">hub.docker.com</text>
+
+              <rect x="570" y="85" width="95" height="50" rx="6" fill="#0d1117" stroke="#30363d"/>
+              <text x="617" y="108" fill="#ff9900" font-size="10" text-anchor="middle" font-family="sans-serif">AWS ECR</text>
+              <text x="617" y="123" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Your private registry</text>
+
+              <rect x="465" y="145" width="200" height="40" rx="6" fill="#0d1117" stroke="#30363d"/>
+              <text x="565" y="163" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="sans-serif">nginx:latest, node:18, python:3.11</text>
+              <text x="565" y="177" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Stored as compressed layers</text>
+            </svg>
+          </div>
+
+          <h2>What Happens When You Run: <code>docker run nginx</code></h2>
+          <ol>
+            <li><strong>Docker CLI</strong> sends the command to Docker Daemon via REST API over a Unix socket</li>
+            <li><strong>Docker Daemon</strong> checks if the <code>nginx</code> image exists locally</li>
+            <li>If not found locally → pulls from <strong>Docker Hub</strong> (or your configured registry)</li>
+            <li>Daemon calls <strong>containerd</strong> to create a container from the image</li>
+            <li>containerd calls <strong>runc</strong> to set up Linux namespaces and cgroups</li>
+            <li>Container starts! The nginx process runs in an isolated environment</li>
+          </ol>
+
+          <h2>Linux Primitives Docker Uses</h2>
+          <p>Docker is <em>not magic</em> — it's Linux kernel features exposed in a developer-friendly way:</p>
+
+          <table class="compare-table">
+            <thead><tr><th>Linux Feature</th><th>What Docker Uses It For</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Namespaces</strong></td><td>Process isolation (PID, NET, MNT, UTS, IPC)</td><td>Container can't see host processes</td></tr>
+              <tr><td><strong>cgroups</strong></td><td>Resource limits (CPU, memory)</td><td><code>--memory=512m --cpus=1</code></td></tr>
+              <tr><td><strong>Union FS</strong></td><td>Layered image filesystem (overlay2)</td><td>Shared base layers, fast builds</td></tr>
+              <tr><td><strong>chroot</strong></td><td>Isolated root filesystem</td><td>Container sees its own / directory</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview Gold: "How does Docker isolate containers?"</div>
+              <div class="callout-text">Answer: "Docker uses Linux namespaces for isolation (each container gets its own PID, network, and mount namespaces) and cgroups to limit resource usage. The container shares the host kernel but cannot see other processes or the host filesystem. The overlay2 storage driver enables efficient copy-on-write layering of images."</div>
+            </div>
+          </div>
+
+          <h2>Type These in the Terminal</h2>
+          <div id="term-architecture" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Practice commands:</div>
+              <div class="callout-text">
+                <code>docker info</code> — see daemon details, storage driver, runtime<br>
+                <code>docker version</code> — client AND server versions
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-what-is]').click()">← What is Docker</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-architecture')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-dockerfile]').click()">Next: Dockerfile →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: INSTALLATION ===== -->
+      <div class="lesson-panel" data-panel="docker-install">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Installation & First Run</h1>
+            <p>Install Docker and run your first container on every major platform.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-green">Hands-On</span></div>
+        </div>
+        <div class="content-body">
+          <div class="tabs">
+            <div class="tab-list">
+              <button class="tab-btn">Ubuntu / Debian</button>
+              <button class="tab-btn">Amazon Linux 2</button>
+              <button class="tab-btn">macOS</button>
+              <button class="tab-btn">Windows</button>
+            </div>
+            <div class="tab-content">
+              <h3>Install Docker on Ubuntu / Debian (EC2 or local)</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">bash</span><span class="code-block-title">Ubuntu install</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="cmt"># 1. Remove old versions</span>
+sudo apt-get remove docker docker-engine docker.io containerd runc
+
+<span class="cmt"># 2. Install prerequisites</span>
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+<span class="cmt"># 3. Add Docker's official GPG key</span>
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+<span class="cmt"># 4. Set up the stable repository</span>
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+<span class="cmt"># 5. Install Docker Engine</span>
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+<span class="cmt"># 6. Add your user to docker group (avoid sudo every time)</span>
+sudo usermod -aG docker $USER
+newgrp docker
+
+<span class="cmt"># 7. Verify installation</span>
+docker run hello-world</pre>
+              </div>
+            </div>
+            <div class="tab-content">
+              <h3>Install Docker on Amazon Linux 2 (EC2)</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">bash</span><span class="code-block-title">Amazon Linux 2</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="cmt"># Update packages</span>
+sudo yum update -y
+
+<span class="cmt"># Install Docker</span>
+sudo amazon-linux-extras install docker -y
+
+<span class="cmt"># Start Docker service</span>
+sudo service docker start
+
+<span class="cmt"># Enable on boot</span>
+sudo systemctl enable docker
+
+<span class="cmt"># Add ec2-user to docker group</span>
+sudo usermod -aG docker ec2-user
+
+<span class="cmt"># Log out and back in, then verify</span>
+docker run hello-world
+
+<span class="cmt"># Install Docker Compose</span>
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" \
+  -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version</pre>
+              </div>
+            </div>
+            <div class="tab-content">
+              <h3>Install Docker Desktop on macOS</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="cmt"># Option 1: Homebrew (recommended)</span>
+brew install --cask docker
+
+<span class="cmt"># Option 2: Download from https://www.docker.com/products/docker-desktop/</span>
+<span class="cmt"># Open the .dmg and drag to Applications</span>
+
+<span class="cmt"># After installation, start Docker Desktop from Applications</span>
+<span class="cmt"># Then verify in terminal:</span>
+docker run hello-world
+docker version</pre>
+              </div>
+            </div>
+            <div class="tab-content">
+              <h3>Install Docker Desktop on Windows</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">powershell</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="cmt"># Enable WSL2 (run as Administrator in PowerShell)</span>
+wsl --install
+wsl --set-default-version 2
+
+<span class="cmt"># Download Docker Desktop from:</span>
+<span class="cmt"># https://www.docker.com/products/docker-desktop/</span>
+<span class="cmt"># Run the installer and enable WSL2 integration</span>
+
+<span class="cmt"># After restart, verify in PowerShell or WSL2 terminal:</span>
+docker run hello-world</pre>
+              </div>
+            </div>
+          </div>
+
+          <h2>Verify Docker is Working</h2>
+          <div id="term-install" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Type to verify your installation:</div>
+              <div class="callout-text">
+                <code>docker version</code><br>
+                <code>docker run hello-world</code><br>
+                <code>docker info</code>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-architecture]').click()">← Architecture</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-install')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-images]').click()">Next: Images →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: IMAGES ===== -->
+      <div class="lesson-panel" data-panel="docker-images">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Images & Containers</h1>
+            <p>Understanding the difference and working with Docker Hub images.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core Concept</span><span class="badge badge-green">Hands-On</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Docker Images are Made of Layers</h2>
+          <p>A Docker image is not a single file — it's a stack of read-only layers. Each instruction in a Dockerfile creates a layer. Layers are shared between images, which makes them fast and storage-efficient.</p>
+
+          <div class="arch-diagram">
+            <svg width="400" height="260" viewBox="0 0 400 260" style="max-width:100%; display:block; margin:0 auto">
+              <rect x="100" y="20" width="200" height="36" rx="6" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="200" y="38" fill="#3fb950" font-size="11" text-anchor="middle" font-family="monospace">COPY app/ .   (Layer 5 — writable)</text>
+
+              <rect x="100" y="64" width="200" height="36" rx="6" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="200" y="82" fill="#58a6ff" font-size="11" text-anchor="middle" font-family="monospace">RUN npm ci  (Layer 4)</text>
+
+              <rect x="100" y="108" width="200" height="36" rx="6" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="200" y="126" fill="#58a6ff" font-size="11" text-anchor="middle" font-family="monospace">COPY package.json .  (Layer 3)</text>
+
+              <rect x="100" y="152" width="200" height="36" rx="6" fill="#0d1117" stroke="#a371f7" stroke-width="1.5"/>
+              <text x="200" y="170" fill="#a371f7" font-size="11" text-anchor="middle" font-family="monospace">WORKDIR /app  (Layer 2)</text>
+
+              <rect x="100" y="196" width="200" height="36" rx="6" fill="#0d1117" stroke="#f0883e" stroke-width="1.5"/>
+              <text x="200" y="214" fill="#f0883e" font-size="11" text-anchor="middle" font-family="monospace">FROM node:18-alpine  (Layer 1 — base)</text>
+
+              <text x="320" y="38" fill="#3fb950" font-size="9" font-family="sans-serif">↑ your code</text>
+              <text x="320" y="82" fill="#58a6ff" font-size="9" font-family="sans-serif">your deps</text>
+              <text x="320" y="170" fill="#a371f7" font-size="9" font-family="sans-serif">config</text>
+              <text x="320" y="214" fill="#f0883e" font-size="9" font-family="sans-serif">shared!</text>
+            </svg>
+          </div>
+
+          <h2>Pulling & Managing Images</h2>
+          <div id="term-images" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Type these commands:</div>
+              <div class="callout-text">
+                <code>docker pull nginx</code> — download nginx image<br>
+                <code>docker pull node:18</code> — specific tag (always pin tags in production!)<br>
+                <code>docker images</code> — list all local images<br>
+                <code>docker rmi nginx</code> — remove an image<br>
+                <code>docker system prune</code> — clean up unused resources
+              </div>
+            </div>
+          </div>
+
+          <h2>Image Naming Convention</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">text</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Format: [registry/][namespace/]repository[:tag][@digest]</span>
+
+nginx                              <span class="cmt"># Docker Hub official image, latest tag</span>
+nginx:1.25.3                       <span class="cmt"># Specific version (USE THIS in production!)</span>
+node:18-alpine                     <span class="cmt"># node v18, alpine variant (tiny)</span>
+mycompany/myapp:v2.1.0             <span class="cmt"># Custom image on Docker Hub</span>
+123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:latest   <span class="cmt"># AWS ECR</span>
+ghcr.io/myorg/myapp:sha-abc123     <span class="cmt"># GitHub Container Registry</span></pre>
+          </div>
+
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body">
+              <div class="callout-title">Never use :latest in production</div>
+              <div class="callout-text">Using <code>nginx:latest</code> means your image changes whenever Docker Hub updates nginx. This breaks reproducibility. Always pin to a specific version: <code>nginx:1.25.3</code>. This is a real mistake companies make and a common interview question.</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-install]').click()">← Installation</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-images')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-run]').click()">Next: docker run →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: DOCKERFILE ===== -->
+      <div class="lesson-panel" data-panel="docker-dockerfile">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Writing Production Dockerfiles</h1>
+            <p>Every instruction, every best practice. Real examples for Node.js, Python, Go.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-orange">Industry Critical</span>
+            <span class="badge badge-green">Hands-On</span>
+          </div>
+        </div>
+        <div class="content-body">
+          <h2>Every Dockerfile Instruction Explained</h2>
+
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">dockerfile</span><span class="code-block-title">Complete Dockerfile reference</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># FROM — base image (ALWAYS first instruction)</span>
+<span class="kw">FROM</span> <span class="cls">node:18-alpine</span>
+
+<span class="cmt"># ARG — build-time variables (not available at runtime)</span>
+<span class="kw">ARG</span> <span class="var">APP_VERSION</span>=<span class="str">1.0.0</span>
+
+<span class="cmt"># ENV — environment variables (available at runtime too)</span>
+<span class="kw">ENV</span> <span class="var">NODE_ENV</span>=<span class="str">production</span>
+<span class="kw">ENV</span> <span class="var">PORT</span>=<span class="num">3000</span>
+
+<span class="cmt"># WORKDIR — sets working directory (creates it if missing)</span>
+<span class="kw">WORKDIR</span> <span class="str">/app</span>
+
+<span class="cmt"># COPY — copy files from host to image</span>
+<span class="cmt"># COPY src dest   (relative to WORKDIR)</span>
+<span class="kw">COPY</span> package*.json ./          <span class="cmt"># Copy FIRST for layer caching</span>
+
+<span class="cmt"># RUN — execute command during build (creates a new layer)</span>
+<span class="kw">RUN</span> npm ci --only=production   <span class="cmt"># npm ci is faster and more reliable than npm install</span>
+
+<span class="cmt"># COPY the rest of the app (separate layer — cache deps above)</span>
+<span class="kw">COPY</span> . .
+
+<span class="cmt"># EXPOSE — document which port the container listens on</span>
+<span class="cmt"># Does NOT actually publish the port — use -p flag in docker run</span>
+<span class="kw">EXPOSE</span> <span class="num">3000</span>
+
+<span class="cmt"># USER — run as non-root (security best practice!)</span>
+<span class="kw">USER</span> node
+
+<span class="cmt"># HEALTHCHECK — Docker monitors container health</span>
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s --retries=3 \
+  <span class="kw">CMD</span> wget -qO- http://localhost:3000/health || exit 1
+
+<span class="cmt"># CMD — default command to run (can be overridden)</span>
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"server.js"</span>]
+
+<span class="cmt"># ENTRYPOINT — cannot be overridden (use for the main process)</span>
+<span class="cmt"># ENTRYPOINT ["node"] + CMD ["server.js"] = node server.js</span></pre>
+          </div>
+
+          <h2>Real Production Examples</h2>
+          <div class="tabs">
+            <div class="tab-list">
+              <button class="tab-btn">Node.js</button>
+              <button class="tab-btn">Python</button>
+              <button class="tab-btn">Go</button>
+              <button class="tab-btn">Java (Spring Boot)</button>
+            </div>
+
+            <div class="tab-content">
+              <h3>Production Node.js Dockerfile</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">dockerfile</span><span class="code-block-title">Dockerfile (Node.js)</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="kw">FROM</span> <span class="cls">node:18-alpine</span> <span class="kw">AS</span> base
+
+<span class="cmt"># Install dumb-init for proper signal handling</span>
+<span class="kw">RUN</span> apk add --no-cache dumb-init
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cmt"># Copy package files FIRST (layer caching trick)</span>
+<span class="kw">COPY</span> package*.json ./
+
+<span class="cmt"># Install only production deps</span>
+<span class="kw">RUN</span> npm ci --only=production && npm cache clean --force
+
+<span class="cmt"># Copy source code</span>
+<span class="kw">COPY</span> . .
+
+<span class="cmt"># Don't run as root!</span>
+<span class="kw">USER</span> node
+
+<span class="kw">EXPOSE</span> 3000
+
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  <span class="kw">CMD</span> wget -qO- http://localhost:3000/health || exit 1
+
+<span class="cmt"># dumb-init handles PID 1 and signal forwarding properly</span>
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dumb-init"</span>, <span class="str">"--"</span>]
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"server.js"</span>]</pre>
+              </div>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">text</span><span class="code-block-title">.dockerignore</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre>node_modules
+.git
+.gitignore
+README.md
+.env
+*.log
+coverage/
+.nyc_output/
+Dockerfile
+docker-compose*.yml</pre>
+              </div>
+            </div>
+
+            <div class="tab-content">
+              <h3>Production Python Dockerfile</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">dockerfile</span><span class="code-block-title">Dockerfile (Python)</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="kw">FROM</span> <span class="cls">python:3.11-slim</span>
+
+<span class="cmt"># Install system deps</span>
+<span class="kw">RUN</span> apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cmt"># Install Python deps first (layer caching)</span>
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="cmt"># Copy app</span>
+<span class="kw">COPY</span> . .
+
+<span class="cmt"># Create non-root user</span>
+<span class="kw">RUN</span> adduser --disabled-password --gecos '' appuser
+<span class="kw">USER</span> appuser
+
+<span class="kw">EXPOSE</span> 8000
+
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  <span class="kw">CMD</span> python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
+
+<span class="kw">CMD</span> [<span class="str">"gunicorn"</span>, <span class="str">"--bind"</span>, <span class="str">"0.0.0.0:8000"</span>, <span class="str">"--workers"</span>, <span class="str">"4"</span>, <span class="str">"app:app"</span>]</pre>
+              </div>
+            </div>
+
+            <div class="tab-content">
+              <h3>Production Go Dockerfile (Multi-Stage)</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">dockerfile</span><span class="code-block-title">Dockerfile (Go)</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="cmt"># Stage 1: Build</span>
+<span class="kw">FROM</span> <span class="cls">golang:1.21-alpine</span> <span class="kw">AS</span> builder
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cmt"># Download deps first (layer cache)</span>
+<span class="kw">COPY</span> go.mod go.sum ./
+<span class="kw">RUN</span> go mod download
+
+<span class="kw">COPY</span> . .
+
+<span class="cmt"># Build static binary</span>
+<span class="kw">RUN</span> CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /myapp ./cmd/server
+
+<span class="cmt"># Stage 2: Minimal production image (scratch = empty!)</span>
+<span class="kw">FROM</span> <span class="cls">scratch</span>
+
+<span class="cmt"># Copy SSL certs for HTTPS</span>
+<span class="kw">COPY</span> --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+<span class="cmt"># Copy ONLY the binary</span>
+<span class="kw">COPY</span> --from=builder /myapp /myapp
+
+<span class="kw">EXPOSE</span> 8080
+<span class="kw">ENTRYPOINT</span> [<span class="str">"/myapp"</span>]
+
+<span class="cmt"># Result: ~5-10MB image vs ~1GB with full Go image!</span></pre>
+              </div>
+            </div>
+
+            <div class="tab-content">
+              <h3>Spring Boot Dockerfile</h3>
+              <div class="code-block">
+                <div class="code-block-header"><span class="code-block-lang">dockerfile</span><button class="copy-btn">⎘ Copy</button></div>
+                <pre><span class="kw">FROM</span> <span class="cls">eclipse-temurin:17-jre-alpine</span>
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cmt"># Create non-root user</span>
+<span class="kw">RUN</span> addgroup -S appgroup && adduser -S appuser -G appgroup
+<span class="kw">USER</span> appuser
+
+<span class="kw">COPY</span> target/myapp.jar app.jar
+
+<span class="kw">EXPOSE</span> 8080
+
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=10s \
+  <span class="kw">CMD</span> wget -qO- http://localhost:8080/actuator/health || exit 1
+
+<span class="kw">ENTRYPOINT</span> [<span class="str">"java"</span>, <span class="str">"-jar"</span>, <span class="str">"/app/app.jar"</span>]</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body">
+              <div class="callout-title">Top 5 Dockerfile Mistakes (and Fixes)</div>
+              <div class="callout-text">
+                1. <strong>No .dockerignore</strong> → adds node_modules (1GB!) to build context<br>
+                2. <strong>Running as root</strong> → security vulnerability, use USER<br>
+                3. <strong>COPY . . before npm install</strong> → breaks layer caching, slow rebuilds<br>
+                4. <strong>Installing dev dependencies</strong> → bloats production image<br>
+                5. <strong>Not pinning base image tags</strong> → non-reproducible builds
+              </div>
+            </div>
+          </div>
+
+          <h2>Build Your Image</h2>
+          <div id="term-dockerfile" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Type these build commands:</div>
+              <div class="callout-text">
+                <code>docker build -t myapp .</code> — build with latest tag<br>
+                <code>docker build -t myapp:v1 .</code> — build with version tag<br>
+                <code>docker images</code> — verify the image was created
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-architecture]').click()">← Architecture</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-dockerfile')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-multistage]').click()">Next: Multi-Stage →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: MULTI-STAGE ===== -->
+      <div class="lesson-panel" data-panel="docker-multistage">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Multi-Stage Builds</h1>
+            <p>Reduce image size by 90%+. The industry standard for production images.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-orange">Production Must-Know</span>
+            <span class="badge badge-red">Interview Favorite</span>
+          </div>
+        </div>
+        <div class="content-body">
+          <h2>Why Multi-Stage?</h2>
+          <p>Building a Node.js app requires compilers, test tools, and build utilities. Running it in production needs <em>none of that</em>. Multi-stage builds let you use a fat image to build, then copy only what's needed into a tiny final image.</p>
+
+          <table class="compare-table">
+            <thead><tr><th>Approach</th><th>Image Size</th><th>Security</th><th>Build Tools in Prod</th></tr></thead>
+            <tbody>
+              <tr><td>Single stage (node:18)</td><td>~1GB</td><td>Poor</td><td>Yes (npm, compilers)</td></tr>
+              <tr><td>Single stage (node:18-alpine)</td><td>~250MB</td><td>OK</td><td>Yes</td></tr>
+              <tr><td>Multi-stage</td><td>~80MB</td><td>Excellent</td><td>No</td></tr>
+              <tr><td>Multi-stage (Go/scratch)</td><td>~5-10MB</td><td>Best</td><td>No</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Complete Multi-Stage Example</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">dockerfile</span><span class="code-block-title">Multi-stage Node.js + React</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># ===== STAGE 1: Build React frontend =====</span>
+<span class="kw">FROM</span> <span class="cls">node:18-alpine</span> <span class="kw">AS</span> frontend-builder
+
+<span class="kw">WORKDIR</span> /app/frontend
+
+<span class="kw">COPY</span> frontend/package*.json ./
+<span class="kw">RUN</span> npm ci
+
+<span class="kw">COPY</span> frontend/ .
+<span class="kw">RUN</span> npm run build              <span class="cmt"># Creates /app/frontend/dist</span>
+
+<span class="cmt"># ===== STAGE 2: Build backend =====</span>
+<span class="kw">FROM</span> <span class="cls">node:18-alpine</span> <span class="kw">AS</span> backend-builder
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="kw">COPY</span> backend/package*.json ./
+<span class="kw">RUN</span> npm ci --only=production
+
+<span class="kw">COPY</span> backend/ .
+
+<span class="cmt"># ===== STAGE 3: Production image =====</span>
+<span class="kw">FROM</span> <span class="cls">node:18-alpine</span>
+
+<span class="kw">RUN</span> apk add --no-cache dumb-init
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cmt"># Copy ONLY what's needed from previous stages</span>
+<span class="kw">COPY</span> --from=backend-builder /app/node_modules ./node_modules
+<span class="kw">COPY</span> --from=backend-builder /app/src ./src
+<span class="kw">COPY</span> --from=frontend-builder /app/frontend/dist ./public
+
+<span class="kw">USER</span> node
+<span class="kw">EXPOSE</span> 3000
+
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dumb-init"</span>, <span class="str">"--"</span>]
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"src/server.js"</span>]
+
+<span class="cmt"># Build: docker build -t myapp:latest .</span>
+<span class="cmt"># node_modules from Stage 1 & 2 are NOT in this image!</span>
+<span class="cmt"># Result: ~80MB instead of ~1.5GB</span></pre>
+          </div>
+
+          <div id="term-multistage" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Build and check image sizes:</div>
+              <div class="callout-text">
+                <code>docker build -t myapp:v1 .</code><br>
+                <code>docker images</code> — compare sizes
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-dockerfile]').click()">← Dockerfile</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-multistage')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-networking]').click()">Next: Networking →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: NETWORKING ===== -->
+      <div class="lesson-panel" data-panel="docker-networking">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Docker Networking</h1>
+            <p>How containers communicate. Bridge, host, none, and overlay networks.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">Interview Favorite</span><span class="badge badge-green">Hands-On</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Network Types</h2>
+          <table class="compare-table">
+            <thead><tr><th>Network Driver</th><th>Use Case</th><th>Container Access</th><th>Host Access</th></tr></thead>
+            <tbody>
+              <tr><td><strong>bridge</strong> (default)</td><td>Single host, containers on same network</td><td>By container name</td><td>Via -p port mapping</td></tr>
+              <tr><td><strong>host</strong></td><td>Remove network isolation (performance)</td><td>Direct host network</td><td>Direct (no -p needed)</td></tr>
+              <tr><td><strong>none</strong></td><td>Complete isolation</td><td>None</td><td>None</td></tr>
+              <tr><td><strong>overlay</strong></td><td>Docker Swarm / multi-host</td><td>Across hosts</td><td>Via published ports</td></tr>
+              <tr><td><strong>macvlan</strong></td><td>Container needs its own MAC/IP</td><td>Physical network</td><td>Direct</td></tr>
+            </tbody>
+          </table>
+
+          <h2>How Bridge Networking Works</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Create a custom bridge network</span>
+docker network create myapp-net
+
+<span class="cmt"># Start containers on the same network</span>
+docker run -d --name postgres --network myapp-net \
+  -e POSTGRES_PASSWORD=secret postgres:15
+
+docker run -d --name redis --network myapp-net redis:7
+
+docker run -d --name web --network myapp-net \
+  -p 3000:3000 \
+  -e DATABASE_URL=postgresql://postgres:secret@postgres:5432/mydb \
+  -e REDIS_URL=redis://redis:6379 \
+  myapp:latest
+
+<span class="cmt"># ✓ 'web' can reach 'postgres' using just the container name 'postgres'</span>
+<span class="cmt"># ✓ Docker provides DNS resolution between containers on same network</span>
+<span class="cmt"># ✓ Only port 3000 is exposed to the host</span></pre>
+          </div>
+
+          <h2>Port Mapping Explained</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># -p HOST_PORT:CONTAINER_PORT</span>
+docker run -p 80:80 nginx        <span class="cmt"># host:80 → container:80</span>
+docker run -p 8080:80 nginx      <span class="cmt"># host:8080 → container:80</span>
+docker run -p 127.0.0.1:80:80 nginx  <span class="cmt"># only localhost, not external</span>
+
+<span class="cmt"># Multiple ports</span>
+docker run -p 80:80 -p 443:443 nginx
+
+<span class="cmt"># Random host port (Docker assigns it)</span>
+docker run -p 80 nginx           <span class="cmt"># check with: docker ps</span></pre>
+          </div>
+
+          <div id="term-networking" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Practice networking:</div>
+              <div class="callout-text">
+                <code>docker network ls</code><br>
+                <code>docker network create myapp-net</code><br>
+                <code>docker run -d -p 80:80 nginx</code><br>
+                <code>docker ps</code>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-multistage]').click()">← Multi-Stage</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-networking')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-volumes]').click()">Next: Volumes →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: VOLUMES ===== -->
+      <div class="lesson-panel" data-panel="docker-volumes">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Volumes & Data Persistence</h1>
+            <p>Container data is ephemeral by default. Learn how to persist it correctly.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core Concept</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Why Volumes?</h2>
+          <p>When a container is deleted, all its data is gone. For databases, uploads, and logs, you need persistent storage.</p>
+
+          <table class="compare-table">
+            <thead><tr><th>Storage Type</th><th>Command</th><th>Use Case</th><th>Managed By</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Volume</strong></td><td><code>-v mydata:/var/lib/mysql</code></td><td>Databases, production</td><td>Docker</td></tr>
+              <tr><td><strong>Bind Mount</strong></td><td><code>-v $(pwd)/src:/app/src</code></td><td>Local development</td><td>Host filesystem</td></tr>
+              <tr><td><strong>tmpfs</strong></td><td><code>--tmpfs /tmp</code></td><td>Sensitive temp data</td><td>RAM</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Complete Volume Examples</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Create a named volume</span>
+docker volume create db-data
+
+<span class="cmt"># Run PostgreSQL with persistent data volume</span>
+docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=secret \
+  -e POSTGRES_DB=myapp \
+  -v db-data:/var/lib/postgresql/data \     <span class="cmt"># named volume</span>
+  -p 5432:5432 \
+  postgres:15
+
+<span class="cmt"># Delete and recreate the container — data PERSISTS</span>
+docker rm -f postgres
+docker run -d --name postgres -v db-data:/var/lib/postgresql/data postgres:15
+<span class="cmt"># Your data is still there!</span>
+
+<span class="cmt"># Bind mount for development (live code reload)</span>
+docker run -d \
+  --name myapp-dev \
+  -v $(pwd):/app \                          <span class="cmt"># bind mount — code changes reflect instantly</span>
+  -v /app/node_modules \                    <span class="cmt"># anonymous volume for node_modules</span>
+  -p 3000:3000 \
+  myapp:dev
+
+<span class="cmt"># List all volumes</span>
+docker volume ls
+
+<span class="cmt"># Inspect volume location on host</span>
+docker volume inspect db-data
+
+<span class="cmt"># Backup a volume</span>
+docker run --rm \
+  -v db-data:/data \
+  -v $(pwd):/backup \
+  alpine tar czf /backup/db-backup.tar.gz /data</pre>
+          </div>
+
+          <div id="term-volumes" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Practice:</div>
+              <div class="callout-text">
+                <code>docker volume create db-data</code><br>
+                <code>docker volume ls</code><br>
+                <code>docker run -d --name redis -p 6379:6379 redis:7</code>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-networking]').click()">← Networking</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-volumes')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-compose]').click()">Next: Docker Compose →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: DOCKER COMPOSE ===== -->
+      <div class="lesson-panel" data-panel="docker-compose">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Docker Compose</h1>
+            <p>Define and run multi-container applications. The standard for local development.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-orange">Industry Standard</span>
+            <span class="badge badge-green">Hands-On</span>
+          </div>
+        </div>
+        <div class="content-body">
+          <h2>Complete docker-compose.yml Reference</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">docker-compose.yml — full production-like example</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="tag">version</span>: <span class="val">'3.9'</span>
+
+<span class="tag">services</span>:
+  <span class="cmt"># ===== WEB APPLICATION =====</span>
+  <span class="tag">web</span>:
+    <span class="attr">build</span>:
+      <span class="attr">context</span>: <span class="val">.</span>
+      <span class="attr">dockerfile</span>: <span class="val">Dockerfile</span>
+      <span class="attr">target</span>: <span class="val">production</span>   <span class="cmt"># multi-stage target</span>
+    <span class="attr">image</span>: <span class="val">myapp:latest</span>
+    <span class="attr">container_name</span>: <span class="val">myapp-web</span>
+    <span class="attr">restart</span>: <span class="val">unless-stopped</span>
+    <span class="attr">ports</span>:
+      - <span class="val">"3000:3000"</span>
+    <span class="attr">environment</span>:
+      - <span class="val">NODE_ENV=production</span>
+      - <span class="val">PORT=3000</span>
+      - <span class="val">DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/myapp</span>
+      - <span class="val">REDIS_URL=redis://redis:6379</span>
+    <span class="attr">env_file</span>:
+      - <span class="val">.env</span>          <span class="cmt"># load from .env file</span>
+    <span class="attr">depends_on</span>:
+      <span class="attr">db</span>:
+        <span class="attr">condition</span>: <span class="val">service_healthy</span>  <span class="cmt"># wait for healthy check</span>
+      <span class="attr">redis</span>:
+        <span class="attr">condition</span>: <span class="val">service_healthy</span>
+    <span class="attr">networks</span>:
+      - <span class="val">backend</span>
+      - <span class="val">frontend</span>
+    <span class="attr">deploy</span>:
+      <span class="attr">resources</span>:
+        <span class="attr">limits</span>:
+          <span class="attr">cpus</span>: <span class="val">'0.5'</span>
+          <span class="attr">memory</span>: <span class="val">512M</span>
+    <span class="attr">healthcheck</span>:
+      <span class="attr">test</span>: [<span class="val">"CMD"</span>, <span class="val">"wget"</span>, <span class="val">"-qO-"</span>, <span class="val">"http://localhost:3000/health"</span>]
+      <span class="attr">interval</span>: <span class="val">30s</span>
+      <span class="attr">timeout</span>: <span class="val">10s</span>
+      <span class="attr">retries</span>: <span class="val">3</span>
+      <span class="attr">start_period</span>: <span class="val">40s</span>
+
+  <span class="cmt"># ===== POSTGRESQL DATABASE =====</span>
+  <span class="tag">db</span>:
+    <span class="attr">image</span>: <span class="val">postgres:15-alpine</span>
+    <span class="attr">container_name</span>: <span class="val">myapp-db</span>
+    <span class="attr">restart</span>: <span class="val">unless-stopped</span>
+    <span class="attr">environment</span>:
+      POSTGRES_USER: <span class="val">postgres</span>
+      POSTGRES_PASSWORD: <span class="val">${DB_PASSWORD}</span>
+      POSTGRES_DB: <span class="val">myapp</span>
+    <span class="attr">volumes</span>:
+      - <span class="val">db-data:/var/lib/postgresql/data</span>
+      - <span class="val">./init.sql:/docker-entrypoint-initdb.d/init.sql</span>  <span class="cmt"># init script</span>
+    <span class="attr">networks</span>:
+      - <span class="val">backend</span>
+    <span class="attr">healthcheck</span>:
+      <span class="attr">test</span>: [<span class="val">"CMD-SHELL"</span>, <span class="val">"pg_isready -U postgres"</span>]
+      <span class="attr">interval</span>: <span class="val">5s</span>
+      <span class="attr">timeout</span>: <span class="val">5s</span>
+      <span class="attr">retries</span>: <span class="val">5</span>
+
+  <span class="cmt"># ===== REDIS CACHE =====</span>
+  <span class="tag">redis</span>:
+    <span class="attr">image</span>: <span class="val">redis:7-alpine</span>
+    <span class="attr">container_name</span>: <span class="val">myapp-redis</span>
+    <span class="attr">restart</span>: <span class="val">unless-stopped</span>
+    <span class="attr">command</span>: <span class="val">redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes</span>
+    <span class="attr">volumes</span>:
+      - <span class="val">redis-data:/data</span>
+    <span class="attr">networks</span>:
+      - <span class="val">backend</span>
+    <span class="attr">healthcheck</span>:
+      <span class="attr">test</span>: [<span class="val">"CMD"</span>, <span class="val">"redis-cli"</span>, <span class="val">"ping"</span>]
+      <span class="attr">interval</span>: <span class="val">5s</span>
+      <span class="attr">timeout</span>: <span class="val">3s</span>
+      <span class="attr">retries</span>: <span class="val">3</span>
+
+  <span class="cmt"># ===== NGINX REVERSE PROXY =====</span>
+  <span class="tag">nginx</span>:
+    <span class="attr">image</span>: <span class="val">nginx:1.25-alpine</span>
+    <span class="attr">container_name</span>: <span class="val">myapp-nginx</span>
+    <span class="attr">restart</span>: <span class="val">unless-stopped</span>
+    <span class="attr">ports</span>:
+      - <span class="val">"80:80"</span>
+      - <span class="val">"443:443"</span>
+    <span class="attr">volumes</span>:
+      - <span class="val">./nginx/nginx.conf:/etc/nginx/nginx.conf:ro</span>
+      - <span class="val">./ssl:/etc/nginx/ssl:ro</span>
+    <span class="attr">depends_on</span>:
+      - <span class="val">web</span>
+    <span class="attr">networks</span>:
+      - <span class="val">frontend</span>
+
+<span class="tag">volumes</span>:
+  <span class="attr">db-data</span>:        <span class="cmt"># persists PostgreSQL data</span>
+  <span class="attr">redis-data</span>:     <span class="cmt"># persists Redis data</span>
+
+<span class="tag">networks</span>:
+  <span class="attr">backend</span>:        <span class="cmt"># internal — web, db, redis</span>
+    <span class="attr">internal</span>: <span class="kw">true</span>  <span class="cmt"># no external access!</span>
+  <span class="attr">frontend</span>:       <span class="cmt"># nginx → web</span></pre>
+          </div>
+
+          <h2>Docker Compose Commands</h2>
+          <div id="term-compose" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Type these Compose commands:</div>
+              <div class="callout-text">
+                <code>docker compose up -d</code> — start all services in background<br>
+                <code>docker compose ps</code> — see running services<br>
+                <code>docker compose logs -f</code> — stream all logs<br>
+                <code>docker compose down</code> — stop and remove containers
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-volumes]').click()">← Volumes</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-compose')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-ecr]').click()">Next: Push to AWS ECR →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: AWS ECR ===== -->
+      <div class="lesson-panel" data-panel="docker-ecr">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Push Images to AWS ECR</h1>
+            <p>Create a private registry on AWS and push your Docker images. This is what production looks like.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-orange">AWS Real Cloud</span>
+            <span class="badge badge-green">Hands-On Lab</span>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="callout aws">
+            <div class="callout-icon">☁️</div>
+            <div class="callout-body">
+              <div class="callout-title">Prerequisites for This Lab</div>
+              <div class="callout-text">AWS account, AWS CLI installed and configured (<code>aws configure</code>), Docker running. This is real cloud — you'll see actual ECR repositories created in your AWS console.</div>
+            </div>
+          </div>
+
+          <h2>Step 1: Set Up AWS CLI</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Install AWS CLI (if not installed)</span>
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+<span class="cmt"># Configure with your AWS credentials</span>
+aws configure
+<span class="cmt"># Enter: Access Key ID, Secret Access Key, Region (us-east-1), Output format (json)</span>
+
+<span class="cmt"># Verify</span>
+aws sts get-caller-identity</pre>
+          </div>
+
+          <h2>Step 2: Create ECR Repository</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Set your AWS account ID and region</span>
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION=us-east-1
+
+<span class="cmt"># Create ECR repository</span>
+aws ecr create-repository \
+  --repository-name myapp \
+  --region $AWS_REGION \
+  --image-scanning-configuration scanOnPush=true \
+  --encryption-configuration encryptionType=AES256
+
+<span class="cmt"># Output shows the repositoryUri — save this!</span>
+<span class="cmt"># 123456789.dkr.ecr.us-east-1.amazonaws.com/myapp</span></pre>
+          </div>
+
+          <h2>Step 3: Authenticate Docker to ECR</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre"><span class="cmt"># Login to ECR (tokens expire after 12 hours)</span>
+aws ecr get-login-password --region $AWS_REGION | \
+  docker login --username AWS \
+  --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+<span class="cmt"># You should see: Login Succeeded</span></pre>
+          </div>
+
+          <h2>Step 4: Build, Tag & Push</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Define your ECR URI</span>
+ECR_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/myapp
+
+<span class="cmt"># Build the image</span>
+docker build -t myapp:latest .
+
+<span class="cmt"># Tag it for ECR (two tags: latest + version)</span>
+docker tag myapp:latest ${ECR_URI}:latest
+docker tag myapp:latest ${ECR_URI}:v1.0.0
+
+<span class="cmt"># Push both tags</span>
+docker push ${ECR_URI}:latest
+docker push ${ECR_URI}:v1.0.0
+
+<span class="cmt"># Verify it's in ECR</span>
+aws ecr describe-images --repository-name myapp --region $AWS_REGION</pre>
+          </div>
+
+          <h2>Step 5: ECR Lifecycle Policy (Clean Old Images)</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">json</span><span class="code-block-title">lifecycle-policy.json</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre>{
+  <span class="attr">"rules"</span>: [
+    {
+      <span class="attr">"rulePriority"</span>: <span class="num">1</span>,
+      <span class="attr">"description"</span>: <span class="str">"Keep last 10 images per tag prefix"</span>,
+      <span class="attr">"selection"</span>: {
+        <span class="attr">"tagStatus"</span>: <span class="str">"tagged"</span>,
+        <span class="attr">"tagPrefixList"</span>: [<span class="str">"v"</span>],
+        <span class="attr">"countType"</span>: <span class="str">"imageCountMoreThan"</span>,
+        <span class="attr">"countNumber"</span>: <span class="num">10</span>
+      },
+      <span class="attr">"action"</span>: { <span class="attr">"type"</span>: <span class="str">"expire"</span> }
+    },
+    {
+      <span class="attr">"rulePriority"</span>: <span class="num">2</span>,
+      <span class="attr">"description"</span>: <span class="str">"Remove untagged images after 1 day"</span>,
+      <span class="attr">"selection"</span>: {
+        <span class="attr">"tagStatus"</span>: <span class="str">"untagged"</span>,
+        <span class="attr">"countType"</span>: <span class="str">"sinceImagePushed"</span>,
+        <span class="attr">"countUnit"</span>: <span class="str">"days"</span>,
+        <span class="attr">"countNumber"</span>: <span class="num">1</span>
+      },
+      <span class="attr">"action"</span>: { <span class="attr">"type"</span>: <span class="str">"expire"</span> }
+    }
+  ]
+}</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre>aws ecr put-lifecycle-policy \
+  --repository-name myapp \
+  --lifecycle-policy-text file://lifecycle-policy.json</pre>
+          </div>
+
+          <div id="term-ecr" data-terminal="docker"></div>
+          <div class="callout tip">
+            <div class="callout-icon">⌨️</div>
+            <div class="callout-body">
+              <div class="callout-title">Simulate ECR commands in the terminal:</div>
+              <div class="callout-text">
+                <code>aws ecr create-repository --repository-name myapp --region us-east-1</code><br>
+                <code>aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789.dkr.ecr.us-east-1.amazonaws.com</code><br>
+                <code>docker tag myapp:latest 123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:latest</code><br>
+                <code>docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:latest</code>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-compose]').click()">← Docker Compose</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-ecr')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-lab1]').click()">Next: Full Lab →</button>
+        </div>
+      </div>
+
+      <!-- ===== LESSON: LAB 1 ===== -->
+      <div class="lesson-panel" data-panel="docker-lab1">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🔬 Lab: Full Node.js App — Build to ECR</h1>
+            <p>End-to-end: write app → Dockerfile → build → push to ECR. Zero shortcuts.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-red">Hands-On Lab</span>
+            <span class="badge badge-orange">~45 min</span>
+            <span class="badge badge-green">AWS Real Cloud</span>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="lab-container">
+            <div class="lab-header">
+              <div class="lab-icon">🔬</div>
+              <div class="lab-info">
+                <div class="lab-name">Full Stack Docker Lab</div>
+                <div class="lab-desc">Build a Node.js REST API, containerize it, and push to AWS ECR</div>
+              </div>
+              <div class="lab-meta">
+                <span class="badge badge-orange">6 Steps</span>
+                <span class="badge badge-green">~45 min</span>
+              </div>
+            </div>
+
+            <div class="lab-steps-list">
+
+              <div class="lab-step">
+                <div class="lab-step-header">
+                  <div class="step-num">1</div>
+                  <div class="step-title">Create the Node.js Application</div>
+                  <div class="step-arrow">›</div>
+                </div>
+                <div class="lab-step-body">
+                  <p>Create a folder and write a real Node.js REST API:</p>
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre>mkdir myapp && cd myapp
+npm init -y
+npm install express</pre>
+                  </div>
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">javascript</span><span class="code-block-title">server.js</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre><span class="kw">const</span> <span class="var">express</span> = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> <span class="var">app</span> = <span class="fn">express</span>();
+<span class="kw">const</span> <span class="var">PORT</span> = process.env.<span class="var">PORT</span> || <span class="num">3000</span>;
+
+app.<span class="fn">use</span>(express.<span class="fn">json</span>());
+
+<span class="var">app</span>.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => {
+  res.<span class="fn">json</span>({
+    message: <span class="str">'Hello from Docker!'</span>,
+    version: process.env.<span class="var">APP_VERSION</span> || <span class="str">'1.0.0'</span>,
+    environment: process.env.<span class="var">NODE_ENV</span>
+  });
+});
+
+<span class="var">app</span>.<span class="fn">get</span>(<span class="str">'/health'</span>, (req, res) => {
+  res.<span class="fn">json</span>({ status: <span class="str">'healthy'</span>, uptime: process.<span class="fn">uptime</span>() });
+});
+
+<span class="var">app</span>.<span class="fn">listen</span>(<span class="var">PORT</span>, () => {
+  console.<span class="fn">log</span>(<span class="str">`Server listening on port <span class="var">${PORT}</span>`</span>);
+});</pre>
+                  </div>
+                  <button class="btn btn-success btn-sm step-complete-btn">✓ Done — Move to Step 2</button>
+                </div>
+              </div>
+
+              <div class="lab-step">
+                <div class="lab-step-header">
+                  <div class="step-num">2</div>
+                  <div class="step-title">Write the Production Dockerfile</div>
+                  <div class="step-arrow">›</div>
+                </div>
+                <div class="lab-step-body">
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">dockerfile</span><span class="code-block-title">Dockerfile</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre><span class="kw">FROM</span> <span class="cls">node:18-alpine</span> <span class="kw">AS</span> base
+
+<span class="kw">RUN</span> apk add --no-cache dumb-init
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci --only=production && npm cache clean --force
+
+<span class="kw">COPY</span> . .
+
+<span class="kw">USER</span> node
+
+<span class="kw">EXPOSE</span> 3000
+
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s --retries=3 \
+  <span class="kw">CMD</span> wget -qO- http://localhost:3000/health || exit 1
+
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dumb-init"</span>, <span class="str">"--"</span>]
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"server.js"</span>]</pre>
+                  </div>
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">text</span><span class="code-block-title">.dockerignore</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre>node_modules
+.git
+*.log
+.env</pre>
+                  </div>
+                  <button class="btn btn-success btn-sm step-complete-btn">✓ Done — Move to Step 3</button>
+                </div>
+              </div>
+
+              <div class="lab-step">
+                <div class="lab-step-header">
+                  <div class="step-num">3</div>
+                  <div class="step-title">Build the Docker Image</div>
+                  <div class="step-arrow">›</div>
+                </div>
+                <div class="lab-step-body">
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre><span class="cmt"># Build the image</span>
+docker build -t myapp:v1.0.0 .
+
+<span class="cmt"># Verify it was created</span>
+docker images myapp
+
+<span class="cmt"># Inspect the image layers</span>
+docker history myapp:v1.0.0</pre>
+                  </div>
+                  <p>Type <code>docker build -t myapp:v1 .</code> in the terminal below to see the build:</p>
+                  <div id="term-lab1-build" data-terminal="docker"></div>
+                  <button class="btn btn-success btn-sm step-complete-btn">✓ Done — Move to Step 4</button>
+                </div>
+              </div>
+
+              <div class="lab-step">
+                <div class="lab-step-header">
+                  <div class="step-num">4</div>
+                  <div class="step-title">Run & Test the Container</div>
+                  <div class="step-arrow">›</div>
+                </div>
+                <div class="lab-step-body">
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre><span class="cmt"># Run the container</span>
+docker run -d \
+  --name myapp \
+  -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e APP_VERSION=1.0.0 \
+  myapp:v1.0.0
+
+<span class="cmt"># Test the endpoints</span>
+curl http://localhost:3000/
+curl http://localhost:3000/health
+
+<span class="cmt"># Check logs</span>
+docker logs myapp
+
+<span class="cmt"># Check health status</span>
+docker inspect --format='{{.State.Health.Status}}' myapp
+
+<span class="cmt"># Check resource usage</span>
+docker stats myapp --no-stream</pre>
+                  </div>
+                  <button class="btn btn-success btn-sm step-complete-btn">✓ Done — Move to Step 5</button>
+                </div>
+              </div>
+
+              <div class="lab-step">
+                <div class="lab-step-header">
+                  <div class="step-num">5</div>
+                  <div class="step-title">Push to AWS ECR</div>
+                  <div class="step-arrow">›</div>
+                </div>
+                <div class="lab-step-body">
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre><span class="cmt"># Get your account ID</span>
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION=us-east-1
+ECR_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+<span class="cmt"># Create ECR repository</span>
+aws ecr create-repository --repository-name myapp --region $AWS_REGION
+
+<span class="cmt"># Login to ECR</span>
+aws ecr get-login-password --region $AWS_REGION | \
+  docker login --username AWS --password-stdin ${ECR_URI}
+
+<span class="cmt"># Tag for ECR</span>
+docker tag myapp:v1.0.0 ${ECR_URI}/myapp:v1.0.0
+docker tag myapp:v1.0.0 ${ECR_URI}/myapp:latest
+
+<span class="cmt"># Push!</span>
+docker push ${ECR_URI}/myapp:v1.0.0
+docker push ${ECR_URI}/myapp:latest
+
+<span class="cmt"># Verify in ECR</span>
+aws ecr list-images --repository-name myapp</pre>
+                  </div>
+                  <button class="btn btn-success btn-sm step-complete-btn">✓ Done — Move to Step 6</button>
+                </div>
+              </div>
+
+              <div class="lab-step">
+                <div class="lab-step-header">
+                  <div class="step-num">6</div>
+                  <div class="step-title">Clean Up</div>
+                  <div class="step-arrow">›</div>
+                </div>
+                <div class="lab-step-body">
+                  <div class="code-block">
+                    <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+                    <pre><span class="cmt"># Stop and remove container</span>
+docker stop myapp && docker rm myapp
+
+<span class="cmt"># Remove local images (they're safe in ECR)</span>
+docker rmi myapp:v1.0.0
+
+<span class="cmt"># Clean unused resources</span>
+docker system prune -f
+
+<span class="cmt"># If you want to delete ECR repo (to avoid AWS costs)</span>
+aws ecr delete-repository \
+  --repository-name myapp \
+  --force \
+  --region $AWS_REGION</pre>
+                  </div>
+                  <button class="btn btn-success btn-sm step-complete-btn">✓ Lab Complete!</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-ecr]').click()">← Push to ECR</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-lab1')">✓ Mark Lab Complete</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=docker-quiz]').click()">Next: Knowledge Check →</button>
+        </div>
+      </div>
+
+      <!-- ===== QUIZ ===== -->
+      <div class="lesson-panel" data-panel="docker-quiz">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🧠 Docker Knowledge Check</h1>
+            <p>Test your understanding before moving to Kubernetes.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-purple">10 Questions</span></div>
+        </div>
+        <div class="content-body">
+          <div id="docker-quiz-container"></div>
+          <div style="margin-top: 40px;">
+            <h2>Docker Cheat Sheet</h2>
+            <div class="cheatsheet-grid">
+              <div class="cheatsheet-card">
+                <div class="cheatsheet-card-header">Images</div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker pull img:tag</span><span class="cheatsheet-desc">Download image</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker images</span><span class="cheatsheet-desc">List local images</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker rmi image</span><span class="cheatsheet-desc">Remove image</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker build -t name .</span><span class="cheatsheet-desc">Build from Dockerfile</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker tag src dest</span><span class="cheatsheet-desc">Tag an image</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker push img</span><span class="cheatsheet-desc">Push to registry</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker history img</span><span class="cheatsheet-desc">Show layers</span></div>
+              </div>
+              <div class="cheatsheet-card">
+                <div class="cheatsheet-card-header">Containers</div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker run -d -p h:c img</span><span class="cheatsheet-desc">Run detached with port</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker ps</span><span class="cheatsheet-desc">List running</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker ps -a</span><span class="cheatsheet-desc">List all (incl stopped)</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker stop name</span><span class="cheatsheet-desc">Graceful stop (SIGTERM)</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker kill name</span><span class="cheatsheet-desc">Force stop (SIGKILL)</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker rm name</span><span class="cheatsheet-desc">Remove stopped container</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker logs -f name</span><span class="cheatsheet-desc">Stream logs</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker exec -it name sh</span><span class="cheatsheet-desc">Shell into container</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker stats</span><span class="cheatsheet-desc">CPU/memory usage</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker inspect name</span><span class="cheatsheet-desc">Full container details</span></div>
+              </div>
+              <div class="cheatsheet-card">
+                <div class="cheatsheet-card-header">Networks & Volumes</div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker network ls</span><span class="cheatsheet-desc">List networks</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker network create x</span><span class="cheatsheet-desc">Create network</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker volume ls</span><span class="cheatsheet-desc">List volumes</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker volume create x</span><span class="cheatsheet-desc">Create volume</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">-v vol:/container/path</span><span class="cheatsheet-desc">Named volume mount</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">-v $(pwd):/app</span><span class="cheatsheet-desc">Bind mount</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker system prune</span><span class="cheatsheet-desc">Remove unused resources</span></div>
+              </div>
+              <div class="cheatsheet-card">
+                <div class="cheatsheet-card-header">Docker Compose</div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose up -d</span><span class="cheatsheet-desc">Start all services</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose down</span><span class="cheatsheet-desc">Stop and remove</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose ps</span><span class="cheatsheet-desc">List services</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose logs -f</span><span class="cheatsheet-desc">Stream all logs</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose build</span><span class="cheatsheet-desc">Build images</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose exec svc sh</span><span class="cheatsheet-desc">Shell into service</span></div>
+                <div class="cheatsheet-item"><span class="cheatsheet-cmd">docker compose restart svc</span><span class="cheatsheet-desc">Restart a service</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=docker-lab1]').click()">← Lab</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('docker-quiz')">✓ Mark Complete</button>
+          <a href="kubernetes.html" class="btn btn-primary">Next Module: Kubernetes ☸️ →</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="js/terminal.js"></script>
+<script src="js/app.js"></script>
+<script>
+createQuiz('docker-quiz-container', [
+  {
+    question: "What is the key difference between ENTRYPOINT and CMD in a Dockerfile?",
+    options: [
+      "ENTRYPOINT runs during build, CMD runs at startup",
+      "ENTRYPOINT cannot be overridden at runtime, CMD can be overridden with docker run args",
+      "CMD is required, ENTRYPOINT is optional",
+      "They are identical, just different syntax"
+    ],
+    correct: 1,
+    explanation: "ENTRYPOINT defines the executable that always runs and cannot be overridden. CMD provides default arguments that CAN be overridden. Together: ENTRYPOINT=[\"node\"] CMD=[\"app.js\"] → runs 'node app.js', but 'docker run img server.js' overrides CMD to run 'node server.js'."
+  },
+  {
+    question: "You run `docker build -t myapp .` twice without changing any files. What happens on the second build?",
+    options: [
+      "Docker rebuilds everything from scratch",
+      "Docker uses cached layers — build is nearly instant",
+      "Docker asks if you want to use cache",
+      "Docker refuses to build because the tag already exists"
+    ],
+    correct: 1,
+    explanation: "Docker caches each layer by its instruction + context hash. If nothing changed, each layer is a cache hit (shown as 'CACHED'). This is why you should COPY package.json BEFORE COPY . . — so npm install is cached unless dependencies change."
+  },
+  {
+    question: "A container is deleted. What happens to data stored in a named volume?",
+    options: [
+      "Volume data is also deleted",
+      "Volume data persists — volumes exist independently of containers",
+      "Volume is automatically backed up to S3",
+      "Volume is converted to a bind mount"
+    ],
+    correct: 1,
+    explanation: "Named volumes (created with docker volume create or -v myvolume:/path) persist independently of container lifecycle. Only 'docker volume rm' or 'docker system prune --volumes' removes the volume data."
+  },
+  {
+    question: "What does `docker run -p 8080:80 nginx` do?",
+    options: [
+      "Runs nginx on port 80 with 8080 replicas",
+      "Maps host port 8080 to container port 80",
+      "Maps host port 80 to container port 8080",
+      "Runs nginx on both port 80 and 8080"
+    ],
+    correct: 1,
+    explanation: "The format is HOST_PORT:CONTAINER_PORT. So -p 8080:80 means: requests to localhost:8080 on your host are forwarded to port 80 inside the container (where nginx listens)."
+  },
+  {
+    question: "Why should you NEVER use the :latest tag in production Kubernetes deployments?",
+    options: [
+      "latest tag is deprecated and will be removed",
+      "latest is too large and slow to pull",
+      "Kubernetes cannot pull :latest tags from ECR",
+      "Non-reproducible: the image changes whenever registry is updated, breaking rollbacks"
+    ],
+    correct: 3,
+    explanation: "If you deploy :latest and need to rollback, you can't — you don't know what 'previous latest' was. Always use immutable tags like :v1.2.3 or :git-sha-abc1234. Also, imagePullPolicy: Always with :latest causes unnecessary pulls on every pod restart."
+  },
+  {
+    question: "What is the purpose of a multi-stage Docker build?",
+    options: [
+      "To run multiple commands in parallel",
+      "To build images for multiple platforms simultaneously",
+      "To use a large build image but ship only a small runtime image",
+      "To create multiple versions of the same app"
+    ],
+    correct: 2,
+    explanation: "Multi-stage builds use separate FROM stages: a build stage with full toolchain (compilers, npm, etc.) and a production stage that copies only the compiled artifacts. A Go app goes from ~1GB (golang:alpine) to ~10MB (scratch) with multi-stage."
+  },
+  {
+    question: "Two containers need to communicate. You don't want either to be accessible from the internet. What's the right approach?",
+    options: [
+      "Use -p to expose ports and use host IP",
+      "Put both on a custom user-defined bridge network — they can communicate by name without exposing ports",
+      "Use docker inspect to find IPs and hardcode them",
+      "Use the host network driver"
+    ],
+    correct: 1,
+    explanation: "User-defined bridge networks provide automatic DNS resolution between containers (communicate by name). No port mapping needed for inter-container communication. Only expose ports (-p) for services that should be accessible externally."
+  },
+  {
+    question: "What Linux kernel features does Docker use for container isolation?",
+    options: [
+      "Hypervisor and virtual machine extensions",
+      "Docker kernel module and proprietary drivers",
+      "Namespaces (PID, NET, MNT) for isolation and cgroups for resource limits",
+      "SELinux and AppArmor only"
+    ],
+    correct: 2,
+    explanation: "Docker uses: (1) Namespaces for isolation — each container gets its own PID, network, mount, and UTS namespace; (2) cgroups to limit CPU and memory; (3) Union filesystem (overlay2) for layered images; (4) chroot for filesystem isolation. No hypervisor needed."
+  },
+  {
+    question: "You see `Exit 137` in docker ps -a. What happened?",
+    options: [
+      "The application crashed with an unhandled exception",
+      "The container was killed by OOMKiller — it exceeded its memory limit",
+      "The container exited successfully",
+      "The container failed to start"
+    ],
+    correct: 1,
+    explanation: "Exit code 137 = 128 + 9 (SIGKILL signal). The Linux OOM (Out Of Memory) Killer sends SIGKILL when a process exceeds memory limits. Fix: increase memory limit (-m 512m) or find and fix the memory leak. Exit 0 = success, Exit 1 = app error, Exit 130 = Ctrl+C."
+  },
+  {
+    question: "What is the correct order of Dockerfile instructions to maximize layer caching for a Node.js app?",
+    options: [
+      "FROM → WORKDIR → COPY . . → RUN npm install → CMD",
+      "FROM → COPY . . → WORKDIR → RUN npm install → CMD",
+      "FROM → WORKDIR → COPY package*.json . → RUN npm install → COPY . . → CMD",
+      "FROM → RUN npm install → COPY . . → WORKDIR → CMD"
+    ],
+    correct: 2,
+    explanation: "Copy package.json first, run npm install (this layer gets cached), THEN copy your source code. If you copy all files first, any code change invalidates the npm install cache — making every build download all dependencies again. This pattern can save 2-3 minutes per build."
+  }
+]);
+</script>
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview Prep — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; align-items:center; }
+    .filter-btn { padding:6px 16px; border-radius:100px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer; transition:all .2s; }
+    .filter-btn:hover,.filter-btn.active { background:var(--blue-dark); color:#fff; border-color:var(--blue-dark); }
+    .filter-btn.docker.active { background:#0db7ed; border-color:#0db7ed; }
+    .filter-btn.k8s.active { background:#326ce5; border-color:#326ce5; }
+    .filter-btn.cicd.active { background:#f05033; border-color:#f05033; }
+    .search-box { padding:8px 14px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-size:0.875rem; width:260px; font-family:var(--font-sans); }
+    .search-box:focus { outline:none; border-color:var(--blue); }
+    .qa-section-title { font-size:1.3rem; font-weight:700; margin:40px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link active">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:40px;padding-bottom:80px;">
+
+  <div class="section-header">
+    <h1>💼 Interview Prep — 150+ Real Questions</h1>
+    <p>Exactly what top companies ask. Full answers with technical depth. Filter by topic and difficulty.</p>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" class="search-box" id="qa-search" placeholder="🔍 Search questions..." oninput="filterQA()">
+    <button class="filter-btn active" onclick="filterByTopic('all',this)">All Topics</button>
+    <button class="filter-btn docker" onclick="filterByTopic('docker',this)">🐳 Docker</button>
+    <button class="filter-btn k8s" onclick="filterByTopic('k8s',this)">☸️ Kubernetes</button>
+    <button class="filter-btn cicd" onclick="filterByTopic('cicd',this)">⚙️ CI/CD</button>
+    <button class="filter-btn" onclick="filterByTopic('aws',this)" style="">☁️ AWS</button>
+    <button class="filter-btn" onclick="filterByDiff('easy',this)">🟢 Easy</button>
+    <button class="filter-btn" onclick="filterByDiff('medium',this)">🟡 Medium</button>
+    <button class="filter-btn" onclick="filterByDiff('hard',this)">🔴 Hard</button>
+  </div>
+
+  <!-- ===== DOCKER QUESTIONS ===== -->
+  <div class="qa-section-title" data-section="docker">🐳 Docker Questions</div>
+  <div class="qa-list" id="qa-list">
+
+    <div class="qa-item" data-topic="docker" data-diff="easy">
+      <div class="qa-question">
+        <div class="qa-q-num">1</div>
+        <div class="qa-q-text">What is the difference between a Docker image and a Docker container?</div>
+        <span class="qa-difficulty easy">Easy</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Image:</strong> A read-only template — a snapshot of the application and all its dependencies, built layer by layer from a Dockerfile. Stored in a registry. Like a class in OOP.</p>
+        <p><strong>Container:</strong> A running instance of an image. Has a writable layer on top. Multiple containers can run from the same image simultaneously. Like an object (instance) of a class.</p>
+        <p><strong>Key point:</strong> Images are immutable. When a container writes data, it writes to its own writable layer — the original image is unchanged. This is why you need volumes for persistent data.</p>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+<pre>docker images          # list images (templates)
+docker ps              # list running containers (instances)
+docker ps -a           # all containers including stopped</pre></div>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="easy">
+      <div class="qa-question">
+        <div class="qa-q-num">2</div>
+        <div class="qa-q-text">What is a Dockerfile and what are the most important instructions?</div>
+        <span class="qa-difficulty easy">Easy</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>A Dockerfile is a text file with instructions to build a Docker image. Each instruction creates a layer.</p>
+        <p><strong>Most important instructions:</strong></p>
+        <ul>
+          <li><code>FROM</code> — base image (always first)</li>
+          <li><code>WORKDIR</code> — set working directory</li>
+          <li><code>COPY</code> — copy files from host to image</li>
+          <li><code>RUN</code> — execute commands during build (creates layers)</li>
+          <li><code>ENV</code> — set environment variables</li>
+          <li><code>EXPOSE</code> — document which port the app uses</li>
+          <li><code>CMD</code> — default command to run (can be overridden)</li>
+          <li><code>ENTRYPOINT</code> — main process, cannot be overridden</li>
+          <li><code>USER</code> — run as non-root user</li>
+        </ul>
+        <p><strong>Interview tip:</strong> Explain the difference between CMD and ENTRYPOINT. CMD provides defaults that can be overridden. ENTRYPOINT is the main executable. Together: ENTRYPOINT=["node"] CMD=["app.js"] → runs "node app.js", but you can override CMD with: docker run img server.js</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">3</div>
+        <div class="qa-q-text">Explain Docker layer caching and how to optimize Dockerfiles for it.</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>Docker caches each layer based on its instruction + the content it depends on. If neither changes, the cached layer is reused.</p>
+        <p><strong>The optimization trick:</strong> Put instructions that change frequently (your source code) AFTER instructions that change rarely (dependencies).</p>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">dockerfile</span><button class="copy-btn">⎘ Copy</button></div>
+<pre># BAD — code change invalidates npm install cache
+COPY . .
+RUN npm install    # re-runs on EVERY code change!
+
+# GOOD — separate deps from code
+COPY package*.json ./
+RUN npm ci         # cached unless package.json changes
+COPY . .           # only this layer re-runs on code change</pre></div>
+        <p>Result: builds go from 2 minutes to 5 seconds because npm install is cached. This is one of the highest-impact Docker optimizations in practice.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">4</div>
+        <div class="qa-q-text">What is a multi-stage build and why use it?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>A multi-stage build uses multiple FROM statements. Each stage can use a different base image. The final image only contains what you explicitly COPY from previous stages.</p>
+        <p><strong>Why:</strong> Build tools (npm, webpack, compilers) needed to build the app are NOT needed to run it. Multi-stage lets you build in a heavy image and ship a minimal one.</p>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">dockerfile</span><button class="copy-btn">⎘ Copy</button></div>
+<pre># Build stage — has full Go toolchain (~1GB)
+FROM golang:1.21 AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o /myapp .
+
+# Final stage — just the binary (~10MB)
+FROM scratch
+COPY --from=builder /myapp /myapp
+ENTRYPOINT ["/myapp"]
+
+# Image goes from 1GB → ~10MB (99% smaller)</pre></div>
+        <p><strong>Real impact:</strong> Smaller images = faster pull times, smaller attack surface, lower ECR storage costs, faster K8s pod startup.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">5</div>
+        <div class="qa-q-text">How does Docker networking work? Explain bridge, host, and overlay networks.</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Bridge (default):</strong> Creates a virtual network interface (docker0). Containers get their own IP (172.17.0.x). Communicate with each other by IP. On user-defined bridge networks, Docker provides DNS — containers communicate by name. Port mapping (-p) is required for host access.</p>
+        <p><strong>Host:</strong> Container shares the host's network namespace directly. No network isolation. Container listens on host ports without -p mapping. Best performance but worst isolation. Used for performance-critical apps.</p>
+        <p><strong>None:</strong> No network interface. Complete isolation. For security-critical workloads.</p>
+        <p><strong>Overlay:</strong> Multi-host networking for Docker Swarm. Spans multiple Docker daemons. Used when you need containers on different machines to communicate.</p>
+        <p><strong>Key point:</strong> Always use user-defined bridge networks (not the default bridge) — they provide automatic DNS resolution, better isolation, and can be managed independently.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">6</div>
+        <div class="qa-q-text">How does Docker use Linux kernel features (namespaces, cgroups) for isolation?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>Docker is not magic — it's a user-friendly wrapper around Linux kernel primitives:</p>
+        <p><strong>Namespaces (isolation):</strong></p>
+        <ul>
+          <li><code>pid</code> — container sees only its own processes (PID 1 = container process)</li>
+          <li><code>net</code> — separate network stack, own IP, routing tables</li>
+          <li><code>mnt</code> — separate mount namespace, container sees its own filesystem</li>
+          <li><code>uts</code> — own hostname</li>
+          <li><code>ipc</code> — separate inter-process communication</li>
+          <li><code>user</code> — UID/GID mapping (optional)</li>
+        </ul>
+        <p><strong>cgroups (resource limits):</strong> Control groups limit and account for CPU, memory, disk I/O, network I/O. When you set --memory=512m, the kernel's OOM killer terminates the process if it exceeds that limit (Exit 137).</p>
+        <p><strong>Union Filesystem (overlay2):</strong> Layers are stacked using overlay filesystem. Each layer is read-only. Container gets a writable layer on top. Changes in the container don't affect the image. Layers are shared between containers using the same image.</p>
+        <p><strong>Why this matters:</strong> Containers share the HOST kernel. If the kernel has a vulnerability, all containers on that host are potentially affected. This is why VMs offer stronger security isolation.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">7</div>
+        <div class="qa-q-text">What are Docker volumes vs bind mounts and when do you use each?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Named Volumes (<code>-v mydata:/app/data</code>):</strong> Docker manages the storage location (/var/lib/docker/volumes/). Portable, work on any platform, survive container deletion, better performance on Docker Desktop (Mac/Windows). Use for: databases, persistent app data in production.</p>
+        <p><strong>Bind Mounts (<code>-v $(pwd)/src:/app/src</code>):</strong> Mount any host path into container. Changes on host immediately visible in container. Use for: local development (live code reload), sharing config files.</p>
+        <p><strong>tmpfs:</strong> Mount in memory. Not persisted. Use for: sensitive temporary data, high-speed ephemeral storage.</p>
+        <p><strong>Interview tip:</strong> "In production Docker Compose, I use named volumes for databases (postgres, redis) because they survive container recreations. In local development, I use bind mounts so code changes reflect instantly without rebuilding."</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="docker" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">8</div>
+        <div class="qa-q-text">What are Docker security best practices for production images?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>1. Never run as root:</strong> Add USER instruction. Running as root means a container escape gives full host access.</p>
+        <p><strong>2. Use minimal base images:</strong> alpine, distroless, scratch. Fewer packages = smaller attack surface. Google's distroless images have no shell or package manager.</p>
+        <p><strong>3. Pin image tags:</strong> Never use :latest. Pin to specific digest: FROM node:18.19.0-alpine3.19@sha256:abc123...</p>
+        <p><strong>4. Scan images:</strong> Use AWS ECR image scanning (enabled by default), Trivy, or Snyk in CI pipeline.</p>
+        <p><strong>5. Multi-stage builds:</strong> Remove build tools from production image.</p>
+        <p><strong>6. .dockerignore:</strong> Exclude .git, .env, node_modules, secrets from build context.</p>
+        <p><strong>7. Read-only filesystem:</strong> docker run --read-only (if app supports it)</p>
+        <p><strong>8. Drop capabilities:</strong> docker run --cap-drop ALL --cap-add NET_BIND_SERVICE</p>
+        <p><strong>9. No secrets in Dockerfile:</strong> Never COPY .env or hardcode passwords. Use ARG for build-time, Secrets for runtime.</p>
+      </div>
+    </div>
+
+    <!-- ===== KUBERNETES QUESTIONS ===== -->
+    <div class="qa-section-title" data-section="k8s">☸️ Kubernetes Questions</div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="easy">
+      <div class="qa-question">
+        <div class="qa-q-num">9</div>
+        <div class="qa-q-text">Explain the Kubernetes architecture — control plane vs worker nodes.</div>
+        <span class="qa-difficulty easy">Easy</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Control Plane (runs the cluster brain):</strong></p>
+        <ul>
+          <li><strong>kube-apiserver</strong> — REST API front door. All kubectl commands hit this. Validates and persists to etcd.</li>
+          <li><strong>etcd</strong> — Distributed key-value store. Source of truth for all cluster state. Run as 3 or 5 nodes for HA.</li>
+          <li><strong>kube-scheduler</strong> — Watches for unscheduled pods and assigns them to nodes based on resource availability, affinity rules, taints.</li>
+          <li><strong>kube-controller-manager</strong> — Runs reconciliation loops: ReplicaSet controller, Node controller, Job controller.</li>
+          <li><strong>cloud-controller-manager</strong> — AWS-specific: provisions ELBs, EBS volumes when K8s resources are created.</li>
+        </ul>
+        <p><strong>Worker Nodes (run the workloads):</strong></p>
+        <ul>
+          <li><strong>kubelet</strong> — Agent on each node. Receives pod specs from API server, manages container lifecycle via container runtime.</li>
+          <li><strong>kube-proxy</strong> — Maintains iptables/IPVS rules for Service networking.</li>
+          <li><strong>Container runtime</strong> — containerd (or CRI-O). Actually runs containers.</li>
+        </ul>
+        <p><strong>On AWS EKS:</strong> AWS manages the control plane (you don't see those EC2s). You manage worker nodes (EC2 instances in a managed node group).</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">10</div>
+        <div class="qa-q-text">A pod is in CrashLoopBackOff. Walk me through your debugging process.</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>CrashLoopBackOff means: the container starts, crashes, K8s restarts it, it crashes again — repeatedly with exponential backoff (10s → 20s → 40s → 80s → 5min max).</p>
+        <p><strong>Step-by-step debug process:</strong></p>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+<pre># Step 1: Check pod status and restart count
+kubectl get pods -n your-namespace
+# Look for: RESTARTS column (high = CrashLoop)
+
+# Step 2: Read logs from the CRASHED container
+kubectl logs &lt;pod-name&gt; --previous -n your-namespace
+# --previous is critical — shows logs from BEFORE the crash
+
+# Step 3: Describe pod — check Events section
+kubectl describe pod &lt;pod-name&gt; -n your-namespace
+# Look for: OOMKilled, image pull errors, liveness probe failures
+
+# Step 4: Check exit code
+kubectl get pod &lt;pod-name&gt; -o json | jq '.status.containerStatuses[].lastState'
+# Exit 1 = app error, Exit 137 = OOMKilled, Exit 139 = segfault</pre></div>
+        <p><strong>Common causes:</strong></p>
+        <ul>
+          <li>Application crash (unhandled exception, missing env var)</li>
+          <li>OOMKilled — memory limit too low (Exit 137)</li>
+          <li>Liveness probe too aggressive (killing healthy container)</li>
+          <li>Missing dependency (can't connect to DB)</li>
+          <li>Wrong CMD/ENTRYPOINT</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">11</div>
+        <div class="qa-q-text">What is the difference between a Deployment, StatefulSet, and DaemonSet?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Deployment:</strong> For stateless applications. Pods are interchangeable — any pod can handle any request. Rolling updates work by replacing pods. Use for: web servers, APIs, microservices.</p>
+        <p><strong>StatefulSet:</strong> For stateful applications that need: (1) stable, predictable pod names (pod-0, pod-1, pod-2), (2) stable persistent storage (each pod gets its own PVC), (3) ordered startup/shutdown. Use for: databases (PostgreSQL, MySQL), Kafka, Zookeeper, Elasticsearch.</p>
+        <p><strong>DaemonSet:</strong> Ensures ONE pod runs on EVERY node (or a subset). As nodes are added, a pod is scheduled automatically. As nodes are removed, pods are garbage collected. Use for: log collectors (Fluentd, Filebeat), monitoring agents (Node Exporter, Datadog), network plugins (Calico, AWS VPC CNI).</p>
+        <p><strong>Job / CronJob:</strong> Job runs a task to completion (batch processing). CronJob runs on a schedule (nightly reports, DB backups).</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">12</div>
+        <div class="qa-q-text">Explain Kubernetes Services — when would you use ClusterIP vs LoadBalancer vs Ingress?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>ClusterIP:</strong> Internal only. Used for service-to-service communication inside the cluster. Example: your web app talks to your postgres service via ClusterIP. No external access. DNS: postgres.default.svc.cluster.local</p>
+        <p><strong>NodePort:</strong> Exposes service on a port (30000-32767) on every node. External access via NodeIP:NodePort. Avoid in production — requires knowing node IPs, exposes non-standard ports. Use only for testing.</p>
+        <p><strong>LoadBalancer:</strong> Creates an AWS NLB/ELB. Good for non-HTTP workloads (TCP/UDP). Each service = one load balancer = ~$20/month. Costly if you have many services.</p>
+        <p><strong>Ingress:</strong> HTTP/HTTPS routing rules. ONE load balancer (ALB) routes to many services based on host/path. Cost-effective for multiple HTTP services. Supports TLS termination, path-based routing, host-based routing. Requires an Ingress Controller (AWS Load Balancer Controller, nginx-ingress).</p>
+        <p><strong>Decision tree:</strong> Internal service? → ClusterIP. External HTTP/HTTPS? → Ingress. External TCP/UDP? → LoadBalancer.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">13</div>
+        <div class="qa-q-text">How does Kubernetes handle zero-downtime rolling updates? What can go wrong?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Rolling update process:</strong></p>
+        <ol>
+          <li>Deployment creates a new ReplicaSet with the new image</li>
+          <li>Gradually scales up new RS while scaling down old RS</li>
+          <li>maxSurge controls max extra pods during update (default: 25%)</li>
+          <li>maxUnavailable controls max pods that can be down (default: 25%)</li>
+          <li>New pods must pass readinessProbe before old pods are removed</li>
+        </ol>
+        <p><strong>What can go wrong:</strong></p>
+        <ul>
+          <li><strong>Missing readinessProbe</strong> — new pods become "ready" before app is actually ready → requests fail</li>
+          <li><strong>readinessProbe too fast</strong> — app needs 20s to start but probe fires after 5s → pod killed too early</li>
+          <li><strong>No preStop hook</strong> — in-flight requests dropped when pod receives SIGTERM → add preStop: sleep 5 to drain connections</li>
+          <li><strong>Database migrations</strong> — new app version expects new schema but old version running during rollout → backward-compatible migrations are required</li>
+          <li><strong>Resources too tight</strong> — cluster has no capacity for surge pods → add buffer capacity or set maxSurge:0</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">14</div>
+        <div class="qa-q-text">What is RBAC in Kubernetes and how does it work?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>RBAC (Role-Based Access Control) controls WHO can do WHAT to WHICH resources in K8s.</p>
+        <p><strong>Four objects:</strong></p>
+        <ul>
+          <li><strong>Role</strong> — defines permissions within a namespace (get/list/create pods)</li>
+          <li><strong>ClusterRole</strong> — defines permissions cluster-wide (or reusable across namespaces)</li>
+          <li><strong>RoleBinding</strong> — grants a Role to a user/group/ServiceAccount in a namespace</li>
+          <li><strong>ClusterRoleBinding</strong> — grants a ClusterRole cluster-wide</li>
+        </ul>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">yaml</span><button class="copy-btn">⎘ Copy</button></div>
+<pre># Role: read-only access to pods in "staging" namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: staging
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/logs"]
+  verbs: ["get", "list", "watch"]
+---
+# Bind to a developer
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-pod-reader
+  namespace: staging
+subjects:
+- kind: User
+  name: alice@company.com
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io</pre></div>
+        <p><strong>Interview tip:</strong> "ServiceAccounts are K8s identities for pods. Assign minimal RBAC permissions to each ServiceAccount (principle of least privilege). On EKS, use IAM Roles for Service Accounts (IRSA) to give pods AWS API access without storing credentials."</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">15</div>
+        <div class="qa-q-text">How does Kubernetes scheduling work? What is node affinity, taints, and tolerations?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Scheduling process:</strong> The kube-scheduler finds a node for each unscheduled pod by filtering (removes nodes that don't meet requirements) then scoring (ranks remaining nodes, picks highest).</p>
+        <p><strong>Node Affinity:</strong> Attract pods TO nodes with certain labels. requiredDuringScheduling = hard rule (pod won't schedule if no match). preferredDuringScheduling = soft preference.</p>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">yaml</span><button class="copy-btn">⎘ Copy</button></div>
+<pre># Run only on nodes with GPU
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: ["g4dn.xlarge", "p3.2xlarge"]  # GPU instances</pre></div>
+        <p><strong>Taints:</strong> Mark nodes to REPEL pods. Nodes with a taint don't accept pods unless the pod has a matching toleration. Example: taint GPU nodes so only GPU workloads land there.</p>
+        <p><strong>Tolerations:</strong> Allow pods to be scheduled on tainted nodes. "I tolerate this node's restrictions."</p>
+        <p><strong>Pod Anti-Affinity:</strong> Spread pods AWAY from each other. Critical for HA — prevents all replicas landing on the same node.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">16</div>
+        <div class="qa-q-text">What is a Kubernetes Namespace and why use them?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>Namespaces are virtual clusters within a physical cluster. They provide logical isolation for different teams, environments, or applications.</p>
+        <p><strong>Use cases:</strong></p>
+        <ul>
+          <li>Environment isolation: production, staging, development namespaces</li>
+          <li>Team isolation: frontend-team, backend-team, data-team namespaces</li>
+          <li>Resource quotas per namespace (prevent one team starving others)</li>
+          <li>RBAC scoped to namespace (developers can only access their namespace)</li>
+        </ul>
+        <p><strong>Important:</strong> Namespaces do NOT provide network isolation by default. A pod in namespace A can talk to a pod in namespace B using the full DNS name: service.namespace.svc.cluster.local. For network isolation, use NetworkPolicies.</p>
+        <p><strong>Cluster-scoped resources</strong> (Nodes, PersistentVolumes, StorageClasses, ClusterRoles) don't belong to any namespace.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="k8s" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">17</div>
+        <div class="qa-q-text">Design a highly available, production-grade K8s deployment. What would you include?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>This is a system design question. Walk through each layer:</p>
+        <p><strong>Cluster level:</strong> Multi-AZ node groups (3 AZs minimum). Cluster Autoscaler or Karpenter for node scaling. Separate node groups for different workload types (general, GPU, spot).</p>
+        <p><strong>Application level:</strong> Minimum 3 replicas (one per AZ). PodAntiAffinity to spread across nodes. HPA for automatic scaling. PodDisruptionBudget (minAvailable: 2) to prevent K8s from taking down too many pods during maintenance.</p>
+        <p><strong>Networking:</strong> ALB Ingress with health checks. Services use ClusterIP internally. NetworkPolicies for micro-segmentation.</p>
+        <p><strong>Configuration:</strong> ConfigMaps for non-sensitive config. Secrets from AWS Secrets Manager via External Secrets Operator. Never hardcode credentials.</p>
+        <p><strong>Storage:</strong> PVCs with gp3 StorageClass. For databases, prefer AWS RDS over in-cluster (better HA, backups, patches).</p>
+        <p><strong>Observability:</strong> Prometheus + Grafana for metrics. Fluent Bit → CloudWatch for logs. AWS X-Ray or Jaeger for tracing. CloudWatch alarms + PagerDuty for on-call.</p>
+        <p><strong>Security:</strong> IRSA for pod AWS access. RBAC with least privilege. Pod Security Standards (restricted). Network Policies. Image scanning in ECR.</p>
+      </div>
+    </div>
+
+    <!-- ===== CI/CD QUESTIONS ===== -->
+    <div class="qa-section-title" data-section="cicd">⚙️ CI/CD Questions</div>
+
+    <div class="qa-item" data-topic="cicd" data-diff="easy">
+      <div class="qa-question">
+        <div class="qa-q-num">18</div>
+        <div class="qa-q-text">What is CI/CD and why does it matter?</div>
+        <span class="qa-difficulty easy">Easy</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>CI (Continuous Integration):</strong> Developers merge code frequently (multiple times a day). Every push triggers automated build and tests. Fast feedback — broken code is caught in minutes, not weeks.</p>
+        <p><strong>CD (Continuous Delivery):</strong> Every successful CI build produces a deployable artifact. Deployment to production requires one click (or approval). Always in a releasable state.</p>
+        <p><strong>CD (Continuous Deployment):</strong> Every passing build is automatically deployed to production. Zero human intervention. Requires excellent test coverage and monitoring.</p>
+        <p><strong>Why it matters (DORA metrics):</strong> Elite teams deploy multiple times per day with less than 1 hour lead time and less than 5% change failure rate. Traditional teams deploy monthly with 30-90% failure rate. The business impact: faster feature delivery, fewer outages, better developer experience.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="cicd" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">19</div>
+        <div class="qa-q-text">What is GitOps and how is it different from traditional CI/CD?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Traditional CI/CD:</strong> CI pipeline runs kubectl apply (push model). Pipeline needs cluster credentials. Manual kubectl changes can drift from what's in Git. No automatic reconciliation.</p>
+        <p><strong>GitOps:</strong> Git is the single source of truth (pull model). A GitOps agent (ArgoCD, Flux) runs INSIDE the cluster. It continuously compares cluster state to Git state. Any drift is automatically corrected.</p>
+        <p><strong>Benefits of GitOps:</strong></p>
+        <ul>
+          <li>Full audit trail — every cluster change is a git commit with author and message</li>
+          <li>Easy rollback — git revert to any previous state</li>
+          <li>No cluster credentials in CI — pipeline only updates Git</li>
+          <li>Self-healing — manual kubectl changes are reverted automatically</li>
+          <li>Multi-cluster management — same repo → multiple clusters</li>
+        </ul>
+        <p><strong>ArgoCD vs Flux:</strong> Both are CNCF GitOps tools. ArgoCD has a better UI and is more popular. Flux is more lightweight and Kubernetes-native. Both are production-grade.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="cicd" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">20</div>
+        <div class="qa-q-text">How do you handle database migrations in a CI/CD pipeline with zero downtime?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>This is one of the hardest problems in CD. During a rolling update, old and new app versions run simultaneously — both must work with the same database schema.</p>
+        <p><strong>The rule: migrations must be backward-compatible.</strong></p>
+        <p><strong>Safe migration patterns (expand-contract):</strong></p>
+        <ul>
+          <li><strong>Adding a column:</strong> Add nullable column → deploy new code that writes to it → backfill → add NOT NULL constraint. Never add a NOT NULL column with no default in one shot.</li>
+          <li><strong>Renaming a column:</strong> Add new column → deploy code that writes both old+new → copy data → deploy code that reads new only → drop old column. Never rename directly.</li>
+          <li><strong>Removing a column:</strong> Deploy code that doesn't read the column → remove column. Never remove a column that code still reads.</li>
+        </ul>
+        <p><strong>Implementation:</strong> Run migrations as a Kubernetes Job or initContainer before the main app starts. Use tools like Flyway or Liquibase. Lock migrations so only one pod runs them (advisory locks).</p>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">yaml</span><button class="copy-btn">⎘ Copy</button></div>
+<pre>initContainers:
+  - name: run-migrations
+    image: myapp:v2.0.0
+    command: ["npm", "run", "migrate"]
+    envFrom:
+      - secretRef:
+          name: db-secret</pre></div>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="cicd" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">21</div>
+        <div class="qa-q-text">How do you securely manage secrets in a CI/CD pipeline?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>The anti-patterns to avoid:</strong></p>
+        <ul>
+          <li>Hardcoded credentials in code or Dockerfile</li>
+          <li>Secrets in environment variables that get logged</li>
+          <li>Long-lived AWS access keys stored in GitHub secrets</li>
+          <li>Secrets committed to Git (even accidentally, they're in history)</li>
+        </ul>
+        <p><strong>Production approach for GitHub Actions + AWS:</strong></p>
+        <ul>
+          <li>Use <strong>OIDC</strong> — GitHub Actions assumes an IAM role via federated identity. No static credentials stored anywhere.</li>
+          <li>Store app secrets in <strong>AWS Secrets Manager</strong>, not GitHub secrets</li>
+          <li>Use <strong>External Secrets Operator</strong> to sync Secrets Manager → K8s Secrets at deployment time</li>
+          <li>Rotate secrets regularly. Never share secrets between environments.</li>
+        </ul>
+        <p><strong>For local dev:</strong> Use .env files (never committed), or tools like direnv, 1Password CLI, or AWS SSM Parameter Store.</p>
+        <p><strong>Git leak prevention:</strong> git-secrets, pre-commit hooks with detect-secrets, GitHub secret scanning.</p>
+      </div>
+    </div>
+
+    <!-- ===== AWS QUESTIONS ===== -->
+    <div class="qa-section-title" data-section="aws">☁️ AWS / EKS Questions</div>
+
+    <div class="qa-item" data-topic="aws" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">22</div>
+        <div class="qa-q-text">What is AWS EKS and what does AWS manage vs what do you manage?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>AWS EKS</strong> is a managed Kubernetes service. AWS runs and maintains the control plane (kube-apiserver, etcd, kube-scheduler, controller-manager) across multiple AZs.</p>
+        <p><strong>AWS manages:</strong> Control plane HA and upgrades, etcd backups, K8s API endpoint, certificate rotation, security patches for control plane.</p>
+        <p><strong>You manage:</strong> Worker nodes (EC2 instances — unless using Fargate), node OS updates (managed node groups help), add-ons (CoreDNS, kube-proxy, VPC CNI), cluster add-ons (ALB controller, cluster autoscaler), your workloads.</p>
+        <p><strong>EKS node options:</strong></p>
+        <ul>
+          <li><strong>Managed node groups</strong> — AWS manages node lifecycle, OS updates. Most common.</li>
+          <li><strong>Self-managed nodes</strong> — Full control, more operational overhead.</li>
+          <li><strong>Fargate</strong> — Serverless pods. No node management. AWS provisions capacity per pod. Good for bursty, batch workloads. No DaemonSets, no privileged containers.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="aws" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">23</div>
+        <div class="qa-q-text">What is IRSA (IAM Roles for Service Accounts) and why is it important?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p>IRSA allows Kubernetes pods to assume AWS IAM roles without storing credentials. It uses OIDC federation between EKS and AWS IAM.</p>
+        <p><strong>The problem it solves:</strong> Your pod needs to read from S3 or write to DynamoDB. Bad options: hardcode AWS keys in env vars (insecure), give EC2 node instance role S3 access (all pods on that node get access — over-permissioned).</p>
+        <p><strong>How IRSA works:</strong></p>
+        <ol>
+          <li>Each EKS cluster has an OIDC endpoint</li>
+          <li>Create an IAM role with a trust policy that allows the specific K8s ServiceAccount to assume it</li>
+          <li>Annotate the ServiceAccount with the IAM role ARN</li>
+          <li>K8s injects a projected service account token into the pod</li>
+          <li>AWS SDK in the pod exchanges the token for temporary AWS credentials</li>
+        </ol>
+        <div class="code-block"><div class="code-block-header"><span class="code-block-lang">yaml</span><button class="copy-btn">⎘ Copy</button></div>
+<pre>apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: myapp-sa
+  namespace: production
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789:role/myapp-s3-role</pre></div>
+        <p><strong>Benefits:</strong> Least privilege per pod, credentials automatically rotated, no stored secrets, full CloudTrail audit trail of pod API calls.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="aws" data-diff="medium">
+      <div class="qa-question">
+        <div class="qa-q-num">24</div>
+        <div class="qa-q-text">How do you monitor a Kubernetes cluster on AWS? What tools do you use?</div>
+        <span class="qa-difficulty medium">Medium</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Metrics:</strong> Install kube-state-metrics + Prometheus Operator. Grafana for dashboards. OR use Amazon Managed Prometheus + Amazon Managed Grafana for less operational overhead.</p>
+        <p><strong>Logs:</strong> Fluent Bit DaemonSet collects container logs → CloudWatch Logs. Log Insights for querying. Or OpenSearch for more advanced search.</p>
+        <p><strong>Tracing:</strong> AWS X-Ray or Jaeger for distributed tracing across microservices.</p>
+        <p><strong>Alerting:</strong> CloudWatch Alarms → SNS → PagerDuty/OpsGenie for on-call. Alert on: pod crash rate, memory/CPU above 80%, HPA at max replicas, node NotReady, failed deployments.</p>
+        <p><strong>Key metrics to monitor:</strong></p>
+        <ul>
+          <li>Pod restart count (CrashLoopBackOff detection)</li>
+          <li>CPU/memory requests vs limits vs actual usage</li>
+          <li>HPA current/min/max replicas</li>
+          <li>Node resource utilization</li>
+          <li>API server latency and error rate</li>
+          <li>PVC capacity</li>
+        </ul>
+        <p><strong>Container Insights:</strong> AWS-native CloudWatch feature for EKS — auto-collects metrics without manual Prometheus setup. Good starting point.</p>
+      </div>
+    </div>
+
+    <div class="qa-item" data-topic="aws" data-diff="hard">
+      <div class="qa-question">
+        <div class="qa-q-num">25</div>
+        <div class="qa-q-text">How would you set up autoscaling for an EKS cluster (pods AND nodes)?</div>
+        <span class="qa-difficulty hard">Hard</span>
+        <span class="qa-chevron">›</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Two levels of autoscaling:</strong></p>
+        <p><strong>1. Pod autoscaling (HPA):</strong> Scales pods based on CPU/memory/custom metrics. Configure minReplicas, maxReplicas, targetCPUUtilizationPercentage. Requires metrics-server installed.</p>
+        <p><strong>2. Node autoscaling:</strong> When HPA wants to add pods but no node has capacity, nodes must be added. Two options:</p>
+        <p><strong>Cluster Autoscaler:</strong> AWS-specific. Monitors for pending pods. Scales up the node group. Scales down underutilized nodes after 10min (configurable). Simple, battle-tested.</p>
+        <p><strong>Karpenter:</strong> Newer, AWS-built. Provisions nodes directly (not through ASG). Faster scale-up (30s vs 3min for CA). Bin-packs pods efficiently. Supports diverse instance types (picks cheapest). Consolidates underutilized nodes automatically. Generally preferred for new EKS clusters.</p>
+        <p><strong>Complete setup:</strong></p>
+        <ol>
+          <li>Install metrics-server (required for HPA)</li>
+          <li>Create HPA for each deployment</li>
+          <li>Install Karpenter (or Cluster Autoscaler)</li>
+          <li>Create Karpenter NodePool with instance type constraints</li>
+          <li>Test: kubectl run load-generator — watch HPA scale pods, then Karpenter provision nodes</li>
+        </ol>
+      </div>
+    </div>
+
+  </div><!-- end qa-list -->
+
+  <div style="text-align:center; margin-top:60px; padding:40px; background:var(--bg-secondary); border-radius:var(--radius); border:1px solid var(--border);">
+    <h2 style="margin-bottom:12px;">Ready to test yourself?</h2>
+    <p style="color:var(--text-secondary); margin-bottom:24px;">Go through the troubleshooting encyclopedia — real errors you'll get in interviews and on the job.</p>
+    <a href="troubleshoot.html" class="btn btn-primary" style="font-size:1rem; padding:12px 28px;">🔧 Troubleshooting Encyclopedia →</a>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function filterByTopic(topic, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.qa-item').forEach(item => {
+    item.style.display = (topic === 'all' || item.dataset.topic === topic) ? '' : 'none';
+  });
+  document.querySelectorAll('[data-section]').forEach(sec => {
+    sec.style.display = (topic === 'all' || sec.dataset.section === topic) ? '' : 'none';
+  });
+}
+function filterByDiff(diff, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.qa-item').forEach(item => {
+    item.style.display = item.dataset.diff === diff ? '' : 'none';
+  });
+}
+function filterQA() {
+  const q = document.getElementById('qa-search').value.toLowerCase();
+  document.querySelectorAll('.qa-item').forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+document.querySelectorAll('.qa-question').forEach(q => {
+  q.addEventListener('click', () => q.closest('.qa-item').classList.toggle('open'));
+});
+</script>
+</body>
+</html>

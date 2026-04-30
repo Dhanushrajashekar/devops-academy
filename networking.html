@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Networking — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .osi-layer { display:flex; align-items:stretch; gap:0; margin:16px 0; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+    .osi-num { width:36px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; flex-shrink:0; }
+    .osi-body { flex:1; padding:12px 16px; border-left:1px solid var(--border); }
+    .osi-name { font-weight:700; font-size:0.9rem; margin-bottom:2px; }
+    .osi-desc { font-size:0.78rem; color:var(--text-secondary); }
+    .osi-example { font-size:0.75rem; color:var(--text-muted); margin-top:4px; font-family:var(--font-mono); }
+
+    .dns-flow { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:20px 0; }
+    .dns-node { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 14px; text-align:center; min-width:110px; }
+    .dns-node .dn-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); }
+    .dns-node .dn-name { font-size:0.85rem; font-weight:700; margin-top:2px; }
+    .dns-node .dn-sub { font-size:0.7rem; color:var(--text-secondary); margin-top:2px; }
+    .dns-arrow { color:var(--blue); font-size:1.2rem; }
+
+    .port-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin:16px 0; }
+    .port-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 16px; display:flex; gap:12px; align-items:center; }
+    .port-num { font-family:var(--font-mono); font-size:0.95rem; font-weight:800; color:var(--blue); min-width:50px; }
+    .port-info .pi-name { font-size:0.82rem; font-weight:700; }
+    .port-info .pi-desc { font-size:0.72rem; color:var(--text-secondary); }
+
+    .subnet-calc { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin:16px 0; }
+    .subnet-calc h3 { margin-bottom:12px; font-size:0.9rem; }
+    .sc-row { display:flex; gap:8px; margin-bottom:8px; align-items:center; font-size:0.82rem; }
+    .sc-label { color:var(--text-muted); min-width:160px; }
+    .sc-val { font-family:var(--font-mono); color:var(--green); font-weight:700; }
+
+    .http-method { display:inline-block; font-family:var(--font-mono); font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:4px; margin-right:4px; }
+    .method-get { background:rgba(63,185,80,0.15); color:var(--green); }
+    .method-post { background:rgba(88,166,255,0.15); color:var(--blue); }
+    .method-put { background:rgba(227,179,65,0.15); color:var(--yellow); }
+    .method-delete { background:rgba(255,123,114,0.15); color:var(--red); }
+    .method-patch { background:rgba(163,113,247,0.15); color:var(--purple); }
+
+    .status-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; margin:16px 0; }
+    .status-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; }
+    .status-card .sc-code { font-family:var(--font-mono); font-size:1rem; font-weight:800; margin-bottom:4px; }
+    .status-card .sc-name { font-size:0.82rem; font-weight:700; }
+    .status-card .sc-desc { font-size:0.73rem; color:var(--text-secondary); margin-top:3px; }
+    .s2xx { border-color:rgba(63,185,80,0.4); } .s2xx .sc-code { color:var(--green); }
+    .s3xx { border-color:rgba(88,166,255,0.4); } .s3xx .sc-code { color:var(--blue); }
+    .s4xx { border-color:rgba(227,179,65,0.4); } .s4xx .sc-code { color:var(--yellow); }
+    .s5xx { border-color:rgba(255,123,114,0.4); } .s5xx .sc-code { color:var(--red); }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link active">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle r="12" cx="16" cy="16"/>
+        <circle class="progress-fill" r="12" cx="16" cy="16" style="stroke-dasharray:75.4; stroke-dashoffset:75.4;"/>
+      </svg>
+      <div class="pct progress-pct">0%</div>
+    </div>
+    <span class="progress-pct">0%</span> done
+  </div>
+</nav>
+
+<div class="container" style="padding-top:32px;padding-bottom:64px;">
+  <div class="curriculum-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">🌐 Networking Curriculum</div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 1 — Fundamentals</div>
+        <div class="sidebar-item" data-lesson="net-osi"><div class="check-icon"></div> OSI Model — 7 Layers</div>
+        <div class="sidebar-item" data-lesson="net-tcpip"><div class="check-icon"></div> TCP/IP & IP Addressing</div>
+        <div class="sidebar-item" data-lesson="net-subnetting"><div class="check-icon"></div> Subnetting & CIDR</div>
+        <div class="sidebar-item" data-lesson="net-dns"><div class="check-icon"></div> DNS — How Domains Resolve</div>
+        <div class="sidebar-item" data-lesson="net-dhcp"><div class="check-icon"></div> DHCP — IP Assignment</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 2 — Protocols</div>
+        <div class="sidebar-item" data-lesson="net-http"><div class="check-icon"></div> HTTP & HTTPS</div>
+        <div class="sidebar-item" data-lesson="net-tls"><div class="check-icon"></div> TLS/SSL — How HTTPS Works</div>
+        <div class="sidebar-item" data-lesson="net-ports"><div class="check-icon"></div> Ports & Common Protocols</div>
+        <div class="sidebar-item" data-lesson="net-firewall"><div class="check-icon"></div> Firewalls, NAT & Load Balancing</div>
+        <div class="sidebar-item" data-lesson="net-tools"><div class="check-icon"></div> Networking Tools (dig, ss, curl…)</div>
+        <div class="sidebar-item" data-lesson="net-lab"><div class="check-icon"></div> 🔬 Hands-On Lab Terminal</div>
+        <div class="sidebar-item" data-lesson="net-quiz"><div class="check-icon"></div> 🧠 Interview Quiz</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Advanced Theory</div>
+        <div class="sidebar-item" data-lesson="net-url-journey"><div class="check-icon"></div> 🌍 What Happens When You Type a URL</div>
+        <div class="sidebar-item" data-lesson="net-arp"><div class="check-icon"></div> ARP — MAC Address Resolution</div>
+        <div class="sidebar-item" data-lesson="net-routing"><div class="check-icon"></div> Routing — How Packets Travel</div>
+        <div class="sidebar-item" data-lesson="net-proxy"><div class="check-icon"></div> Proxy, Reverse Proxy &amp; CDN</div>
+        <div class="sidebar-item" data-lesson="net-vpn"><div class="check-icon"></div> VPN &amp; Tunneling</div>
+        <div class="sidebar-item" data-lesson="net-ipv6"><div class="check-icon"></div> IPv6 Essentials</div>
+        <div class="sidebar-item" data-lesson="net-perf"><div class="check-icon"></div> Network Performance &amp; Metrics</div>
+        <div class="sidebar-item" data-lesson="net-attacks"><div class="check-icon"></div> Network Security &amp; Attacks</div>
+        <div class="sidebar-item" data-lesson="net-vlan"><div class="check-icon"></div> VLANs &amp; Segmentation</div>
+        <div class="sidebar-item" data-lesson="net-advanced-qa"><div class="check-icon"></div> 💡 Advanced Interview Q&amp;A</div>
+      </div>
+    </aside>
+
+    <main class="lesson-content">
+
+      <!-- OSI MODEL -->
+      <div class="lesson-panel" data-panel="net-osi">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>OSI Model — The 7 Layers</h1>
+            <p>The framework that describes how data moves from one computer to another. Every networking interview starts here.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <div class="callout info">
+            <div class="callout-icon">🧠</div>
+            <div class="callout-body">
+              <div class="callout-title">Memory trick: "Please Do Not Throw Sausage Pizza Away"</div>
+              <div class="callout-text">Physical, Data Link, Network, Transport, Session, Presentation, Application — layers 1 to 7.</div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px">
+            <div class="osi-layer" style="background:rgba(255,123,114,0.06)">
+              <div class="osi-num" style="background:rgba(255,123,114,0.2);color:var(--red)">7</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--red)">Application</div>
+                <div class="osi-desc">The layer you interact with. Provides network services to applications.</div>
+                <div class="osi-example">HTTP, HTTPS, FTP, SMTP, DNS, SSH, DHCP, WebSocket</div>
+              </div>
+            </div>
+            <div class="osi-layer" style="background:rgba(163,113,247,0.06)">
+              <div class="osi-num" style="background:rgba(163,113,247,0.2);color:var(--purple)">6</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--purple)">Presentation</div>
+                <div class="osi-desc">Data formatting, encryption, compression. Translates between app and network formats.</div>
+                <div class="osi-example">TLS/SSL encryption, JPEG/PNG/MPEG encoding, JSON/XML serialisation</div>
+              </div>
+            </div>
+            <div class="osi-layer" style="background:rgba(88,166,255,0.06)">
+              <div class="osi-num" style="background:rgba(88,166,255,0.2);color:var(--blue)">5</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--blue)">Session</div>
+                <div class="osi-desc">Establishes, manages, and terminates sessions between applications.</div>
+                <div class="osi-example">NetBIOS, RPC, SQL sessions, authentication sessions</div>
+              </div>
+            </div>
+            <div class="osi-layer" style="background:rgba(63,185,80,0.06)">
+              <div class="osi-num" style="background:rgba(63,185,80,0.2);color:var(--green)">4</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--green)">Transport</div>
+                <div class="osi-desc">End-to-end communication. Reliability, flow control, segmentation.</div>
+                <div class="osi-example">TCP (reliable, ordered), UDP (fast, no guarantee) — ports live here</div>
+              </div>
+            </div>
+            <div class="osi-layer" style="background:rgba(240,136,62,0.06)">
+              <div class="osi-num" style="background:rgba(240,136,62,0.2);color:var(--orange)">3</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--orange)">Network</div>
+                <div class="osi-desc">Logical addressing and routing. Gets packets from source to destination across networks.</div>
+                <div class="osi-example">IP (IPv4, IPv6), ICMP (ping), routers, routing tables</div>
+              </div>
+            </div>
+            <div class="osi-layer" style="background:rgba(227,179,65,0.06)">
+              <div class="osi-num" style="background:rgba(227,179,65,0.2);color:var(--yellow)">2</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--yellow)">Data Link</div>
+                <div class="osi-desc">Node-to-node delivery on the same network. MAC addresses, error detection.</div>
+                <div class="osi-example">Ethernet, Wi-Fi (802.11), MAC addresses, switches, ARP</div>
+              </div>
+            </div>
+            <div class="osi-layer" style="background:rgba(139,148,158,0.06)">
+              <div class="osi-num" style="background:rgba(139,148,158,0.2);color:var(--text-secondary)">1</div>
+              <div class="osi-body">
+                <div class="osi-name" style="color:var(--text-secondary)">Physical</div>
+                <div class="osi-desc">Raw bits over a physical medium. Cables, signals, hardware.</div>
+                <div class="osi-example">Ethernet cables (Cat5e/6), fibre optic, Wi-Fi radio waves, hubs, repeaters</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 style="margin-top:24px">What Layer Does Each Device Operate At?</h2>
+          <table class="compare-table">
+            <thead><tr><th>Device</th><th>OSI Layer</th><th>What It Does</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Hub</strong></td><td>Layer 1 — Physical</td><td>Broadcasts all traffic to all ports. Dumb. No intelligence.</td></tr>
+              <tr><td><strong>Switch</strong></td><td>Layer 2 — Data Link</td><td>Forwards frames using MAC address table. Sends traffic only to the right port.</td></tr>
+              <tr><td><strong>Router</strong></td><td>Layer 3 — Network</td><td>Routes packets between different networks using IP addresses and routing tables.</td></tr>
+              <tr><td><strong>Firewall</strong></td><td>L3–L7</td><td>Filters traffic. Basic = Layer 3/4 (IP + port). Next-gen = Layer 7 (application content).</td></tr>
+              <tr><td><strong>Load Balancer</strong></td><td>Layer 4 or 7</td><td>L4: distributes TCP connections. L7 (ALB): routes based on HTTP path/headers.</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "At what layer does a router operate, and why?"</div>
+              <div class="callout-text"><strong>Answer:</strong> Layer 3 — Network. A router uses IP addresses (Layer 3) to decide where to forward packets. It reads the destination IP, consults its routing table, and forwards out the correct interface. It doesn't care about MAC addresses (Layer 2) or what application generated the traffic (Layer 7).</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="window.location='linux.html'">← Linux Module</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-osi')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-tcpip]').click()">Next: TCP/IP →</button>
+        </div>
+      </div>
+
+      <!-- TCP/IP -->
+      <div class="lesson-panel" data-panel="net-tcpip">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>TCP/IP & IP Addressing</h1>
+            <p>The actual protocols the internet runs on. TCP vs UDP, IPv4, and how packets travel.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>TCP vs UDP</h2>
+          <table class="compare-table">
+            <thead><tr><th>Property</th><th>TCP</th><th>UDP</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Connection</strong></td><td>Connection-oriented (3-way handshake)</td><td>Connectionless — fire and forget</td></tr>
+              <tr><td><strong>Reliability</strong></td><td>Guaranteed delivery — retransmits lost packets</td><td>No guarantee — packets can be dropped</td></tr>
+              <tr><td><strong>Order</strong></td><td>Packets reassembled in correct order</td><td>No ordering guarantee</td></tr>
+              <tr><td><strong>Speed</strong></td><td>Slower (acknowledgements, overhead)</td><td>Faster (no overhead)</td></tr>
+              <tr><td><strong>Use cases</strong></td><td>HTTP/S, SSH, FTP, email, databases</td><td>DNS, video streaming, VoIP, gaming, NTP</td></tr>
+            </tbody>
+          </table>
+
+          <h2>TCP 3-Way Handshake</h2>
+          <div class="code-block">
+Client                    Server
+  │                         │
+  │──── SYN ───────────────►│  "I want to connect" (SEQ=100)
+  │                         │
+  │◄─── SYN-ACK ────────────│  "OK, I'm ready too" (SEQ=200, ACK=101)
+  │                         │
+  │──── ACK ───────────────►│  "Got it, let's go" (ACK=201)
+  │                         │
+  │    [Connection open]    │
+  │                         │
+  │──── FIN ───────────────►│  "I'm done" (4-way close)
+  │◄─── FIN-ACK ────────────│
+  │──── ACK ───────────────►│</div>
+
+          <h2>IPv4 Addressing</h2>
+          <div class="code-block">
+<span class="cb-comment"># IPv4 = 32 bits, written as 4 octets (0-255)</span>
+192.168.1.100
+
+<span class="cb-comment"># Private IP ranges (not routable on the internet)</span>
+10.0.0.0    – 10.255.255.255     <span class="cb-comment"># Class A — /8 — 16 million hosts</span>
+172.16.0.0  – 172.31.255.255    <span class="cb-comment"># Class B — /12 — 1 million hosts</span>
+192.168.0.0 – 192.168.255.255   <span class="cb-comment"># Class C — /16 — 65,000 hosts</span>
+
+<span class="cb-comment"># Special addresses</span>
+127.0.0.1     <span class="cb-comment"># Loopback — always your own machine (localhost)</span>
+0.0.0.0       <span class="cb-comment"># "All interfaces" — a server listening on 0.0.0.0 accepts on any IP</span>
+255.255.255.255  <span class="cb-comment"># Broadcast — sends to all hosts on network</span></div>
+
+          <h2>TCP/IP Model vs OSI</h2>
+          <table class="compare-table">
+            <thead><tr><th>TCP/IP Layer</th><th>OSI Equivalent</th><th>Protocols</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Application</strong></td><td>Layers 5, 6, 7</td><td>HTTP, FTP, DNS, SMTP, SSH</td></tr>
+              <tr><td><strong>Transport</strong></td><td>Layer 4</td><td>TCP, UDP</td></tr>
+              <tr><td><strong>Internet</strong></td><td>Layer 3</td><td>IP, ICMP, ARP</td></tr>
+              <tr><td><strong>Network Access</strong></td><td>Layers 1, 2</td><td>Ethernet, Wi-Fi, MAC</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "Why does DNS use UDP instead of TCP?"</div>
+              <div class="callout-text"><strong>Answer:</strong> DNS queries are tiny (usually under 512 bytes) and need to be fast. The overhead of a TCP 3-way handshake would add latency. UDP lets the client send the query and get an answer in one round-trip. If the response is too large (e.g., DNSSEC records, zone transfers), DNS falls back to TCP automatically.</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-osi]').click()">← OSI Model</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-tcpip')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-subnetting]').click()">Next: Subnetting →</button>
+        </div>
+      </div>
+
+      <!-- SUBNETTING -->
+      <div class="lesson-panel" data-panel="net-subnetting">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Subnetting & CIDR</h1>
+            <p>Dividing a network into smaller pieces. You will be asked to subnet in interviews. Learn the shortcuts.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~35 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>CIDR Notation</h2>
+          <div class="code-block">
+192.168.1.0/24
+            ↑↑
+            └─── Prefix length = 24 bits are the network part
+                 Remaining 8 bits = host addresses = 2^8 = 256 addresses
+                 Usable hosts = 256 - 2 = 254 (network + broadcast reserved)</div>
+
+          <h2>CIDR Quick Reference — Memorise These</h2>
+          <table class="compare-table">
+            <thead><tr><th>CIDR</th><th>Subnet Mask</th><th>Total IPs</th><th>Usable Hosts</th><th>Common Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>/8</strong></td><td>255.0.0.0</td><td>16,777,216</td><td>16,777,214</td><td>Large enterprises, Class A private (10.x.x.x)</td></tr>
+              <tr><td><strong>/16</strong></td><td>255.255.0.0</td><td>65,536</td><td>65,534</td><td>VPC default CIDR, large office networks</td></tr>
+              <tr><td><strong>/24</strong></td><td>255.255.255.0</td><td>256</td><td>254</td><td>Subnets in VPC, small office LAN</td></tr>
+              <tr><td><strong>/25</strong></td><td>255.255.255.128</td><td>128</td><td>126</td><td>Split a /24 in half</td></tr>
+              <tr><td><strong>/26</strong></td><td>255.255.255.192</td><td>64</td><td>62</td><td>Small subnet</td></tr>
+              <tr><td><strong>/28</strong></td><td>255.255.255.240</td><td>16</td><td>14</td><td>Tiny subnet — Azure/AWS management subnets</td></tr>
+              <tr><td><strong>/30</strong></td><td>255.255.255.252</td><td>4</td><td>2</td><td>Point-to-point links between routers</td></tr>
+              <tr><td><strong>/32</strong></td><td>255.255.255.255</td><td>1</td><td>1</td><td>Single host — security group rules, routes to one IP</td></tr>
+            </tbody>
+          </table>
+
+          <div class="subnet-calc">
+            <h3>Example: Breaking 10.0.0.0/16 into Subnets (AWS VPC style)</h3>
+            <div class="sc-row"><div class="sc-label">VPC CIDR</div><div class="sc-val">10.0.0.0/16</div><span style="color:var(--text-muted);font-size:0.8rem">→ 65,536 total IPs</span></div>
+            <div class="sc-row"><div class="sc-label">Public Subnet AZ-a</div><div class="sc-val">10.0.1.0/24</div><span style="color:var(--text-muted);font-size:0.8rem">→ 254 usable IPs</span></div>
+            <div class="sc-row"><div class="sc-label">Public Subnet AZ-b</div><div class="sc-val">10.0.2.0/24</div><span style="color:var(--text-muted);font-size:0.8rem">→ 254 usable IPs</span></div>
+            <div class="sc-row"><div class="sc-label">Private Subnet AZ-a</div><div class="sc-val">10.0.10.0/24</div><span style="color:var(--text-muted);font-size:0.8rem">→ 254 usable IPs</span></div>
+            <div class="sc-row"><div class="sc-label">Private Subnet AZ-b</div><div class="sc-val">10.0.11.0/24</div><span style="color:var(--text-muted);font-size:0.8rem">→ 254 usable IPs</span></div>
+            <div class="sc-row"><div class="sc-label">DB Subnet AZ-a</div><div class="sc-val">10.0.20.0/24</div><span style="color:var(--text-muted);font-size:0.8rem">→ 254 usable IPs</span></div>
+            <div class="sc-row"><div class="sc-label">DB Subnet AZ-b</div><div class="sc-val">10.0.21.0/24</div><span style="color:var(--text-muted);font-size:0.8rem">→ 254 usable IPs</span></div>
+          </div>
+
+          <h2>Shortcut: How Many Hosts?</h2>
+          <div class="code-block">
+Formula: 2^(32 - prefix) - 2 = usable hosts
+
+/24 → 2^8  - 2 = 254
+/25 → 2^7  - 2 = 126
+/26 → 2^6  - 2 = 62
+/27 → 2^5  - 2 = 30
+/28 → 2^4  - 2 = 14
+/29 → 2^3  - 2 = 6
+/30 → 2^2  - 2 = 2   ← Minimum for a point-to-point link</div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "Your VPC is 10.0.0.0/16. You need 4 subnets each with 50 hosts minimum. What CIDR would you use?"</div>
+              <div class="callout-text"><strong>Answer:</strong> /26 — gives 64 total IPs, 62 usable. That's enough for 50 hosts per subnet. A /27 gives only 30 usable which is not enough. Always plan for growth — I'd actually use /24 per subnet (254 hosts) to leave room, keeping subnets clean and consistent. Use the remaining /16 space for future subnets.</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-tcpip]').click()">← TCP/IP</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-subnetting')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-dns]').click()">Next: DNS →</button>
+        </div>
+      </div>
+
+      <!-- DNS -->
+      <div class="lesson-panel" data-panel="net-dns">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>DNS — Domain Name System</h1>
+            <p>The phonebook of the internet. Translates names to IP addresses. Understand this end-to-end.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>How DNS Resolution Works</h2>
+          <div class="dns-flow">
+            <div class="dns-node"><div class="dn-label">You type</div><div class="dn-name">google.com</div></div>
+            <div class="dns-arrow">→</div>
+            <div class="dns-node" style="border-color:var(--blue)"><div class="dn-label">Check</div><div class="dn-name" style="color:var(--blue)">Local Cache</div><div class="dn-sub">Already know it?</div></div>
+            <div class="dns-arrow">→</div>
+            <div class="dns-node" style="border-color:var(--green)"><div class="dn-label">Ask</div><div class="dn-name" style="color:var(--green)">Recursive Resolver</div><div class="dn-sub">ISP / 8.8.8.8 / 1.1.1.1</div></div>
+            <div class="dns-arrow">→</div>
+            <div class="dns-node" style="border-color:var(--orange)"><div class="dn-label">Ask</div><div class="dn-name" style="color:var(--orange)">Root Server</div><div class="dn-sub">13 root clusters</div></div>
+            <div class="dns-arrow">→</div>
+            <div class="dns-node" style="border-color:var(--yellow)"><div class="dn-label">Ask</div><div class="dn-name" style="color:var(--yellow)">TLD Server</div><div class="dn-sub">.com nameserver</div></div>
+            <div class="dns-arrow">→</div>
+            <div class="dns-node" style="border-color:var(--purple)"><div class="dn-label">Ask</div><div class="dn-name" style="color:var(--purple)">Authoritative NS</div><div class="dn-sub">Google's DNS</div></div>
+            <div class="dns-arrow">→</div>
+            <div class="dns-node" style="border-color:var(--green)"><div class="dn-label">Answer</div><div class="dn-name" style="color:var(--green)">142.250.80.46</div><div class="dn-sub">Cached per TTL</div></div>
+          </div>
+
+          <h2>DNS Record Types — Learn All of These</h2>
+          <table class="compare-table">
+            <thead><tr><th>Record</th><th>Purpose</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>A</strong></td><td>Maps hostname → IPv4 address</td><td>example.com → 93.184.216.34</td></tr>
+              <tr><td><strong>AAAA</strong></td><td>Maps hostname → IPv6 address</td><td>example.com → 2606:2800:220:1::/32</td></tr>
+              <tr><td><strong>CNAME</strong></td><td>Alias — maps name to another name (not IP)</td><td>www.example.com → example.com</td></tr>
+              <tr><td><strong>MX</strong></td><td>Mail exchanger — where to send email for domain</td><td>example.com → mail.example.com (priority 10)</td></tr>
+              <tr><td><strong>TXT</strong></td><td>Text record — SPF, DKIM, domain verification</td><td>"v=spf1 include:google.com ~all"</td></tr>
+              <tr><td><strong>NS</strong></td><td>Nameserver — which servers hold DNS records</td><td>example.com → ns1.awsdns-01.com</td></tr>
+              <tr><td><strong>PTR</strong></td><td>Reverse DNS — IP address → hostname</td><td>93.184.216.34 → example.com</td></tr>
+              <tr><td><strong>SOA</strong></td><td>Start of Authority — admin info for the zone</td><td>Primary NS, email, serial, refresh intervals</td></tr>
+            </tbody>
+          </table>
+
+          <h2>TTL — Time to Live</h2>
+          <div class="code-block">
+<span class="cb-comment"># TTL controls how long resolvers cache the record (in seconds)</span>
+example.com.  300   IN  A  93.184.216.34
+              ↑
+              TTL = 300 seconds = 5 minutes
+
+<span class="cb-comment"># Before a migration:</span>
+<span class="cb-comment"># Lower TTL to 60 seconds 24 hours before → changes propagate in 1 minute</span>
+<span class="cb-comment"># After migration: raise TTL back to 3600+ for performance</span></div>
+
+          <h2>dig — Query DNS from CLI</h2>
+          <div class="code-block">
+dig google.com                    <span class="cb-comment"># A record lookup</span>
+dig google.com A                  <span class="cb-comment"># Explicit A record</span>
+dig google.com MX                 <span class="cb-comment"># Mail records</span>
+dig google.com NS                 <span class="cb-comment"># Nameserver records</span>
+dig google.com TXT                <span class="cb-comment"># TXT records (SPF, DKIM)</span>
+dig -x 8.8.8.8                    <span class="cb-comment"># Reverse lookup (PTR record)</span>
+dig @8.8.8.8 google.com          <span class="cb-comment"># Query specific DNS server (8.8.8.8)</span>
+dig @1.1.1.1 google.com +short   <span class="cb-comment"># Short output — just the IP</span>
+dig google.com +trace             <span class="cb-comment"># Show full resolution chain from root</span></div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "A user says the website is down but you can reach it by IP. What do you check?"</div>
+              <div class="callout-text">
+                DNS issue. Steps:<br>
+                1. <code>dig website.com</code> — is it resolving to the right IP?<br>
+                2. <code>dig @8.8.8.8 website.com</code> — does Google's DNS resolve it? (rules out local DNS cache)<br>
+                3. <code>nslookup website.com</code> — is the TTL expired or cached old IP?<br>
+                4. Check the DNS record in your registrar/Route53 — was it changed?<br>
+                5. Check if TTL is high — old record may be cached for hours
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-subnetting]').click()">← Subnetting</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-dns')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-dhcp]').click()">Next: DHCP →</button>
+        </div>
+      </div>
+
+      <!-- DHCP -->
+      <div class="lesson-panel" data-panel="net-dhcp">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>DHCP — Dynamic Host Configuration Protocol</h1>
+            <p>How devices automatically get IP addresses, subnet masks, gateways, and DNS servers when they join a network.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>The DORA Process — How DHCP Works</h2>
+          <table class="compare-table">
+            <thead><tr><th>Step</th><th>Message</th><th>Direction</th><th>What Happens</th></tr></thead>
+            <tbody>
+              <tr><td><strong>D</strong></td><td>DISCOVER</td><td>Client → Broadcast</td><td>"I need an IP! Anyone there?" Sent to 255.255.255.255 (broadcast). Client has no IP yet.</td></tr>
+              <tr><td><strong>O</strong></td><td>OFFER</td><td>Server → Client</td><td>"Here, take 192.168.1.50 — it's free for 24 hours." Server offers an available IP.</td></tr>
+              <tr><td><strong>R</strong></td><td>REQUEST</td><td>Client → Broadcast</td><td>"I'll take 192.168.1.50 please." Broadcast so other DHCP servers know the offer was accepted.</td></tr>
+              <tr><td><strong>A</strong></td><td>ACKNOWLEDGE</td><td>Server → Client</td><td>"Confirmed. Here's your IP, gateway, DNS, and lease time." Client configures its network stack.</td></tr>
+            </tbody>
+          </table>
+
+          <h2>What DHCP Provides</h2>
+          <div class="code-block">
+<span class="cb-comment"># A DHCP lease gives the client all of these:</span>
+IP Address:      192.168.1.50
+Subnet Mask:     255.255.255.0  (/24)
+Default Gateway: 192.168.1.1    <span class="cb-comment"># Router — where to send traffic outside the subnet</span>
+DNS Servers:     8.8.8.8, 8.8.4.4
+Lease Time:      86400 seconds  <span class="cb-comment"># 24 hours — must renew before expiry</span></div>
+
+          <h2>Static vs DHCP</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>Static IP</th><th>DHCP</th></tr></thead>
+            <tbody>
+              <tr><td><strong>How assigned</strong></td><td>Manually configured</td><td>Automatically by DHCP server</td></tr>
+              <tr><td><strong>Changes</strong></td><td>Never (unless you change it)</td><td>Can change when lease renews</td></tr>
+              <tr><td><strong>Use for</strong></td><td>Servers, printers, network devices, VMs</td><td>Laptops, phones, workstations</td></tr>
+              <tr><td><strong>DNS entry</strong></td><td>Fixed A record</td><td>Dynamic DNS or no reliable record</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "A user plugs in a laptop and gets 169.254.x.x — what does that mean?"</div>
+              <div class="callout-text"><strong>169.254.0.0/16 is APIPA (Automatic Private IP Addressing).</strong> When a device can't reach a DHCP server, Windows assigns itself an address in this range. It means: the DHCP request was never answered. Check: Is the DHCP server running? Is there a network cable issue? Is the user on the right VLAN? Can other devices get addresses on the same network?</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-dns]').click()">← DNS</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-dhcp')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-http]').click()">Next: HTTP/HTTPS →</button>
+        </div>
+      </div>
+
+      <!-- HTTP -->
+      <div class="lesson-panel" data-panel="net-http">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>HTTP & HTTPS</h1>
+            <p>The protocol that powers the web. Know request methods, status codes, and headers cold.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>HTTP Methods</h2>
+          <table class="compare-table">
+            <thead><tr><th>Method</th><th>Purpose</th><th>Has Body?</th><th>Idempotent?</th></tr></thead>
+            <tbody>
+              <tr><td><span class="http-method method-get">GET</span></td><td>Retrieve a resource. Never modifies data.</td><td>No</td><td>Yes</td></tr>
+              <tr><td><span class="http-method method-post">POST</span></td><td>Create a new resource or submit data</td><td>Yes</td><td>No (creates duplicate)</td></tr>
+              <tr><td><span class="http-method method-put">PUT</span></td><td>Replace entire resource</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td><span class="http-method method-patch">PATCH</span></td><td>Partially update a resource</td><td>Yes</td><td>Sometimes</td></tr>
+              <tr><td><span class="http-method method-delete">DELETE</span></td><td>Delete a resource</td><td>Sometimes</td><td>Yes</td></tr>
+            </tbody>
+          </table>
+
+          <h2>HTTP Status Codes — Know Every Group</h2>
+          <div class="status-grid">
+            <div class="status-card s2xx"><div class="sc-code">200 OK</div><div class="sc-name">Success</div><div class="sc-desc">Request succeeded. Body contains the response.</div></div>
+            <div class="status-card s2xx"><div class="sc-code">201 Created</div><div class="sc-name">Resource Created</div><div class="sc-desc">POST succeeded. New resource was created.</div></div>
+            <div class="status-card s2xx"><div class="sc-code">204 No Content</div><div class="sc-name">Success, No Body</div><div class="sc-desc">DELETE succeeded. Nothing to return.</div></div>
+            <div class="status-card s3xx"><div class="sc-code">301 Moved Permanently</div><div class="sc-name">Permanent Redirect</div><div class="sc-desc">URL changed forever. Browser caches this. HTTP → HTTPS redirect.</div></div>
+            <div class="status-card s3xx"><div class="sc-code">302 Found</div><div class="sc-name">Temporary Redirect</div><div class="sc-desc">Temporary redirect. Browser doesn't cache.</div></div>
+            <div class="status-card s4xx"><div class="sc-code">400 Bad Request</div><div class="sc-name">Client Error</div><div class="sc-desc">Malformed request — missing required field, bad JSON.</div></div>
+            <div class="status-card s4xx"><div class="sc-code">401 Unauthorized</div><div class="sc-name">Not Authenticated</div><div class="sc-desc">No or invalid credentials. Must log in first.</div></div>
+            <div class="status-card s4xx"><div class="sc-code">403 Forbidden</div><div class="sc-name">Not Authorized</div><div class="sc-desc">Authenticated but no permission. Different from 401.</div></div>
+            <div class="status-card s4xx"><div class="sc-code">404 Not Found</div><div class="sc-name">Resource Missing</div><div class="sc-desc">URL exists but resource doesn't. Or route not configured.</div></div>
+            <div class="status-card s4xx"><div class="sc-code">429 Too Many Requests</div><div class="sc-name">Rate Limited</div><div class="sc-desc">Client is sending too many requests. Retry after delay.</div></div>
+            <div class="status-card s5xx"><div class="sc-code">500 Internal Server Error</div><div class="sc-name">Server Crash</div><div class="sc-desc">Unhandled exception in the app. Check logs immediately.</div></div>
+            <div class="status-card s5xx"><div class="sc-code">502 Bad Gateway</div><div class="sc-name">Upstream Error</div><div class="sc-desc">Reverse proxy got invalid response from backend. Backend down?</div></div>
+            <div class="status-card s5xx"><div class="sc-code">503 Service Unavailable</div><div class="sc-name">Overloaded / Down</div><div class="sc-desc">Server temporarily can't handle requests. Check load, health checks.</div></div>
+            <div class="status-card s5xx"><div class="sc-code">504 Gateway Timeout</div><div class="sc-name">Upstream Timeout</div><div class="sc-desc">Reverse proxy waited too long for backend. Backend slow or down.</div></div>
+          </div>
+
+          <h2>Important HTTP Headers</h2>
+          <div class="code-block">
+<span class="cb-comment"># Request headers</span>
+Host: example.com                    <span class="cb-comment"># Which domain (required in HTTP/1.1)</span>
+Authorization: Bearer eyJhbGci...    <span class="cb-comment"># Auth token</span>
+Content-Type: application/json       <span class="cb-comment"># Body format</span>
+Accept: application/json             <span class="cb-comment"># What format client wants back</span>
+User-Agent: Mozilla/5.0...           <span class="cb-comment"># Client browser/app identifier</span>
+
+<span class="cb-comment"># Response headers</span>
+Content-Type: application/json       <span class="cb-comment"># Body format of response</span>
+Cache-Control: max-age=3600          <span class="cb-comment"># Cache for 1 hour</span>
+Set-Cookie: session=abc; HttpOnly    <span class="cb-comment"># Set cookie (HttpOnly = JS can't read it)</span>
+Location: /new-url                   <span class="cb-comment"># Where to redirect (301/302)</span>
+X-Request-Id: abc-123                <span class="cb-comment"># Trace ID for debugging</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-dhcp]').click()">← DHCP</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-http')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-tls]').click()">Next: TLS/SSL →</button>
+        </div>
+      </div>
+
+      <!-- TLS -->
+      <div class="lesson-panel" data-panel="net-tls">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>TLS/SSL — How HTTPS Works</h1>
+            <p>The encryption layer under every HTTPS connection. Understand certificates, handshakes, and what HTTPS actually protects.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>TLS Handshake (Simplified)</h2>
+          <div class="code-block">
+Client                              Server
+  │                                   │
+  │──── ClientHello ─────────────────►│  "I support TLS 1.3, here are my cipher suites"
+  │                                   │
+  │◄─── ServerHello + Certificate ────│  "Use AES-256. Here's my certificate."
+  │                                   │
+  │  [Client verifies certificate]    │
+  │  - Is it signed by a trusted CA?  │
+  │  - Is it expired?                 │
+  │  - Does hostname match?           │
+  │                                   │
+  │──── Key Exchange ────────────────►│  Exchange keys to derive session key
+  │                                   │
+  │    [Both sides derive the same    │
+  │     symmetric session key]        │
+  │                                   │
+  │◄══► Encrypted Application Data ══►│  All HTTP traffic now encrypted</div>
+
+          <h2>Certificates</h2>
+          <table class="compare-table">
+            <thead><tr><th>Concept</th><th>What It Is</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Certificate</strong></td><td>Digital file containing: public key, domain name, expiry date, issuer (CA). Proves server identity.</td></tr>
+              <tr><td><strong>CA (Certificate Authority)</strong></td><td>Trusted third party that signs certificates (Let's Encrypt, DigiCert, Comodo). Your browser trusts ~150 CAs.</td></tr>
+              <tr><td><strong>Private Key</strong></td><td>Server-side secret. Used to decrypt data encrypted with the public key. NEVER share this.</td></tr>
+              <tr><td><strong>Self-Signed Cert</strong></td><td>Signed by yourself, not a CA. Browsers show "Not Secure" warning. OK for internal/dev, not for production.</td></tr>
+              <tr><td><strong>Let's Encrypt</strong></td><td>Free, automated CA. Certificates valid for 90 days. Use certbot to auto-renew. Standard for modern web.</td></tr>
+              <tr><td><strong>Wildcard Cert</strong></td><td>*.example.com — covers all subdomains. One cert for api.example.com, app.example.com, etc.</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Common TLS Commands</h2>
+          <div class="code-block">
+<span class="cb-comment"># Check certificate expiry from CLI</span>
+echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates
+
+<span class="cb-comment"># View certificate details</span>
+openssl x509 -in cert.pem -text -noout
+
+<span class="cb-comment"># Check what TLS versions a server supports</span>
+curl -vI https://example.com 2>&1 | grep -E "TLS|SSL"
+
+<span class="cb-comment"># Generate a self-signed cert (dev only)</span>
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes</div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "What's the difference between HTTP and HTTPS?"</div>
+              <div class="callout-text">HTTP sends data in plaintext — anyone on the network (ISP, coffee shop Wi-Fi, MITM attacker) can read it. HTTPS wraps HTTP inside TLS, which provides: <strong>Encryption</strong> (data unreadable in transit), <strong>Authentication</strong> (you're actually talking to example.com, not an impersonator), <strong>Integrity</strong> (data can't be tampered with in transit). TLS runs on port 443; HTTP on port 80.</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-http]').click()">← HTTP</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-tls')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-ports]').click()">Next: Ports →</button>
+        </div>
+      </div>
+
+      <!-- PORTS -->
+      <div class="lesson-panel" data-panel="net-ports">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Ports & Common Protocols</h1>
+            <p>Know the essential port numbers. Interviewers test these directly.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~15 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Must-Know Ports</h2>
+          <div class="port-grid">
+            <div class="port-card"><div class="port-num">20/21</div><div class="port-info"><div class="pi-name">FTP</div><div class="pi-desc">File Transfer Protocol (data/control)</div></div></div>
+            <div class="port-card"><div class="port-num">22</div><div class="port-info"><div class="pi-name">SSH</div><div class="pi-desc">Secure Shell — encrypted remote access</div></div></div>
+            <div class="port-card"><div class="port-num">23</div><div class="port-info"><div class="pi-name">Telnet</div><div class="pi-desc">Unencrypted remote access — NEVER use</div></div></div>
+            <div class="port-card"><div class="port-num">25</div><div class="port-info"><div class="pi-name">SMTP</div><div class="pi-desc">Sending email between mail servers</div></div></div>
+            <div class="port-card"><div class="port-num">53</div><div class="port-info"><div class="pi-name">DNS</div><div class="pi-desc">UDP (queries) and TCP (zone transfers)</div></div></div>
+            <div class="port-card"><div class="port-num">67/68</div><div class="port-info"><div class="pi-name">DHCP</div><div class="pi-desc">Server:67, Client:68 — IP assignment</div></div></div>
+            <div class="port-card"><div class="port-num">80</div><div class="port-info"><div class="pi-name">HTTP</div><div class="pi-desc">Unencrypted web traffic</div></div></div>
+            <div class="port-card"><div class="port-num">110</div><div class="port-info"><div class="pi-name">POP3</div><div class="pi-desc">Receive email — downloads and deletes</div></div></div>
+            <div class="port-card"><div class="port-num">143</div><div class="port-info"><div class="pi-name">IMAP</div><div class="pi-desc">Receive email — keeps mail on server</div></div></div>
+            <div class="port-card"><div class="port-num">443</div><div class="port-info"><div class="pi-name">HTTPS</div><div class="pi-desc">Encrypted web traffic (TLS)</div></div></div>
+            <div class="port-card"><div class="port-num">3306</div><div class="port-info"><div class="pi-name">MySQL</div><div class="pi-desc">MySQL / MariaDB database</div></div></div>
+            <div class="port-card"><div class="port-num">5432</div><div class="port-info"><div class="pi-name">PostgreSQL</div><div class="pi-desc">PostgreSQL database</div></div></div>
+            <div class="port-card"><div class="port-num">6379</div><div class="port-info"><div class="pi-name">Redis</div><div class="pi-desc">In-memory cache / message broker</div></div></div>
+            <div class="port-card"><div class="port-num">8080</div><div class="port-info"><div class="pi-name">HTTP Alt</div><div class="pi-desc">Common dev/staging HTTP port</div></div></div>
+            <div class="port-card"><div class="port-num">9090</div><div class="port-info"><div class="pi-name">Prometheus</div><div class="pi-desc">Metrics scraping</div></div></div>
+            <div class="port-card"><div class="port-num">3000</div><div class="port-info"><div class="pi-name">Grafana</div><div class="pi-desc">Dashboard UI (default)</div></div></div>
+          </div>
+
+          <h2>Port Ranges</h2>
+          <table class="compare-table">
+            <thead><tr><th>Range</th><th>Name</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>0–1023</td><td>Well-known / System ports</td><td>Require root to bind. HTTP, SSH, DNS, SMTP are here.</td></tr>
+              <tr><td>1024–49151</td><td>Registered ports</td><td>Assigned to applications. MySQL (3306), Postgres (5432), Redis (6379).</td></tr>
+              <tr><td>49152–65535</td><td>Ephemeral / Dynamic ports</td><td>Used by OS for outgoing connections (source port in TCP).</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-tls]').click()">← TLS/SSL</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-ports')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-firewall]').click()">Next: Firewalls & NAT →</button>
+        </div>
+      </div>
+
+      <!-- FIREWALL & NAT -->
+      <div class="lesson-panel" data-panel="net-firewall">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Firewalls, NAT & Load Balancing</h1>
+            <p>Controlling traffic flow — what gets in, what goes out, and how load is distributed.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>iptables — Linux Firewall</h2>
+          <div class="code-block">
+<span class="cb-comment"># View current rules</span>
+iptables -L -n -v               <span class="cb-comment"># List all rules with packet counts</span>
+iptables -L INPUT -n            <span class="cb-comment"># Just INPUT chain</span>
+
+<span class="cb-comment"># Allow specific traffic</span>
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT    <span class="cb-comment"># Allow SSH</span>
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT    <span class="cb-comment"># Allow HTTP</span>
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT   <span class="cb-comment"># Allow HTTPS</span>
+
+<span class="cb-comment"># Block an IP</span>
+iptables -A INPUT -s 1.2.3.4 -j DROP
+
+<span class="cb-comment"># Default deny (after allowing what you need)</span>
+iptables -P INPUT DROP          <span class="cb-comment"># Drop all incoming not explicitly allowed</span>
+
+<span class="cb-comment"># Save rules (survives reboot)</span>
+iptables-save > /etc/iptables/rules.v4</div>
+
+          <h2>ufw — Simpler Firewall (Ubuntu)</h2>
+          <div class="code-block">
+ufw enable                      <span class="cb-comment"># Enable firewall</span>
+ufw status verbose              <span class="cb-comment"># Show rules</span>
+ufw allow ssh                   <span class="cb-comment"># Allow SSH (port 22)</span>
+ufw allow 80/tcp                <span class="cb-comment"># Allow HTTP</span>
+ufw allow from 10.0.0.0/8      <span class="cb-comment"># Allow entire private network</span>
+ufw deny 23                     <span class="cb-comment"># Block Telnet</span>
+ufw delete allow 80/tcp         <span class="cb-comment"># Remove a rule</span></div>
+
+          <h2>NAT — Network Address Translation</h2>
+          <table class="compare-table">
+            <thead><tr><th>Type</th><th>What It Does</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Source NAT (SNAT/Masquerade)</strong></td><td>Replaces source IP with public IP when leaving the network</td><td>Your home router — all devices share one public IP. NAT Gateway in AWS VPC.</td></tr>
+              <tr><td><strong>Destination NAT (DNAT/Port Forwarding)</strong></td><td>Redirects incoming traffic to a different IP:port</td><td>Router forwards port 80 → internal server 192.168.1.50:80</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Load Balancing</h2>
+          <table class="compare-table">
+            <thead><tr><th>Algorithm</th><th>How It Works</th><th>Best For</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Round Robin</strong></td><td>Each request goes to the next server in rotation</td><td>Stateless apps where all servers are equal</td></tr>
+              <tr><td><strong>Least Connections</strong></td><td>Send to server with fewest active connections</td><td>Long-lived connections (WebSockets, file uploads)</td></tr>
+              <tr><td><strong>IP Hash</strong></td><td>Same client IP always goes to same server</td><td>Session affinity (sticky sessions)</td></tr>
+              <tr><td><strong>Weighted</strong></td><td>Newer/bigger servers get more traffic</td><td>Canary deployments, mixed capacity nodes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-ports]').click()">← Ports</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-firewall')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-tools]').click()">Next: Tools →</button>
+        </div>
+      </div>
+
+      <!-- TOOLS -->
+      <div class="lesson-panel" data-panel="net-tools">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Networking Tools</h1>
+            <p>The commands every engineer uses daily to diagnose network issues.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Diagnostic Toolkit</h2>
+          <div class="code-block">
+<span class="cb-comment">### ping — test reachability and latency</span>
+ping 8.8.8.8              <span class="cb-comment"># Test internet connectivity</span>
+ping -c 4 google.com      <span class="cb-comment"># Send exactly 4 packets</span>
+<span class="cb-comment"># If ping works to IP but not hostname → DNS problem</span>
+<span class="cb-comment"># If ping works to 8.8.8.8 but not your server → routing or firewall</span>
+
+<span class="cb-comment">### traceroute — see each hop to destination</span>
+traceroute google.com     <span class="cb-comment"># Show path (each router between you and target)</span>
+traceroute -n google.com  <span class="cb-comment"># No DNS lookups (faster)</span>
+<span class="cb-comment"># * * * = hop doesn't respond (firewall blocking ICMP) — not necessarily broken</span>
+
+<span class="cb-comment">### ss — socket statistics (modern netstat)</span>
+ss -tulpn                 <span class="cb-comment"># All listening TCP+UDP ports with process names</span>
+ss -tupn                  <span class="cb-comment"># Established connections</span>
+ss -s                     <span class="cb-comment"># Summary statistics</span>
+
+<span class="cb-comment">### netstat (older, still common in exams)</span>
+netstat -tulpn            <span class="cb-comment"># Same as ss -tulpn</span>
+netstat -rn               <span class="cb-comment"># Routing table</span>
+
+<span class="cb-comment">### curl — make HTTP requests</span>
+curl https://example.com                         <span class="cb-comment"># GET request</span>
+curl -I https://example.com                      <span class="cb-comment"># Headers only (-I = HEAD)</span>
+curl -v https://example.com                      <span class="cb-comment"># Verbose — see TLS, headers, body</span>
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"key":"value"}' https://api.example.com/endpoint
+curl -o file.zip https://example.com/file.zip    <span class="cb-comment"># Download to file</span>
+curl -L https://short.url/abc                    <span class="cb-comment"># Follow redirects</span>
+curl --resolve example.com:443:1.2.3.4 https://example.com  <span class="cb-comment"># Override DNS</span>
+
+<span class="cb-comment">### dig — DNS queries</span>
+dig google.com                    <span class="cb-comment"># A record</span>
+dig google.com +short             <span class="cb-comment"># Just the IP</span>
+dig @8.8.8.8 google.com          <span class="cb-comment"># Query Google's DNS directly</span>
+dig google.com +trace             <span class="cb-comment"># Full resolution chain</span>
+dig -x 8.8.8.8                   <span class="cb-comment"># Reverse lookup</span>
+
+<span class="cb-comment">### tcpdump — capture packets (requires root)</span>
+tcpdump -i eth0                   <span class="cb-comment"># Capture all traffic on eth0</span>
+tcpdump -i eth0 port 443          <span class="cb-comment"># Only HTTPS traffic</span>
+tcpdump -i eth0 host 8.8.8.8     <span class="cb-comment"># Traffic to/from 8.8.8.8</span>
+tcpdump -i eth0 -w capture.pcap  <span class="cb-comment"># Save to file (open in Wireshark)</span></div>
+
+          <h2>Troubleshooting Flow</h2>
+          <div class="code-block">
+<span class="cb-comment"># "I can't reach server.example.com" — systematic diagnosis</span>
+
+1. ping 8.8.8.8           <span class="cb-comment"># Can I reach the internet at all?</span>
+2. ping server.example.com <span class="cb-comment"># Does DNS resolve?</span>
+3. dig server.example.com  <span class="cb-comment"># What IP does DNS return?</span>
+4. ping &lt;that-IP&gt;          <span class="cb-comment"># Can I reach the server by IP?</span>
+5. traceroute &lt;that-IP&gt;    <span class="cb-comment"># Where does the path fail?</span>
+6. curl -v http://&lt;IP&gt;:80  <span class="cb-comment"># Is the web server responding?</span>
+7. ss -tulpn | grep :80    <span class="cb-comment"># (On server) Is something listening?</span>
+8. iptables -L | grep DROP <span class="cb-comment"># (On server) Is a firewall blocking it?</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-firewall]').click()">← Firewalls</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-tools')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-url-journey]').click()">Next: URL Journey →</button>
+        </div>
+      </div>
+
+      <!-- URL JOURNEY -->
+      <div class="lesson-panel" data-panel="net-url-journey">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🌍 What Happens When You Type a URL?</h1>
+            <p>The single most common networking interview question. Know every step — DNS, TCP, TLS, HTTP — end to end.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Must Know</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview tip</div>
+              <div class="callout-text">This question is asked at Google, Amazon, Cloudflare, and almost every DevOps role. Go layer by layer. The interviewer wants to see how deep you can go.</div>
+            </div>
+          </div>
+
+          <h2>Step-by-Step: https://www.example.com/page</h2>
+
+          <h3>Step 1 — Browser Cache &amp; OS Cache Check</h3>
+          <p>Before any network request, the browser checks its own DNS cache (stored from recent visits). If found, jumps straight to TCP. Then it checks the OS-level DNS cache (<code>/etc/hosts</code> on Linux, the Windows DNS cache service). If either has a fresh record (within TTL), DNS resolution is skipped entirely.</p>
+
+          <h3>Step 2 — DNS Resolution</h3>
+          <p>If not cached, the OS asks the configured DNS resolver (usually your router or ISP, or a corporate DNS server). That resolver performs a recursive lookup:</p>
+          <div class="code-block">Client → Recursive Resolver (8.8.8.8)
+  → Root Nameserver ("who handles .com?")
+  → .com TLD Server ("ns1.example.com handles example.com")
+  → Authoritative Nameserver (ns1.example.com)
+  ← Returns: www.example.com → 93.184.216.34 (TTL: 3600s)
+Client caches this for TTL duration</div>
+          <p>The resolver caches the answer. Your OS caches it. Your browser caches it. Future requests within TTL skip all these steps.</p>
+
+          <h3>Step 3 — ARP (if on same network)</h3>
+          <p>To send packets to the default gateway (your router), your machine needs the router's MAC address. It checks its ARP cache. If missing, it broadcasts: "Who has 192.168.1.1?" The router replies with its MAC. Now packets can be sent at Layer 2.</p>
+
+          <h3>Step 4 — TCP 3-Way Handshake</h3>
+          <p>TCP is connection-oriented — a connection must be established before any data is sent. Three packets are exchanged:</p>
+          <div class="code-block">Client → Server: SYN        (seq=100)         "I want to connect"
+Server → Client: SYN-ACK   (seq=200, ack=101) "OK, I'm ready"
+Client → Server: ACK        (ack=201)          "Great, connected!"
+─── Connection established in ~1 RTT ───</div>
+          <p>RTT (Round-Trip Time) is the delay for one packet to travel to the server and back. A connection to a London server from India might cost 100ms just for the handshake.</p>
+
+          <h3>Step 5 — TLS Handshake (HTTPS only)</h3>
+          <p>Because the URL is <code>https://</code>, TLS runs on top of TCP before any HTTP data is sent:</p>
+          <div class="code-block">Client → Server: ClientHello (TLS version, cipher list, random bytes)
+Server → Client: ServerHello + Certificate + ServerHelloDone
+Client:          Validates certificate (CA trust chain, expiry, hostname match)
+Client → Server: Pre-master secret (encrypted with server's public key)
+Both sides:      Derive same symmetric session key independently
+Client → Server: "Finished" (encrypted)
+Server → Client: "Finished" (encrypted)
+─── All future data is encrypted with symmetric key ───</div>
+          <p>Modern TLS 1.3 does this in 1 RTT (instead of TLS 1.2's 2 RTTs) by combining steps. The session key is never transmitted — both sides derive it from shared random values (Diffie-Hellman key exchange).</p>
+
+          <h3>Step 6 — HTTP Request</h3>
+          <p>Now the browser sends an HTTP GET request through the encrypted tunnel:</p>
+          <div class="code-block">GET /page HTTP/1.1
+Host: www.example.com
+Accept: text/html,application/xhtml+xml
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+Cookie: session_id=abc123</div>
+
+          <h3>Step 7 — Server-Side Processing</h3>
+          <p>The request may travel through several hops before reaching the application:</p>
+          <div class="code-block">Internet → CDN Edge Node (CloudFront/Cloudflare)
+         → Load Balancer (AWS ALB / nginx)
+         → Web Server (nginx / Apache)
+         → Application Server (Node.js / Python / Java)
+         → Database (PostgreSQL / Redis cache)
+         → Response assembled</div>
+          <p>If the CDN has a cached copy of <code>/page</code>, the request never reaches your server at all — the CDN serves it from the nearest edge location worldwide.</p>
+
+          <h3>Step 8 — HTTP Response</h3>
+          <div class="code-block">HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Content-Encoding: gzip
+Content-Length: 4823
+Cache-Control: max-age=3600
+Set-Cookie: session_id=abc123; HttpOnly; Secure
+
+&lt;!DOCTYPE html&gt;...  (gzip-compressed HTML body)</div>
+
+          <h3>Step 9 — Browser Renders the Page</h3>
+          <p>The browser parses HTML → builds DOM, parses CSS → builds CSSOM, combines into Render Tree, runs JavaScript. Sub-resources (images, CSS files, JS files) each trigger their own DNS+TCP+TLS+HTTP cycles — but HTTP/2 multiplexes multiple requests over a single TCP connection so they happen in parallel.</p>
+
+          <h3>Complete Summary Table</h3>
+          <table class="compare-table">
+            <thead><tr><th>Layer</th><th>What happens</th><th>Protocol</th></tr></thead>
+            <tbody>
+              <tr><td>DNS</td><td>www.example.com → 93.184.216.34</td><td>UDP/53 (or TCP/53 for large responses)</td></tr>
+              <tr><td>ARP</td><td>IP → MAC for local gateway</td><td>Layer 2 broadcast</td></tr>
+              <tr><td>TCP</td><td>SYN, SYN-ACK, ACK handshake</td><td>TCP/443</td></tr>
+              <tr><td>TLS</td><td>Certificate verify + session key exchange</td><td>TLS 1.3</td></tr>
+              <tr><td>HTTP</td><td>GET /page → 200 OK + HTML</td><td>HTTP/1.1 or HTTP/2</td></tr>
+              <tr><td>Render</td><td>DOM + CSSOM → Render Tree → Paint</td><td>Browser engine</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout warning">
+            <div class="callout-icon">🔥</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview follow-ups to prepare for</div>
+              <div class="callout-text">"What if DNS is slow?" (increase TTL, use local resolver) • "What if the TCP connection drops mid-response?" (TCP retransmits, or HTTP/2 stream error) • "How does CDN caching work?" (Cache-Control headers, edge PoPs) • "What's HTTP/3?" (replaces TCP with QUIC over UDP, no head-of-line blocking)</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-tools]').click()">← Networking Tools</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-url-journey')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-arp]').click()">Next: ARP →</button>
+        </div>
+      </div>
+
+      <!-- ARP -->
+      <div class="lesson-panel" data-panel="net-arp">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>ARP — Address Resolution Protocol</h1>
+            <p>Bridges the gap between Layer 3 (IP addresses) and Layer 2 (MAC addresses). Without ARP, packets can't leave your network.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-yellow">Important</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>Why ARP Exists</h2>
+          <p>IP addresses are logical (they can change). MAC addresses are physical (burned into hardware). When you send a packet to 192.168.1.50, the OS needs to know <em>which physical NIC</em> on the local network segment has that IP — that's what ARP resolves.</p>
+
+          <h2>ARP Request/Reply Process</h2>
+          <div class="code-block"><span class="cb-comment"># Your machine wants to send to 192.168.1.50</span>
+<span class="cb-comment"># First checks ARP cache — not found</span>
+<span class="cb-comment"># Broadcasts to everyone on the subnet:</span>
+
+ARP Request (broadcast):
+  "Who has 192.168.1.50? Tell 192.168.1.10"
+  Destination MAC: FF:FF:FF:FF:FF:FF  (broadcast — everyone receives)
+  Source MAC: AA:BB:CC:DD:EE:FF       (your MAC)
+
+ARP Reply (unicast — only the target responds):
+  "192.168.1.50 is at 11:22:33:44:55:66"
+  Destination MAC: AA:BB:CC:DD:EE:FF  (your MAC)
+
+<span class="cb-comment"># Now your machine caches this mapping</span>
+<span class="cb-comment"># View ARP cache:</span>
+arp -a
+ip neigh show</div>
+
+          <h2>ARP Cache</h2>
+          <p>ARP entries are cached to avoid broadcasting on every packet. They expire after a timeout (typically 20-120 seconds on Linux). You can view and manipulate the cache:</p>
+          <div class="code-block">ip neigh show                    <span class="cb-comment"># View ARP cache (modern)</span>
+arp -a                           <span class="cb-comment"># View ARP cache (legacy)</span>
+ip neigh flush all               <span class="cb-comment"># Clear ARP cache</span>
+ip neigh add 192.168.1.50 lladdr 11:22:33:44:55:66 dev eth0  <span class="cb-comment"># Static entry</span></div>
+
+          <h2>Gratuitous ARP</h2>
+          <p>A device sends an ARP reply <em>without</em> being asked. Used to: (1) announce a new IP, (2) update neighbours after failover, (3) detect IP conflicts. Load balancers use gratuitous ARP during failover so all devices on the network immediately route to the new primary.</p>
+
+          <h2>Proxy ARP</h2>
+          <p>A router responds to ARP requests on behalf of hosts in another network. Allows hosts without a configured default gateway to reach remote hosts. Rarely used today but appears in legacy networks.</p>
+
+          <h2>ARP Spoofing (Security)</h2>
+          <p>An attacker sends fake ARP replies to poison the ARP cache of victims:</p>
+          <div class="code-block"><span class="cb-comment"># Attacker tells Victim: "192.168.1.1 (the router) is at MY MAC"</span>
+<span class="cb-comment"># Attacker tells Router: "192.168.1.100 (the victim) is at MY MAC"</span>
+<span class="cb-comment"># Result: all traffic between Victim ↔ Router flows through attacker (MITM)</span>
+
+<span class="cb-comment"># Mitigations:</span>
+<span class="cb-comment"># - Dynamic ARP Inspection (DAI) on managed switches</span>
+<span class="cb-comment"># - Static ARP entries for critical hosts</span>
+<span class="cb-comment"># - 802.1X port authentication</span>
+<span class="cb-comment"># - Use HTTPS/TLS — even if MITM'd, traffic is encrypted</span></div>
+
+          <h2>ARP vs. DNS — Key Difference</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>ARP</th><th>DNS</th></tr></thead>
+            <tbody>
+              <tr><td>Resolves</td><td>IP → MAC address</td><td>Hostname → IP address</td></tr>
+              <tr><td>Scope</td><td>Local network only (Layer 2)</td><td>Global / internet-wide</td></tr>
+              <tr><td>Protocol</td><td>Layer 2 broadcast</td><td>UDP/TCP port 53</td></tr>
+              <tr><td>Cache</td><td>OS ARP table (seconds)</td><td>OS resolver (TTL seconds–hours)</td></tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-url-journey]').click()">← URL Journey</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-arp')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-routing]').click()">Next: Routing →</button>
+        </div>
+      </div>
+
+      <!-- ROUTING -->
+      <div class="lesson-panel" data-panel="net-routing">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Routing — How Packets Travel Across Networks</h1>
+            <p>Routers are the post offices of the internet. Understanding routing tables, static vs dynamic routes, and BGP is essential for cloud and network roles.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>What a Router Does</h2>
+          <p>A router operates at Layer 3 (Network). For each incoming packet it reads the destination IP, looks up the best matching route in its routing table, and forwards the packet out the appropriate interface — decrementing the IP TTL field by 1. If TTL hits 0, the packet is dropped (prevents infinite loops).</p>
+
+          <h2>Routing Table</h2>
+          <div class="code-block"><span class="cb-comment"># View the routing table on Linux</span>
+ip route show
+
+<span class="cb-comment"># Typical output:</span>
+default via 192.168.1.1 dev eth0 proto dhcp          <span class="cb-comment"># Default route = gateway of last resort</span>
+10.0.0.0/8 via 10.1.1.1 dev eth1                    <span class="cb-comment"># All 10.x.x.x goes via 10.1.1.1</span>
+192.168.1.0/24 dev eth0 proto kernel scope link      <span class="cb-comment"># Local subnet — direct delivery</span>
+172.16.0.0/12 via 192.168.1.254 dev eth0            <span class="cb-comment"># RFC 1918 range via specific router</span></div>
+
+          <h2>Longest Prefix Match</h2>
+          <p>When multiple routes match a destination, the router picks the <strong>most specific</strong> (longest subnet mask). Example: a packet to 10.0.1.5:</p>
+          <div class="code-block">Route A: 10.0.0.0/8     → matches (covers 10.x.x.x)
+Route B: 10.0.0.0/16    → matches (covers 10.0.x.x)
+Route C: 10.0.1.0/24    → matches (covers 10.0.1.x) ← WINS (most specific /24)</div>
+
+          <h2>Static vs Dynamic Routing</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>Static Routes</th><th>Dynamic Routing</th></tr></thead>
+            <tbody>
+              <tr><td>Configured by</td><td>Admin manually</td><td>Routing protocol automatically</td></tr>
+              <tr><td>Reacts to failures</td><td>No — fixed</td><td>Yes — recalculates paths</td></tr>
+              <tr><td>Overhead</td><td>None</td><td>CPU + bandwidth for protocol</td></tr>
+              <tr><td>Use case</td><td>Small networks, default routes, AWS VPC</td><td>Large enterprise, ISPs, internet</td></tr>
+              <tr><td>Examples</td><td><code>ip route add 10.1.0.0/16 via 192.168.1.1</code></td><td>OSPF, EIGRP, BGP, RIP</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Key Routing Protocols</h2>
+          <h3>OSPF (Open Shortest Path First)</h3>
+          <p>Link-state protocol. Each router builds a complete map of the network (LSDB). Uses Dijkstra's algorithm to calculate shortest path. Converges fast after topology changes. Used inside enterprise networks and data centres.</p>
+
+          <h3>BGP (Border Gateway Protocol)</h3>
+          <p>The routing protocol of the internet. Every ISP uses BGP to exchange reachability information. BGP is <em>path-vector</em> — it knows the full AS-path to each destination, not just the next hop. AWS VPC uses BGP for Direct Connect and VPN connections.</p>
+          <div class="code-block"><span class="cb-comment"># BGP key concepts:</span>
+AS (Autonomous System)  — a network under single admin control, has an ASN
+eBGP                    — BGP between different ASes (internet routing)
+iBGP                    — BGP within the same AS
+BGP Route Attributes    — AS_PATH, LOCAL_PREF, MED, NEXT_HOP used for path selection
+BGP Convergence         — can take minutes (very slow vs OSPF's seconds)</div>
+
+          <h2>AWS VPC Routing</h2>
+          <p>Every VPC has an implicit router. Route tables are attached to subnets. Key routes you must know:</p>
+          <div class="code-block"><span class="cb-comment"># Public subnet route table:</span>
+10.0.0.0/16   → local           (VPC internal traffic)
+0.0.0.0/0     → igw-xxx        (Internet Gateway — enables internet access)
+
+<span class="cb-comment"># Private subnet route table:</span>
+10.0.0.0/16   → local
+0.0.0.0/0     → nat-xxx        (NAT Gateway — outbound only internet access)
+
+<span class="cb-comment"># VPN / Direct Connect route table:</span>
+10.100.0.0/16 → vgw-xxx        (Virtual Private Gateway → on-prem network)</div>
+
+          <h2>Traceroute — Seeing the Route</h2>
+          <div class="code-block">traceroute google.com
+<span class="cb-comment"># Each line = one router (hop) along the path</span>
+<span class="cb-comment"># Uses TTL: sends packet with TTL=1, gets ICMP "TTL Exceeded" from hop 1</span>
+<span class="cb-comment">#           sends packet with TTL=2, gets response from hop 2, etc.</span>
+<span class="cb-comment"># * * * means hop is not responding (firewall drops ICMP)</span>
+
+ 1  192.168.1.1 (your router)        1.2 ms
+ 2  10.x.x.x   (ISP hop)            8.4 ms
+ 3  72.14.x.x  (Google's network)   15.1 ms
+ 4  google.com                       16.3 ms</div>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-arp]').click()">← ARP</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-routing')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-proxy]').click()">Next: Proxy &amp; CDN →</button>
+        </div>
+      </div>
+
+      <!-- PROXY / REVERSE PROXY / CDN -->
+      <div class="lesson-panel" data-panel="net-proxy">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Proxy, Reverse Proxy &amp; CDN</h1>
+            <p>Three concepts that control how traffic flows. Nginx, HAProxy, Cloudflare, and AWS CloudFront all live here.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>Forward Proxy</h2>
+          <p>Sits in front of <em>clients</em>. The client sends all requests to the proxy; the proxy forwards them to the internet. The server sees the proxy's IP, not the client's.</p>
+          <div class="code-block">Client → [Forward Proxy] → Internet (server)
+<span class="cb-comment"># Use cases:</span>
+<span class="cb-comment"># - Corporate web filtering (block social media)</span>
+<span class="cb-comment"># - Anonymity (VPN-like, server can't see real client IP)</span>
+<span class="cb-comment"># - Caching repeated requests for a group of clients</span>
+<span class="cb-comment"># Examples: Squid Proxy, corporate firewalls, Tor</span></div>
+
+          <h2>Reverse Proxy</h2>
+          <p>Sits in front of <em>servers</em>. Clients send requests to the reverse proxy; it forwards to backend servers. The client sees only the proxy's IP.</p>
+          <div class="code-block">Client → [Reverse Proxy] → Backend Server(s)
+<span class="cb-comment"># Use cases:</span>
+<span class="cb-comment"># - Load balancing (distribute across multiple backends)</span>
+<span class="cb-comment"># - TLS termination (handles HTTPS, backend gets plain HTTP)</span>
+<span class="cb-comment"># - Caching (serve cached responses, reduce backend load)</span>
+<span class="cb-comment"># - DDoS protection / WAF (filters malicious traffic)</span>
+<span class="cb-comment"># - URL routing (/ → app1, /api → app2, /static → app3)</span>
+<span class="cb-comment"># Examples: nginx, HAProxy, AWS ALB, Cloudflare, Traefik</span></div>
+
+          <h2>Nginx as Reverse Proxy</h2>
+          <div class="code-block"><span class="cb-comment"># /etc/nginx/sites-available/myapp</span>
+server {
+    listen 443 ssl;
+    server_name myapp.com;
+
+    ssl_certificate     /etc/ssl/myapp.crt;
+    ssl_certificate_key /etc/ssl/myapp.key;
+
+    location / {
+        proxy_pass http://localhost:3000;       <span class="cb-comment"># Forward to Node.js backend</span>
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;  <span class="cb-comment"># Pass real client IP</span>
+    }
+
+    location /static/ {
+        root /var/www;                         <span class="cb-comment"># Serve static files directly</span>
+    }
+}</div>
+
+          <h2>Load Balancing Algorithms</h2>
+          <table class="compare-table">
+            <thead><tr><th>Algorithm</th><th>How it works</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td>Round Robin</td><td>Each request → next server in rotation</td><td>Equal-capacity backends</td></tr>
+              <tr><td>Least Connections</td><td>Route to server with fewest active connections</td><td>Long-lived connections (WebSocket)</td></tr>
+              <tr><td>IP Hash</td><td>Hash client IP → always same server</td><td>Session stickiness (stateful apps)</td></tr>
+              <tr><td>Weighted</td><td>Server with higher weight gets more traffic</td><td>Mixed-capacity servers</td></tr>
+              <tr><td>Random</td><td>Random server selection</td><td>Simple, stateless services</td></tr>
+            </tbody>
+          </table>
+
+          <h2>CDN (Content Delivery Network)</h2>
+          <p>A globally distributed network of cache servers (called PoPs — Points of Presence). When a user requests a resource, the CDN serves it from the nearest PoP instead of your origin server.</p>
+          <div class="code-block"><span class="cb-comment"># Without CDN:</span>
+User in Mumbai → Origin server in London  (RTT ~150ms)
+
+<span class="cb-comment"># With CDN (e.g., Cloudflare, CloudFront, Fastly):</span>
+User in Mumbai → CDN PoP in Mumbai  (RTT ~5ms)  ← 30x faster
+  └─ If PoP doesn't have it (cache miss): fetch from origin, cache it
+
+<span class="cb-comment"># Cache control (how long CDN stores content):</span>
+Cache-Control: max-age=86400, s-maxage=3600   <span class="cb-comment"># Browser=24h, CDN=1h</span>
+Cache-Control: no-store                        <span class="cb-comment"># Never cache (e.g., API responses)</span>
+Vary: Accept-Encoding                          <span class="cb-comment"># Cache separately per encoding</span></div>
+
+          <h2>CDN Cache Invalidation</h2>
+          <p>When you deploy a new version of a file, the CDN may still serve the old cached version. Solutions: (1) purge the cache via API (<code>aws cloudfront create-invalidation</code>), (2) use cache-busting filenames (<code>app.a3f8c2.js</code> — the hash changes on each deploy), (3) set short TTLs for HTML, long TTLs for hashed assets.</p>
+
+          <h2>Forward vs Reverse Proxy — Quick Comparison</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>Forward Proxy</th><th>Reverse Proxy</th></tr></thead>
+            <tbody>
+              <tr><td>Sits in front of</td><td>Clients</td><td>Servers</td></tr>
+              <tr><td>Hides</td><td>Client identity from server</td><td>Server identity from client</td></tr>
+              <tr><td>Client config</td><td>Client must be configured to use it</td><td>Transparent to client</td></tr>
+              <tr><td>Examples</td><td>Squid, corporate proxy, Tor</td><td>nginx, AWS ALB, Cloudflare</td></tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-routing]').click()">← Routing</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-proxy')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-vpn]').click()">Next: VPN →</button>
+        </div>
+      </div>
+
+      <!-- VPN -->
+      <div class="lesson-panel" data-panel="net-vpn">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>VPN &amp; Tunneling</h1>
+            <p>Virtual Private Networks create encrypted tunnels over public networks. Essential for connecting offices, remote workers, and cloud infrastructure.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-yellow">Important</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>What is a VPN?</h2>
+          <p>A VPN creates an encrypted tunnel between two endpoints across an untrusted network (the internet). Data is encrypted before leaving the source, travels through the public internet as unintelligible ciphertext, and is decrypted at the destination. From the applications' perspective, they're on the same private network.</p>
+
+          <h2>Types of VPN</h2>
+
+          <h3>Site-to-Site VPN</h3>
+          <p>Connects two entire networks (e.g., office LAN ↔ AWS VPC, or two office branches). Routers/gateways on each side handle encryption — individual devices don't need VPN software.</p>
+          <div class="code-block">Office Network (192.168.1.0/24) ←──────────────→ AWS VPC (10.0.0.0/16)
+      Router/Firewall              Encrypted tunnel         Virtual Private Gateway
+      (encrypts all traffic                                 (decrypts, routes into VPC)
+       leaving the office)
+
+<span class="cb-comment"># AWS setup:</span>
+<span class="cb-comment"># 1. Create Virtual Private Gateway (VGW) — attach to VPC</span>
+<span class="cb-comment"># 2. Create Customer Gateway (CGW) — your on-prem router's IP</span>
+<span class="cb-comment"># 3. Create Site-to-Site VPN Connection — two tunnels for redundancy</span>
+<span class="cb-comment"># 4. Add route in VPC route table: 192.168.1.0/24 → VGW</span></div>
+
+          <h3>Client VPN (Remote Access VPN)</h3>
+          <p>Individual users connect from their laptop/phone to a VPN server. Software on the device creates a virtual network interface. All or part of the user's traffic is routed through the tunnel.</p>
+          <div class="code-block"><span class="cb-comment"># Split tunneling (common):</span>
+Traffic to 10.0.0.0/8 → through VPN tunnel (corporate resources)
+All other traffic      → direct to internet (no VPN overhead)
+
+<span class="cb-comment"># Full tunneling:</span>
+All traffic → through VPN → internet   (company can see everything, more secure)</div>
+
+          <h2>VPN Protocols</h2>
+          <table class="compare-table">
+            <thead><tr><th>Protocol</th><th>How it works</th><th>Performance</th><th>Use case</th></tr></thead>
+            <tbody>
+              <tr><td>IPSec/IKEv2</td><td>Industry standard, operates at Layer 3. Two phases: IKE negotiates keys, IPSec encrypts packets. Can be tunnel or transport mode.</td><td>Good</td><td>Site-to-site, enterprise, AWS VPN</td></tr>
+              <tr><td>OpenVPN</td><td>TLS-based, runs over UDP or TCP, port 1194. Very flexible, open source, works through firewalls on port 443.</td><td>Good</td><td>Remote access, corporate VPN</td></tr>
+              <tr><td>WireGuard</td><td>Modern, minimal codebase (4000 lines vs OpenVPN's 400,000). Uses state-of-the-art cryptography (ChaCha20, Curve25519). Extremely fast.</td><td>Excellent</td><td>Cloud, containers, modern deployments</td></tr>
+              <tr><td>SSL/TLS VPN</td><td>Runs over HTTPS (port 443). No client software needed — works through browsers. Used by corporate web portals.</td><td>Moderate</td><td>Clientless remote access</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Tunneling</h2>
+          <p>Tunneling encapsulates one protocol inside another. The original packet becomes the payload of the outer packet:</p>
+          <div class="code-block"><span class="cb-comment"># Example: IP-in-IP tunneling</span>
+[Outer IP Header: 1.2.3.4 → 5.6.7.8] [Inner IP Header: 10.0.1.5 → 10.0.2.10] [Data]
+                                        ←────────── encrypted payload ──────────→
+
+<span class="cb-comment"># Common tunneling protocols:</span>
+GRE (Generic Routing Encapsulation)  — wraps any L3 protocol in IP, no encryption
+IPSec Tunnel Mode                    — encrypts entire inner packet
+VXLAN                                — wraps Layer 2 frames in UDP (used by Docker/K8s overlay networks)
+IPIP                                 — simplest IP-in-IP, no encryption</div>
+
+          <h2>AWS Direct Connect vs VPN</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>Site-to-Site VPN</th><th>Direct Connect</th></tr></thead>
+            <tbody>
+              <tr><td>Connection</td><td>Over public internet (encrypted)</td><td>Dedicated private fibre line</td></tr>
+              <tr><td>Setup time</td><td>Minutes</td><td>Weeks/months</td></tr>
+              <tr><td>Bandwidth</td><td>Up to ~1.25 Gbps</td><td>1 Gbps – 100 Gbps</td></tr>
+              <tr><td>Reliability</td><td>Best-effort internet</td><td>SLA-backed, consistent latency</td></tr>
+              <tr><td>Cost</td><td>Low (pay per GB)</td><td>High (port + data transfer)</td></tr>
+              <tr><td>Use case</td><td>Smaller workloads, backup</td><td>Mission-critical, large data transfer</td></tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-proxy]').click()">← Proxy &amp; CDN</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-vpn')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-ipv6]').click()">Next: IPv6 →</button>
+        </div>
+      </div>
+
+      <!-- IPv6 -->
+      <div class="lesson-panel" data-panel="net-ipv6">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>IPv6 Essentials</h1>
+            <p>IPv4 addresses ran out in 2011. IPv6 is the future — and increasingly present. You'll encounter it in cloud, ISP, and modern infrastructure roles.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Modern</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>Why IPv6?</h2>
+          <p>IPv4 has ~4.3 billion addresses (2³²). With billions of devices, we exhausted them. IPv6 has 2¹²⁸ addresses — ~340 undecillion (340,000,000,000,000,000,000,000,000,000,000,000,000). Every device can have a globally unique address, eliminating the need for NAT.</p>
+
+          <h2>IPv6 Address Format</h2>
+          <div class="code-block"><span class="cb-comment"># IPv6 = 128 bits, written as 8 groups of 4 hex digits separated by colons</span>
+2001:0db8:0000:0000:0000:ff00:0042:8329
+
+<span class="cb-comment"># Abbreviation rules:</span>
+<span class="cb-comment"># 1. Leading zeros in each group can be omitted</span>
+2001:db8:0:0:0:ff00:42:8329
+
+<span class="cb-comment"># 2. One run of consecutive all-zero groups can be replaced with ::</span>
+2001:db8::ff00:42:8329   ← this is the canonical form
+
+<span class="cb-comment"># :: can only appear ONCE in an address</span>
+<span class="cb-comment"># Wrong: 2001::db8::1  (ambiguous — two :: groups)</span>
+
+<span class="cb-comment"># Loopback (equivalent of 127.0.0.1)</span>
+::1
+
+<span class="cb-comment"># All-zeros "unspecified" address (like 0.0.0.0)</span>
+::  (or 0:0:0:0:0:0:0:0)</div>
+
+          <h2>IPv6 Address Types</h2>
+          <table class="compare-table">
+            <thead><tr><th>Type</th><th>Prefix</th><th>Equivalent</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>Global Unicast</td><td>2000::/3</td><td>Public IPv4</td><td>Globally routable — your real internet address</td></tr>
+              <tr><td>Link-Local</td><td>fe80::/10</td><td>169.254.x.x</td><td>Auto-configured on every IPv6 interface, not routable off-link</td></tr>
+              <tr><td>Unique Local</td><td>fc00::/7</td><td>RFC 1918 private</td><td>Private addressing — not routed on internet</td></tr>
+              <tr><td>Loopback</td><td>::1/128</td><td>127.0.0.1</td><td>Local machine only</td></tr>
+              <tr><td>Multicast</td><td>ff00::/8</td><td>224.x.x.x</td><td>One-to-many (replaces IPv4 broadcast)</td></tr>
+            </tbody>
+          </table>
+
+          <h2>IPv6 Has No Broadcast</h2>
+          <p>IPv4 uses broadcast (255.255.255.255) to send to all devices. IPv6 eliminates broadcast — replaced by multicast and anycast. This reduces unnecessary traffic significantly.</p>
+
+          <h2>Address Assignment: SLAAC vs DHCPv6</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>SLAAC</th><th>DHCPv6</th></tr></thead>
+            <tbody>
+              <tr><td>Stands for</td><td>Stateless Address Autoconfiguration</td><td>Dynamic Host Config Protocol v6</td></tr>
+              <tr><td>How</td><td>Device generates its own address using network prefix (from router) + its MAC (EUI-64)</td><td>Central server assigns addresses (like DHCPv4)</td></tr>
+              <tr><td>State tracking</td><td>None — router doesn't track who has what</td><td>Server tracks all leases</td></tr>
+              <tr><td>Use case</td><td>Home networks, IoT, simple deployments</td><td>Enterprise — need DNS assignment &amp; audit trail</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Dual Stack</h2>
+          <p>Most networks today run "dual stack" — both IPv4 and IPv6 simultaneously. The device has both a 192.168.x.x address and a 2001:db8::x address. When connecting, it prefers IPv6 if available (RFC 6724 address selection).</p>
+          <div class="code-block"><span class="cb-comment"># Check IPv6 connectivity on Linux</span>
+ip -6 addr show
+ip -6 route show
+ping6 ::1           <span class="cb-comment"># Ping loopback</span>
+ping6 2001:4860:4860::8888  <span class="cb-comment"># Ping Google's IPv6 DNS</span>
+
+<span class="cb-comment"># curl with explicit IPv6</span>
+curl -6 https://ipv6.google.com</div>
+
+          <h2>NDP — Neighbour Discovery Protocol</h2>
+          <p>IPv6 replaces ARP with NDP (Neighbour Discovery Protocol), which uses ICMPv6 multicast instead of broadcasts. It also replaces DHCP for address assignment (SLAAC), and replaces ICMP Router Discovery for default gateway learning. More efficient and secure than IPv4's equivalent mechanisms.</p>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-vpn]').click()">← VPN</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-ipv6')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-perf]').click()">Next: Performance →</button>
+        </div>
+      </div>
+
+      <!-- NETWORK PERFORMANCE -->
+      <div class="lesson-panel" data-panel="net-perf">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Network Performance &amp; Metrics</h1>
+            <p>Bandwidth, latency, throughput, jitter — know the differences and how to measure them. Critical for diagnosing slow applications.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-yellow">Important</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>Key Metrics — Defined Precisely</h2>
+
+          <h3>Latency</h3>
+          <p>The time for a single packet to travel from source to destination. Measured in milliseconds (ms). Determined by physical distance (speed of light in fibre ≈ 200,000 km/s) and processing time at each hop. You can't overcome physics — London to Sydney is at minimum ~85ms regardless of your bandwidth.</p>
+          <div class="code-block">ping google.com
+<span class="cb-comment"># RTT (Round-Trip Time) = latency × 2 (there and back)</span>
+<span class="cb-comment"># Typical RTTs: same city 1-5ms, same country 10-50ms, cross-continent 80-200ms</span></div>
+
+          <h3>Bandwidth</h3>
+          <p>The maximum data transfer rate of a link. Like the width of a pipe. Measured in Mbps or Gbps. A 1 Gbps link can theoretically transfer 125 MB per second. Bandwidth ≠ speed — you can have 1 Gbps bandwidth but 200ms latency.</p>
+
+          <h3>Throughput</h3>
+          <p>The <em>actual</em> data transfer rate achieved, always ≤ bandwidth. Affected by latency, packet loss, protocol overhead, and TCP window size. A 1 Gbps link with 1% packet loss might only achieve 100 Mbps throughput (TCP slows down aggressively on loss).</p>
+
+          <h3>Jitter</h3>
+          <p>Variation in packet arrival times. High jitter causes choppy VoIP/video calls even if average latency is fine. Measured in ms. Target: &lt;30ms for VoIP, &lt;10ms for video conferencing.</p>
+
+          <h3>Packet Loss</h3>
+          <p>Percentage of packets that don't arrive. Even 0.1% loss significantly degrades TCP performance (triggers retransmission + slowdown). Measured with ping or iperf3.</p>
+
+          <h2>TCP Performance Deep Dive</h2>
+          <div class="code-block"><span class="cb-comment"># TCP Slow Start — how TCP builds up speed</span>
+Connection starts with small congestion window (cwnd)
+Each ACK received → double the cwnd  (exponential growth)
+Until cwnd reaches ssthresh (slow-start threshold)
+Then: linear growth (congestion avoidance)
+On packet loss: cwnd halved (multiplicative decrease)
+
+<span class="cb-comment"># This is why large file transfers start slow then accelerate</span>
+<span class="cb-comment"># High latency + high bandwidth = "bandwidth-delay product" problem</span>
+
+<span class="cb-comment"># Bandwidth-Delay Product (BDP):</span>
+BDP = Bandwidth × RTT
+    = 1 Gbps × 0.1s (100ms) = 100 Mbit = 12.5 MB
+<span class="cb-comment"># TCP must have 12.5 MB "in flight" to fully utilise this link</span>
+<span class="cb-comment"># Old TCP limit: 64 KB window — only ~5 Mbps on that 1 Gbps link!</span>
+<span class="cb-comment"># TCP window scaling (RFC 7323) solves this for modern systems</span></div>
+
+          <h2>MTU — Maximum Transmission Unit</h2>
+          <p>The largest packet size a link can carry without fragmentation. Ethernet MTU = 1500 bytes. If a packet is larger, it must be fragmented (split into multiple packets) or dropped with an ICMP "Fragmentation Needed" message. VPNs reduce the effective MTU (tunnel overhead eats bytes — typically 20-80 bytes). Jumbo frames (MTU 9000) used in data centres for performance.</p>
+          <div class="code-block"><span class="cb-comment"># Check MTU</span>
+ip link show eth0              <span class="cb-comment"># Shows "mtu 1500"</span>
+
+<span class="cb-comment"># Test path MTU (find largest unfragmented packet size)</span>
+ping -M do -s 1472 8.8.8.8    <span class="cb-comment"># -M do = don't fragment, 1472+28 header = 1500</span>
+
+<span class="cb-comment"># Common MTU issue: VPN tunnel with MTU 1500 → overhead → inner MTU 1420</span>
+<span class="cb-comment"># Symptom: large files fail/hang but small files/pings work fine</span></div>
+
+          <h2>Tools to Measure Performance</h2>
+          <div class="code-block"><span class="cb-comment"># iperf3 — measure bandwidth between two hosts</span>
+iperf3 -s                          <span class="cb-comment"># Start server on port 5201</span>
+iperf3 -c server_ip                <span class="cb-comment"># Run client — tests TCP bandwidth</span>
+iperf3 -c server_ip -u -b 100M    <span class="cb-comment"># UDP test at 100 Mbps — measures jitter/loss</span>
+
+<span class="cb-comment"># mtr — combines ping + traceroute, shows per-hop loss and latency</span>
+mtr google.com
+
+<span class="cb-comment"># ss — show TCP socket stats including retransmits</span>
+ss -tin                            <span class="cb-comment"># -t TCP, -i info, -n numeric</span>
+<span class="cb-comment"># Look for: retrans, rto, cwnd, ssthresh values</span>
+
+<span class="cb-comment"># ethtool — check physical link speed</span>
+ethtool eth0 | grep Speed         <span class="cb-comment"># "Speed: 1000Mb/s"</span></div>
+
+          <h2>Latency vs Bandwidth — The Analogy</h2>
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">Think of a motorway (highway)</div>
+              <div class="callout-text"><strong>Bandwidth = width of the road</strong> (number of lanes — how much can flow at once). <strong>Latency = speed limit</strong> (how fast a single car travels). A 10-lane motorway (huge bandwidth) still takes 4 hours London → Edinburgh (high latency). You can't reduce latency by adding more lanes.</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-ipv6]').click()">← IPv6</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-perf')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-attacks]').click()">Next: Security &amp; Attacks →</button>
+        </div>
+      </div>
+
+      <!-- NETWORK SECURITY & ATTACKS -->
+      <div class="lesson-panel" data-panel="net-attacks">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Network Security &amp; Attacks</h1>
+            <p>Know the attacks so you can defend against them. Every infrastructure role requires understanding DDoS, MITM, DNS poisoning, and SYN floods.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>DDoS — Distributed Denial of Service</h2>
+          <p>Overwhelming a target with traffic from many sources (botnet) until legitimate users can't connect. Different from DoS (single attacker). Attacks happen at different layers:</p>
+          <div class="code-block"><span class="cb-comment"># Layer 3/4 — Volumetric attacks (flood the pipe)</span>
+UDP Flood:       Millions of UDP packets to random ports → server sends ICMP "unreachable" → overwhelmed
+ICMP Flood:      Massive ping storm
+Amplification:   Send small requests with spoofed source IP to DNS/NTP servers
+                 → servers send large responses to victim (amplification 50-100x)
+
+<span class="cb-comment"># Layer 7 — Application attacks (exhaust server resources)</span>
+HTTP Flood:      Millions of legitimate-looking HTTP GET/POST requests
+Slowloris:       Open many connections, send headers very slowly → holds server threads
+SSL Exhaustion:  TLS handshakes are expensive → flood with partial handshakes
+
+<span class="cb-comment"># Mitigations:</span>
+<span class="cb-comment"># - AWS Shield (Standard: free, Advanced: $3000/month)</span>
+<span class="cb-comment"># - Cloudflare DDoS protection (absorbs at edge)</span>
+<span class="cb-comment"># - Rate limiting at WAF / nginx level</span>
+<span class="cb-comment"># - Anycast routing (spread attack across many PoPs)</span>
+<span class="cb-comment"># - Blackhole routing (null-route the attack traffic at ISP level)</span></div>
+
+          <h2>SYN Flood</h2>
+          <p>Exploits the TCP 3-way handshake. Attacker sends SYN packets with spoofed source IPs. Server allocates memory for each half-open connection waiting for the final ACK that never arrives. Server's connection table fills up — legitimate connections refused.</p>
+          <div class="code-block"><span class="cb-comment"># Attack:</span>
+Attacker → SYN (source: fake IPs)
+Server   → SYN-ACK (to fake IPs — no response)
+Server keeps half-open connections (default timeout 75s)
+After ~thousands of SYNs: connection table full → all new connections rejected
+
+<span class="cb-comment"># Mitigation: SYN Cookies (RFC 4987)</span>
+Server doesn't allocate memory on SYN — instead encodes state in the SYN-ACK sequence number
+Only allocates memory when valid ACK arrives (proving the client received SYN-ACK)
+<span class="cb-comment"># Enable on Linux:</span>
+sysctl net.ipv4.tcp_syncookies=1</div>
+
+          <h2>MITM — Man in the Middle</h2>
+          <p>Attacker intercepts communication between two parties. Both believe they're talking directly to each other.</p>
+          <div class="code-block"><span class="cb-comment"># ARP Spoofing MITM (on local network):</span>
+1. Attacker tells Victim: "The gateway's MAC is MY MAC"
+2. Attacker tells Gateway: "The victim's MAC is MY MAC"
+3. All Victim ↔ Gateway traffic flows through attacker
+4. Attacker reads/modifies unencrypted traffic
+
+<span class="cb-comment"># SSL Stripping:</span>
+1. Victim requests http://bank.com
+2. MITM intercepts → fetches https://bank.com (talks HTTPS to server)
+3. MITM serves plain http:// to victim
+4. Victim's password sent in plaintext!
+
+<span class="cb-comment"># Mitigations:</span>
+<span class="cb-comment"># - HSTS (HTTP Strict Transport Security): browser always uses HTTPS for domain</span>
+<span class="cb-comment"># - HSTS Preloading: browsers ship with a list of HTTPS-only domains</span>
+<span class="cb-comment"># - Certificate Pinning: app refuses certs not matching known fingerprint</span>
+<span class="cb-comment"># - Dynamic ARP Inspection (DAI): switch validates ARP against DHCP snooping table</span></div>
+
+          <h2>DNS Poisoning / Cache Poisoning</h2>
+          <p>Attacker injects false DNS records into a resolver's cache. When users query for example.com, they get the attacker's IP instead — classic phishing attack vector.</p>
+          <div class="code-block"><span class="cb-comment"># Classic Kaminsky Attack (2008):</span>
+1. Attacker floods resolver with queries for random.example.com
+2. For each query, sends thousands of fake responses with different transaction IDs
+3. One fake response wins the race → poisons the .com TLD cache
+4. Now all *.example.com queries return attacker's IP
+
+<span class="cb-comment"># Mitigations:</span>
+<span class="cb-comment"># DNSSEC — cryptographically signs DNS records</span>
+<span class="cb-comment">#   Each response has a digital signature — resolver can verify authenticity</span>
+<span class="cb-comment"># Source port randomisation — makes transaction IDs harder to guess</span>
+<span class="cb-comment"># DNS over HTTPS (DoH) / DNS over TLS (DoT) — encrypt DNS queries</span>
+dig example.com +dnssec   <span class="cb-comment"># Check DNSSEC validation</span></div>
+
+          <h2>Common Firewall Rules — Defence</h2>
+          <div class="code-block"><span class="cb-comment"># iptables — default deny, allow specific inbound</span>
+iptables -P INPUT DROP            <span class="cb-comment"># Default: drop all inbound</span>
+iptables -P FORWARD DROP          <span class="cb-comment"># Default: drop all forwarded</span>
+iptables -P OUTPUT ACCEPT         <span class="cb-comment"># Default: allow all outbound</span>
+
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  <span class="cb-comment"># Allow replies</span>
+iptables -A INPUT -i lo -j ACCEPT                                  <span class="cb-comment"># Allow loopback</span>
+iptables -A INPUT -p tcp --dport 22 -s 10.0.0.0/8 -j ACCEPT      <span class="cb-comment"># SSH from internal only</span>
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT                    <span class="cb-comment"># HTTPS from anywhere</span>
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT                     <span class="cb-comment"># HTTP from anywhere</span>
+
+<span class="cb-comment"># Rate limit to mitigate brute-force / SYN flood</span>
+iptables -A INPUT -p tcp --dport 22 -m limit --limit 3/min -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -j DROP</div>
+
+          <h2>Security Concepts Summary</h2>
+          <table class="compare-table">
+            <thead><tr><th>Attack</th><th>Layer</th><th>Mitigation</th></tr></thead>
+            <tbody>
+              <tr><td>DDoS</td><td>3/4/7</td><td>Cloudflare/Shield, rate limiting, anycast</td></tr>
+              <tr><td>SYN Flood</td><td>4</td><td>SYN cookies, rate limiting</td></tr>
+              <tr><td>ARP Spoofing</td><td>2</td><td>DAI, 802.1X, static ARP, use TLS</td></tr>
+              <tr><td>SSL Stripping</td><td>7</td><td>HSTS, HSTS preloading</td></tr>
+              <tr><td>DNS Poisoning</td><td>7</td><td>DNSSEC, DoH/DoT, source port randomisation</td></tr>
+              <tr><td>Port Scanning</td><td>4</td><td>Firewall default-deny, IDS/IPS</td></tr>
+              <tr><td>Packet Sniffing</td><td>2</td><td>Encryption (TLS), switches not hubs, 802.1X</td></tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-perf]').click()">← Performance</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-attacks')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-vlan]').click()">Next: VLANs →</button>
+        </div>
+      </div>
+
+      <!-- VLANs -->
+      <div class="lesson-panel" data-panel="net-vlan">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>VLANs &amp; Network Segmentation</h1>
+            <p>VLANs divide one physical network into isolated logical networks. Fundamental for security, traffic management, and enterprise networking.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-yellow">Important</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>What is a VLAN?</h2>
+          <p>Virtual LAN. A logical grouping of network devices regardless of their physical location. Devices on the same VLAN can communicate as if on the same switch — devices on different VLANs are isolated even if plugged into the same physical switch. Defined by IEEE 802.1Q standard.</p>
+
+          <h2>802.1Q VLAN Tagging</h2>
+          <p>A 4-byte tag is inserted into the Ethernet frame header identifying which VLAN the frame belongs to. The tag contains a 12-bit VLAN ID (VID), allowing 4094 VLANs (IDs 1-4094, 0 and 4095 reserved).</p>
+          <div class="code-block"><span class="cb-comment"># Ethernet frame with 802.1Q tag:</span>
+[Dest MAC][Src MAC][802.1Q Tag: TPID=0x8100 | PCP | DEI | VLAN ID][Type][Data][FCS]
+                    ←──────────── 4 bytes ──────────────────────────→
+
+<span class="cb-comment"># Example: Frame tagged with VLAN 100</span>
+VLAN ID = 100 (binary: 0000 0110 0100)
+
+<span class="cb-comment"># Linux — create VLAN interface</span>
+ip link add link eth0 name eth0.100 type vlan id 100
+ip addr add 192.168.100.1/24 dev eth0.100
+ip link set eth0.100 up</div>
+
+          <h2>Access Ports vs Trunk Ports</h2>
+          <table class="compare-table">
+            <thead><tr><th></th><th>Access Port</th><th>Trunk Port</th></tr></thead>
+            <tbody>
+              <tr><td>Also called</td><td>Untagged port</td><td>Tagged port</td></tr>
+              <tr><td>Connected to</td><td>End devices (PCs, servers, printers)</td><td>Other switches, routers, hypervisors</td></tr>
+              <tr><td>Frames</td><td>Untagged — device doesn't know about VLANs</td><td>Tagged with 802.1Q VLAN ID</td></tr>
+              <tr><td>VLAN membership</td><td>Belongs to exactly one VLAN</td><td>Carries multiple VLANs</td></tr>
+              <tr><td>Native VLAN</td><td>N/A</td><td>One VLAN can be untagged (native) — default VLAN 1</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Inter-VLAN Routing</h2>
+          <p>By design, VLANs don't talk to each other. To route between VLANs you need a Layer 3 device (router or Layer 3 switch):</p>
+          <div class="code-block"><span class="cb-comment"># Router-on-a-stick: single router port carries tagged trunk</span>
+<span class="cb-comment"># Router creates sub-interfaces for each VLAN:</span>
+
+interface eth0.10                 <span class="cb-comment"># Sub-interface for VLAN 10</span>
+  encapsulation dot1q 10          <span class="cb-comment"># Accept 802.1Q tagged frames for VLAN 10</span>
+  ip address 10.10.10.1 255.255.255.0
+
+interface eth0.20                 <span class="cb-comment"># Sub-interface for VLAN 20</span>
+  encapsulation dot1q 20
+  ip address 10.20.20.1 255.255.255.0
+
+<span class="cb-comment"># Now hosts in VLAN 10 can reach VLAN 20 via the router</span>
+<span class="cb-comment"># But you can add ACLs to control what traffic is allowed between VLANs</span></div>
+
+          <h2>Why Segment Networks with VLANs?</h2>
+          <div class="code-block"><span class="cb-comment"># Security segmentation example:</span>
+VLAN 10: Servers (192.168.10.0/24)     — no internet, no user access
+VLAN 20: End Users (192.168.20.0/24)  — internet access, no server access
+VLAN 30: Management (192.168.30.0/24) — SSH to all devices, very restricted access
+VLAN 40: Guest WiFi (192.168.40.0/24) — internet only, isolated from all other VLANs
+VLAN 50: IoT Devices (192.168.50.0/24)— isolated, outbound only
+
+<span class="cb-comment"># Benefits:</span>
+<span class="cb-comment"># 1. Security: breach in guest VLAN can't reach servers</span>
+<span class="cb-comment"># 2. Performance: reduces broadcast domain size (less ARP noise)</span>
+<span class="cb-comment"># 3. Compliance: PCI DSS requires card data to be on isolated network</span>
+<span class="cb-comment"># 4. Flexibility: move devices between VLANs without rewiring</span></div>
+
+          <h2>AWS VPC — The Cloud Equivalent</h2>
+          <p>AWS VPCs and subnets are conceptually similar to VLANs. Private subnets = isolated VLAN. Security Groups = per-instance firewall. NACLs = per-subnet ACL (like inter-VLAN ACLs). VPC Peering = inter-VLAN routing between different VPCs. Transit Gateway = hub connecting many VPCs (like a Layer 3 core switch).</p>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-attacks]').click()">← Security &amp; Attacks</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-vlan')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-advanced-qa]').click()">Next: Advanced Q&amp;A →</button>
+        </div>
+      </div>
+
+      <!-- ADVANCED INTERVIEW Q&A -->
+      <div class="lesson-panel" data-panel="net-advanced-qa">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>💡 Advanced Interview Q&amp;A</h1>
+            <p>Deep-dive answers to the hardest networking interview questions. Bookmark this and review before every interview.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Must Know</span><span class="badge badge-green">~45 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">How to use this section</div>
+              <div class="callout-text">Read the question first. Try to answer it mentally. Then read the answer. The goal is to be able to explain these concepts out loud in 60-90 seconds without hesitation.</div>
+            </div>
+          </div>
+
+          <h2>Fundamentals</h2>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: What is the difference between TCP and UDP? When would you use each?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p><strong>TCP (Transmission Control Protocol)</strong> is connection-oriented, reliable, and ordered. It guarantees delivery through acknowledgements and retransmission, ensures packets arrive in order, and has flow control (prevents overwhelming the receiver) and congestion control (prevents overwhelming the network). The cost: overhead of the 3-way handshake, and ACK round-trips add latency.</p>
+              <p><strong>UDP (User Datagram Protocol)</strong> is connectionless, unreliable (fire-and-forget), and has no ordering guarantee. No handshake, no retransmission, no flow control. What you get: low latency and simplicity.</p>
+              <p><strong>Use TCP for:</strong> anything where data integrity matters — HTTP/HTTPS, SSH, FTP, database connections, file transfers. You'd rather wait for a retransmit than receive corrupted data.</p>
+              <p><strong>Use UDP for:</strong> real-time applications where latency matters more than perfection — DNS (fast queries), VoIP (a dropped word is better than a delayed conversation), live video streaming, online gaming, DHCP. HTTP/3 runs over QUIC (a UDP-based protocol) because it implements reliability in user space with better performance than TCP.</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: Explain the OSI model. What layer does each protocol operate at?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>The OSI (Open Systems Interconnection) model is a conceptual framework with 7 layers. Remember: "Please Do Not Throw Sausage Pizza Away" (Physical→Application).</p>
+              <p><strong>L1 Physical:</strong> Bits over wire/fibre/air. Ethernet cables, fibre, Wi-Fi radio waves, hubs (broadcast everything).</p>
+              <p><strong>L2 Data Link:</strong> Frames between devices on same network. MAC addresses, switches (learn which MAC on which port), ARP, 802.1Q VLAN tags, Ethernet.</p>
+              <p><strong>L3 Network:</strong> Packets between networks. IP addresses, routing, routers. IP, ICMP, OSPF, BGP.</p>
+              <p><strong>L4 Transport:</strong> End-to-end connections between processes. Ports, TCP (reliable), UDP (unreliable). Firewalls typically operate here.</p>
+              <p><strong>L5 Session:</strong> Session establishment/management. NetBIOS, RPC, SQL sessions. Often merged with L4/L6 in practice.</p>
+              <p><strong>L6 Presentation:</strong> Data format, encryption, compression. TLS/SSL, JPEG encoding, character set translation (ASCII/Unicode).</p>
+              <p><strong>L7 Application:</strong> Application protocols. HTTP, HTTPS, FTP, SMTP, DNS, DHCP, SSH, WebSocket.</p>
+              <p><strong>Key interview point:</strong> A firewall at L4 sees IP+port but not the URL. A WAF (Web Application Firewall) at L7 sees the full HTTP request and can block based on URL, headers, or body content. A switch operates at L2 (MAC), a router at L3 (IP).</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: What happens when you ping a machine and get no response?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>Systematic diagnosis — work from Layer 1 up:</p>
+              <ol>
+                <li><strong>Is the target machine up?</strong> Try pinging its own IP from itself (loopback). If it responds to itself, the machine is running.</li>
+                <li><strong>Network connectivity:</strong> Can you ping the gateway? If not, local network issue — check cables, switch, VLAN.</li>
+                <li><strong>DNS resolution (if using hostname):</strong> Does <code>dig hostname</code> return the right IP? Separate issue from connectivity.</li>
+                <li><strong>Firewall blocking ICMP:</strong> Many servers block ICMP by default. Try <code>curl http://targetip:port</code> — if that works, it's a firewall rule on ICMP, not a connectivity problem. AWS Security Groups don't pass ICMP by default.</li>
+                <li><strong>Routing problem:</strong> Run <code>traceroute</code> — where does the path fail? Asymmetric routing can also cause this (packets go out but return path is broken).</li>
+                <li><strong>IP conflict:</strong> Another device may have the same IP — ARP will send packets to the wrong MAC.</li>
+              </ol>
+              <p>The key insight: no ping response ≠ machine is down. It often just means ICMP is blocked. Always try to connect on the actual service port before concluding the machine is unreachable.</p>
+            </div>
+          </details>
+
+          <h2>DNS &amp; DHCP</h2>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: A user says a website is loading slowly. How do you diagnose whether it's a DNS issue?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>DNS adds latency to the <em>first</em> connection only (cached after that). To isolate DNS as the cause:</p>
+              <div class="code-block">time dig example.com                    <span class="cb-comment"># How long does DNS resolution take?</span>
+time dig example.com @8.8.8.8           <span class="cb-comment"># Try Google's DNS — is your resolver slow?</span>
+dig example.com +norecurse              <span class="cb-comment"># Query without recursion — check local cache</span>
+<span class="cb-comment"># If first dig is slow but second is fast → DNS caching working, first lookup was slow</span>
+<span class="cb-comment"># If dig is fast but page is slow → DNS is fine, problem is elsewhere</span>
+curl -w "%{time_namelookup} %{time_connect} %{time_total}" -o /dev/null https://example.com
+<span class="cb-comment"># time_namelookup = DNS time, time_connect = TCP connect time, time_total = total</span></div>
+              <p>If DNS is the issue: switch to a faster resolver (8.8.8.8, 1.1.1.1), check if the authoritative NS is slow, increase TTL so clients cache longer, or use a local caching resolver.</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: What is TTL in DNS? What happens if you set it too high or too low?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>TTL (Time To Live) is the number of seconds a DNS record can be cached before the resolver must refresh it from the authoritative nameserver.</p>
+              <p><strong>Too high (e.g., 86400 = 24 hours):</strong> If you change the IP (failover, migration), users stuck with old IP for up to 24 hours. DNS propagation appears "slow." Most browsers/OS respects TTL strictly.</p>
+              <p><strong>Too low (e.g., 60 = 1 minute):</strong> Every minute every client queries your authoritative nameserver. High query volume, slower lookup for each user (no caching benefit). More nameserver cost.</p>
+              <p><strong>Best practice:</strong> Normal operations: 3600 (1 hour) to 86400 (24 hours). <em>Before a planned change</em> (server migration): lower TTL to 300 (5 min) 24-48 hours before. After the change completes: raise TTL back. This ensures fast propagation of the change while keeping normal operations efficient.</p>
+            </div>
+          </details>
+
+          <h2>HTTP &amp; TLS</h2>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: What's the difference between HTTP/1.1, HTTP/2, and HTTP/3?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p><strong>HTTP/1.1:</strong> One request at a time per TCP connection. Workaround: open 6-8 parallel connections per domain. Head-of-line blocking: a slow response blocks everything behind it. Text-based headers (verbose). Introduced keep-alive to reuse connections.</p>
+              <p><strong>HTTP/2:</strong> Multiplexing — multiple requests/responses over a single TCP connection simultaneously. Binary protocol (more compact). Header compression (HPACK). Server push (server can proactively send resources). Still has TCP-level head-of-line blocking — if one TCP packet is lost, all streams wait for retransmission.</p>
+              <p><strong>HTTP/3:</strong> Replaces TCP with QUIC (Quick UDP Internet Connections) — runs over UDP. Each stream is independent — packet loss in one stream doesn't block others (true end of head-of-line blocking). Built-in TLS 1.3 — TLS is part of QUIC, not layered on top. 0-RTT reconnections — returning clients can send data in the first packet. Used by YouTube, Google, Facebook, Cloudflare. ~30% of web traffic is now HTTP/3.</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: A user gets a "Certificate not trusted" error. Walk me through your diagnosis.</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>This error means the TLS handshake found a problem with the server's certificate. Possible causes:</p>
+              <ol>
+                <li><strong>Certificate expired:</strong> Check expiry with <code>openssl s_client -connect example.com:443 | openssl x509 -noout -dates</code>. Fix: renew the certificate (Let's Encrypt is free with auto-renewal via certbot).</li>
+                <li><strong>Wrong hostname:</strong> The CN/SAN in the cert doesn't match the domain the user typed. A cert for <code>example.com</code> won't work for <code>www.example.com</code> unless it includes both (SAN — Subject Alternative Name). Fix: reissue cert with correct domains.</li>
+                <li><strong>Self-signed cert:</strong> The cert isn't signed by a trusted CA. OK for internal/dev, not for public. Fix: use a public CA (Let's Encrypt, Comodo, DigiCert).</li>
+                <li><strong>Incomplete certificate chain:</strong> The server isn't sending the intermediate CA cert. Browser can't build the chain of trust from the cert to a root CA. Fix: configure the server to include the full chain.</li>
+                <li><strong>Revoked certificate:</strong> The CA revoked it (compromise or mis-issue). Browser checks CRL/OCSP. Fix: get a new cert.</li>
+                <li><strong>MITM attack:</strong> Someone is intercepting traffic and presenting a different cert. The browser catches this. Evidence: sudden unexplained error on a previously working site.</li>
+              </ol>
+              <div class="code-block">openssl s_client -connect example.com:443 -servername example.com
+<span class="cb-comment"># Look for: Verify return code: 0 (ok) vs error codes</span>
+<span class="cb-comment"># Check: Certificate chain, expiry, issuer, subject</span>
+curl -v https://example.com 2>&amp;1 | grep -E "SSL|cert|expire|verify"</div>
+            </div>
+          </details>
+
+          <h2>Routing &amp; Network Design</h2>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: What is the difference between a hub, switch, and router?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p><strong>Hub (Layer 1 — Physical):</strong> Completely dumb. Receives a signal on one port and broadcasts it out every other port. Every device sees every frame — massive collision domain, huge security risk. Obsolete since mid-2000s.</p>
+              <p><strong>Switch (Layer 2 — Data Link):</strong> Intelligent. Learns MAC address → port mappings by watching traffic. Forwards frames only to the correct port. Each port is its own collision domain. VLANs create separate broadcast domains within one switch. Used for connecting devices within a network (LAN).</p>
+              <p><strong>Router (Layer 3 — Network):</strong> Connects separate networks. Reads destination IP address and forwards packets based on routing table. Creates broadcast domain boundaries (broadcasts don't cross routers). Provides NAT, DHCP, firewall functionality in home/small office routers. Used to connect your LAN to the internet, or VPC subnets to each other.</p>
+              <p><strong>Layer 3 switch:</strong> A switch that also does routing. Can route between VLANs at wire speed without a separate router. Used in enterprise data centres.</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: You're designing a network for an office. Walk me through your approach.</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>A structured approach demonstrates experience:</p>
+              <ol>
+                <li><strong>Requirements:</strong> How many users? Devices (PCs, phones, printers, IoT, servers)? Bandwidth needs? Remote access needed? Compliance requirements (PCI, HIPAA)?</li>
+                <li><strong>IP addressing:</strong> Choose RFC 1918 range. E.g., 10.0.0.0/8 for flexibility. Plan subnets: 10.0.10.0/24 staff, 10.0.20.0/24 servers, 10.0.30.0/24 management, 10.0.40.0/24 guest.</li>
+                <li><strong>Segmentation:</strong> VLANs for security isolation. Staff PCs never on same VLAN as servers. Guest WiFi completely isolated — VLAN with internet-only access.</li>
+                <li><strong>Core infrastructure:</strong> Managed switches for VLAN support. Layer 3 switch or router for inter-VLAN routing with ACLs. Redundant internet connections (two ISPs) with failover.</li>
+                <li><strong>Security:</strong> Perimeter firewall (pfSense, Fortinet, Cisco ASA). Default-deny inbound. IDS/IPS if needed. 802.1X for wired port authentication.</li>
+                <li><strong>Remote access:</strong> VPN for remote workers. Options: OpenVPN/WireGuard server, or managed solution (Tailscale, Cloudflare Access).</li>
+                <li><strong>Services:</strong> Internal DNS server (resolve internal hostnames). DHCP per VLAN. NTP server. Monitoring (SNMP, syslog to central SIEM).</li>
+              </ol>
+            </div>
+          </details>
+
+          <h2>Cloud &amp; DevOps Networking</h2>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: An EC2 instance in a private subnet can't reach the internet. What do you check?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>Checklist in order:</p>
+              <ol>
+                <li><strong>Route table:</strong> Does the private subnet's route table have a route <code>0.0.0.0/0 → nat-gateway-id</code>? Without this, packets have nowhere to go.</li>
+                <li><strong>NAT Gateway:</strong> Is the NAT Gateway itself in a <em>public</em> subnet? Does the public subnet's route table have <code>0.0.0.0/0 → igw-xxx</code> (Internet Gateway)?</li>
+                <li><strong>NAT Gateway state:</strong> Is it in "available" state? Not "pending" or "failed"? Check the NAT Gateway's subnet and Elastic IP.</li>
+                <li><strong>Security Group:</strong> Does the EC2 instance's security group allow outbound traffic? (Default SG allows all outbound, but it may have been modified.)</li>
+                <li><strong>NACL:</strong> Does the subnet's Network ACL have outbound rules that allow the traffic? And inbound rules for the <em>return</em> traffic (NACLs are stateless — you need explicit inbound allow for responses).</li>
+                <li><strong>Test from the instance:</strong> SSH in (via bastion or SSM), run <code>curl https://8.8.8.8</code> (tests IP connectivity) and <code>curl https://google.com</code> (tests DNS too).</li>
+              </ol>
+              <p>Common mistake: forgetting that NACLs are stateless. You must allow both the outbound request AND the inbound response (ephemeral ports 1024-65535). Security groups are stateful — return traffic is automatically allowed.</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: What is the difference between a Security Group and a NACL in AWS?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <table class="compare-table">
+                <thead><tr><th></th><th>Security Group</th><th>NACL</th></tr></thead>
+                <tbody>
+                  <tr><td>Applies to</td><td>EC2 instance (ENI level)</td><td>Entire subnet</td></tr>
+                  <tr><td>Stateful?</td><td>Yes — return traffic automatically allowed</td><td>No — must explicitly allow both directions</td></tr>
+                  <tr><td>Rules</td><td>Allow only (no deny rules)</td><td>Allow and Deny rules</td></tr>
+                  <tr><td>Rule processing</td><td>All rules evaluated together</td><td>Rules processed in order by rule number (stops at first match)</td></tr>
+                  <tr><td>Default</td><td>New SG: deny all inbound, allow all outbound</td><td>Default NACL: allow all in both directions</td></tr>
+                  <tr><td>Use for</td><td>Instance-level control</td><td>Subnet-level blast radius control, blocking specific IPs</td></tr>
+                </tbody>
+              </table>
+              <p><strong>Practical tip:</strong> Use Security Groups for most access control. Add NACLs only when you need to explicitly block a CIDR range (e.g., block an attacker's IP range across an entire subnet, which SG allow-only rules can't do).</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: Explain how Kubernetes networking works (Pod-to-Pod, Service, Ingress).</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p><strong>Pod networking:</strong> Every Pod gets a unique IP within the cluster CIDR (e.g., 10.244.0.0/16). Pods can communicate directly with any other Pod by IP without NAT — this is the fundamental Kubernetes networking requirement (implemented by CNI plugins: Calico, Flannel, Cilium, AWS VPC CNI).</p>
+              <p><strong>Services:</strong> Pods are ephemeral — their IPs change. A Service provides a stable virtual IP (ClusterIP) that load-balances to matching pods. kube-proxy on each node programs iptables/IPVS rules to DNAT the ClusterIP to one of the backend Pod IPs. Types: ClusterIP (internal only), NodePort (exposes on each node's port), LoadBalancer (creates cloud LB), ExternalName (DNS alias).</p>
+              <p><strong>Ingress:</strong> A single entry point for HTTP/HTTPS traffic into the cluster. An Ingress Controller (nginx-ingress, AWS ALB Ingress Controller, Traefik) watches Ingress resources and configures a load balancer. Ingress rules define: "host example.com + path /api → backend Service api-service:8080". Handles TLS termination, routing, and virtual hosting.</p>
+              <p><strong>DNS in Kubernetes:</strong> CoreDNS runs in the cluster. Services get DNS names: <code>my-service.my-namespace.svc.cluster.local</code>. Pods get DNS: <code>pod-ip.namespace.pod.cluster.local</code>. Applications use short names (<code>my-service</code>) which resolve via the cluster DNS.</p>
+            </div>
+          </details>
+
+          <h2>Troubleshooting Scenarios</h2>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: Users report intermittent connection resets. How do you troubleshoot?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>Connection resets (TCP RST) can be caused by several things. Systematic approach:</p>
+              <div class="code-block"><span class="cb-comment"># 1. Capture the RST to see which side sends it</span>
+tcpdump -i eth0 'tcp[tcpflags] &amp; tcp-rst != 0' -w reset.pcap
+<span class="cb-comment"># If RST from server → server closed connection (app crash, timeout, max conn exceeded)</span>
+<span class="cb-comment"># If RST from client → client gave up (timeout on client side)</span>
+<span class="cb-comment"># If RST from a middle device → firewall idle timeout (common!)</span>
+
+<span class="cb-comment"># 2. Check TCP keepalive settings</span>
+sysctl net.ipv4.tcp_keepalive_time    <span class="cb-comment"># How long before keepalive probes start (default 7200s)</span>
+sysctl net.ipv4.tcp_keepalive_intvl   <span class="cb-comment"># Time between keepalive probes (default 75s)</span>
+<span class="cb-comment"># If a firewall has a 300s idle timeout, connections idle for &gt;5min get RST'd</span>
+<span class="cb-comment"># Fix: lower tcp_keepalive_time to 120s</span>
+
+<span class="cb-comment"># 3. Check for packet loss</span>
+mtr --report server_ip                <span class="cb-comment"># Shows per-hop loss</span>
+ss -s                                 <span class="cb-comment"># Shows retransmit stats</span>
+
+<span class="cb-comment"># 4. Check application logs for connection pool issues</span>
+<span class="cb-comment"># Database connection pools that hold idle connections get RST after firewall timeout</span></div>
+              <p>Most common cause in cloud environments: the load balancer or security group has an idle timeout (AWS ALB default 60 seconds). Long-running idle connections (database connections, WebSockets) get killed. Fix: configure keepalive in your application, or increase the LB idle timeout.</p>
+            </div>
+          </details>
+
+          <details style="margin:12px 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+            <summary style="cursor:pointer;font-weight:700;font-size:0.9rem">Q: DNS is working but the website still shows the old IP after you changed the DNS record. Why?</summary>
+            <div style="margin-top:12px;font-size:0.85rem;line-height:1.7">
+              <p>This is a DNS caching problem. Multiple layers cache DNS records:</p>
+              <ol>
+                <li><strong>Browser cache:</strong> Chrome caches DNS internally. Clear it: chrome://net-internals/#dns → Clear host cache. Or open a new incognito window.</li>
+                <li><strong>OS cache:</strong> The OS DNS resolver caches results. On Linux: <code>sudo systemd-resolve --flush-caches</code>. On Windows: <code>ipconfig /flushdns</code>.</li>
+                <li><strong>ISP/upstream resolver cache:</strong> Your DNS resolver (ISP or 8.8.8.8) cached the old record. Must wait for its TTL to expire — you can't flush someone else's cache remotely.</li>
+                <li><strong>The old TTL is still active:</strong> The TTL was set before you changed the record. Resolvers must wait that many seconds before re-querying. If TTL was 86400 (24h), it could take 24 hours.</li>
+              </ol>
+              <p><strong>Test what IP you're getting:</strong> <code>dig example.com @8.8.8.8</code> vs <code>dig example.com @1.1.1.1</code>. If different resolvers return different IPs, propagation is in progress — some resolvers have the old cached value, some have already refreshed.</p>
+              <p><strong>Prevention:</strong> Always lower TTL to 300 at least 24 hours before making a DNS change. After the change is confirmed working, raise TTL back.</p>
+            </div>
+          </details>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-vlan]').click()">← VLANs</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-advanced-qa')">✓ Mark Complete &amp; Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-lab]').click()">Go to Lab →</button>
+        </div>
+      </div>
+
+      <!-- LAB TERMINAL -->
+      <div class="lesson-panel" data-panel="net-lab">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🔬 Hands-On Lab — Networking Terminal</h1>
+            <p>Run real networking diagnostic commands. Same output you'd see on a Linux server.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">Lab</span><span class="badge badge-green">Interactive</span></div>
+        </div>
+        <div class="content-body">
+
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">How to use this terminal</div>
+              <div class="callout-text">Type commands exactly as shown. Use ↑↓ for history. Type <code>help</code> to see everything available. This simulates a real Ubuntu server with a live internet connection.</div>
+            </div>
+          </div>
+
+          <div id="net-terminal" data-terminal="linux" style="margin:20px 0"></div>
+
+          <h2 style="margin-top:28px">Lab Exercises — Work Through These</h2>
+
+          <table class="compare-table" style="margin-top:12px">
+            <thead><tr><th>#</th><th>Task</th><th>Command to try</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>See your IP address and network interface</td><td><code>ip addr</code></td></tr>
+              <tr><td>2</td><td>See your default gateway (router)</td><td><code>ip route</code></td></tr>
+              <tr><td>3</td><td>Test basic internet connectivity</td><td><code>ping 8.8.8.8</code></td></tr>
+              <tr><td>4</td><td>Test DNS resolution (name → IP)</td><td><code>ping -c 4 google.com</code></td></tr>
+              <tr><td>5</td><td>Look up DNS A record for google.com</td><td><code>dig google.com</code></td></tr>
+              <tr><td>6</td><td>Get just the IP, no extra output</td><td><code>dig google.com +short</code></td></tr>
+              <tr><td>7</td><td>Query Google's DNS server directly</td><td><code>dig @8.8.8.8 google.com</code></td></tr>
+              <tr><td>8</td><td>Look up mail records</td><td><code>dig google.com MX</code></td></tr>
+              <tr><td>9</td><td>Simple DNS lookup with nslookup</td><td><code>nslookup google.com</code></td></tr>
+              <tr><td>10</td><td>Trace the route to Google</td><td><code>traceroute google.com</code></td></tr>
+              <tr><td>11</td><td>See all listening ports and which process owns them</td><td><code>ss -tulpn</code></td></tr>
+              <tr><td>12</td><td>Same with older netstat command</td><td><code>netstat -tulpn</code></td></tr>
+              <tr><td>13</td><td>Make an HTTP request, see headers only</td><td><code>curl -I https://example.com</code></td></tr>
+              <tr><td>14</td><td>See the full TLS handshake + headers</td><td><code>curl -v https://example.com 2>&1 | head -20</code></td></tr>
+              <tr><td>15</td><td>Check firewall rules</td><td><code>ufw status</code></td></tr>
+              <tr><td>16</td><td>Block Telnet port</td><td><code>ufw deny 23</code></td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout warning" style="margin-top:20px">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview simulation — answer these out loud after the lab</div>
+              <div class="callout-text">
+                1. A user says "the website is down" but you can reach it by IP. What commands do you run to diagnose?<br><br>
+                2. You need to check if port 443 is actually listening on the server. What's the command?<br><br>
+                3. A server has port 3306 (MySQL) open to the internet. How do you check this and what's the risk?<br><br>
+                4. <code>ping 8.8.8.8</code> works but <code>ping google.com</code> fails. What's the problem and how do you fix it?
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-tools]').click()">← Tools</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-lab')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=net-quiz]').click()">Next: Quiz →</button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="lesson-panel" data-panel="net-quiz">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🧠 Networking Interview Quiz</h1>
+            <p>Every question here has come up in real interviews. Aim for 100%.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-purple">Quiz</span></div>
+        </div>
+        <div class="content-body">
+          <div id="net-quiz-container"></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=net-tools]').click()">← Tools</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('net-quiz')">✓ Module Complete</button>
+          <button class="btn btn-primary" onclick="window.location='docker.html'">Next: Docker →</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/terminal.js"></script>
+<script>
+createQuiz('net-quiz', [
+  {
+    question: "At which OSI layer does a router operate, and why?",
+    options: [
+      "Layer 2 — it uses MAC addresses to forward frames",
+      "Layer 3 — it uses IP addresses and routing tables to forward packets between networks",
+      "Layer 4 — it uses port numbers to route traffic",
+      "Layer 7 — it understands application protocols"
+    ],
+    correct: 1,
+    explanation: "Routers operate at Layer 3 (Network). They read the destination IP address, look it up in their routing table, and forward the packet out the correct interface. They connect different networks (e.g., your home LAN to the internet). Switches work at Layer 2 (MAC addresses), load balancers can work at L4 or L7."
+  },
+  {
+    question: "A user's laptop shows IP address 169.254.x.x. What is the problem?",
+    options: [
+      "The laptop has been assigned a static IP",
+      "The laptop couldn't reach a DHCP server, so Windows assigned itself an APIPA address",
+      "The router is blocking the laptop",
+      "The DNS server is down"
+    ],
+    correct: 1,
+    explanation: "169.254.0.0/16 is APIPA (Automatic Private IP Addressing). Windows assigns this when the DHCP DISCOVER gets no response. The laptop can talk to other APIPA devices on the same network segment, but cannot reach the internet or internal servers. Fix: check if DHCP server is running, check network cable/Wi-Fi, check if the device is on the correct VLAN."
+  },
+  {
+    question: "What is the difference between a 401 and a 403 HTTP response?",
+    options: [
+      "401 = server error, 403 = client error",
+      "401 = not authenticated (no valid credentials provided), 403 = not authorized (credentials valid but no permission)",
+      "401 = resource not found, 403 = server overloaded",
+      "They mean the same thing"
+    ],
+    correct: 1,
+    explanation: "401 Unauthorized: the request lacks valid authentication credentials. The client should log in first (or provide a token). 403 Forbidden: the server knows who you are (authenticated) but you don't have permission to access this resource. Example: a logged-in user trying to access /admin. The naming is confusing — 401 'Unauthorized' actually means unauthenticated."
+  },
+  {
+    question: "How many usable host addresses are in a /26 subnet?",
+    options: [
+      "62",
+      "64",
+      "30",
+      "126"
+    ],
+    correct: 0,
+    explanation: "Formula: 2^(32-26) - 2 = 2^6 - 2 = 64 - 2 = 62. The -2 removes the network address (first IP) and broadcast address (last IP). /26 gives a 64-IP block (e.g., 10.0.0.0–10.0.0.63) with 62 usable host addresses. Memorise: /24=254, /25=126, /26=62, /27=30, /28=14, /30=2."
+  },
+  {
+    question: "The full DNS resolution for 'example.com' goes in what order?",
+    options: [
+      "Root Server → TLD Server → Authoritative Server → Recursive Resolver → Client",
+      "Client → Local Cache → Recursive Resolver → Root Server → TLD (.com) Server → Authoritative Nameserver",
+      "Client → Authoritative Server directly",
+      "Client → ISP → Google DNS → Root Server"
+    ],
+    correct: 1,
+    explanation: "The resolver process: 1) Check local cache and /etc/hosts. 2) Ask recursive resolver (ISP or 8.8.8.8). 3) Resolver asks a Root Server: 'who handles .com?' 4) Root refers to .com TLD server. 5) TLD server refers to example.com's authoritative nameserver (e.g., ns1.example.com). 6) Authoritative NS returns the A record IP. 7) Resolver caches it (per TTL) and returns to client."
+  },
+  {
+    question: "What is the purpose of NAT (Network Address Translation)?",
+    options: [
+      "It converts domain names to IP addresses",
+      "It allows multiple devices with private IPs to share a single public IP address for internet access",
+      "It encrypts network traffic between subnets",
+      "It assigns IP addresses to devices on a network"
+    ],
+    correct: 1,
+    explanation: "NAT translates private (RFC 1918) IP addresses to a public IP when traffic leaves the network. Without NAT, every device would need a unique public IP — we'd have run out in the 1990s. Your home router does NAT: your laptop has 192.168.1.x internally, but the internet sees your router's one public IP. AWS NAT Gateway does the same for EC2 instances in private subnets."
+  },
+  {
+    question: "You run `ss -tulpn` and see port 8080 is not in the output, but your app should be listening. What does this mean?",
+    options: [
+      "The app is listening but ss can't see it",
+      "The app process is not running or failed to bind to the port — nothing is listening on 8080",
+      "Port 8080 is blocked by the firewall",
+      "You need to run ss with sudo to see all ports"
+    ],
+    correct: 1,
+    explanation: "ss -tulpn shows ALL listening ports. If port 8080 is absent, nothing is listening there — your app either crashed, failed to start, or is configured to use a different port. Next steps: check if the process is running (ps aux | grep myapp), check app logs for startup errors, verify the app's config for the port it's trying to bind. A firewall blocks connections but doesn't remove the port from ss output."
+  },
+  {
+    question: "What does the TLS handshake verify before encrypting data?",
+    options: [
+      "Only the encryption speed of both parties",
+      "That the server's certificate is signed by a trusted CA, hasn't expired, and the hostname matches — then both parties agree on a session encryption key",
+      "That both the client and server have matching IP addresses",
+      "Only that the port 443 is open"
+    ],
+    correct: 1,
+    explanation: "The TLS handshake does three things: 1) Authentication — the server presents a certificate. The client checks: is it signed by a trusted CA? Is it expired? Does the hostname match the domain? 2) Key exchange — both parties negotiate a shared session key without sending it across the network (Diffie-Hellman). 3) From here, all HTTP traffic is encrypted with that symmetric session key. This prevents eavesdropping and man-in-the-middle attacks."
+  }
+]);
+</script>
+</body>
+</html>

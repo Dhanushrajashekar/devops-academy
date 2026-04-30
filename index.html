@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Academy — 0 to Hero in 30 Days</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .stats-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; margin: 40px 0; }
+    .stat-item { text-align: center; }
+    .stat-item .n { font-size: 2.2rem; font-weight: 800; color: var(--blue); line-height: 1; }
+    .stat-item .l { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+    .week-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .week-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .week-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; }
+    .week-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .week-items { list-style: none; margin: 0; padding: 0; }
+    .week-items li { font-size: 0.8rem; color: var(--text-secondary); padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+    .week-items li::before { content: '→'; color: var(--blue); font-size: 0.7rem; }
+    .tools-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+    .tool-badge { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; }
+    .tool-icon { font-size: 1.2rem; }
+    .floating-terminal { background: #010409; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; font-family: var(--font-mono); font-size: 0.85rem; max-width: 500px; margin: 0 auto; text-align: left; }
+    .ft-line { display: flex; gap: 8px; margin-bottom: 6px; }
+    .ft-p { color: #3fb950; }
+    .ft-c { color: #c9d1d9; }
+    .ft-o { color: #8b949e; }
+    .ft-s { color: #3fb950; }
+    .ft-i { color: #58a6ff; }
+    .aws-section { background: linear-gradient(135deg, #0f1a0f 0%, #0d1117 50%, #1a0f0f 100%); border: 1px solid rgba(255,153,0,0.2); border-radius: var(--radius); padding: 40px; margin: 40px 0; }
+  </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <a href="index.html" class="nav-brand">
+    <span class="logo-icon">🚀</span>
+    DevOps Academy
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link active">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle r="12" cx="16" cy="16"/>
+        <circle class="progress-fill" r="12" cx="16" cy="16" style="stroke-dasharray:75.4; stroke-dashoffset:75.4;"/>
+      </svg>
+      <div class="pct progress-pct">0%</div>
+    </div>
+    <span class="progress-pct">0%</span> done
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🎯 30-Day Industry-Ready Program</div>
+  <h1>Master <span class="grad">Docker · Kubernetes · CI/CD</span><br>From Zero to Interview-Ready</h1>
+  <p class="hero-sub">Hands-on labs with a real interactive terminal. Type every command yourself. Deploy to AWS EKS. Build real pipelines. Crush interviews.</p>
+  <div class="hero-actions">
+    <a href="docker.html" class="btn btn-primary">🐳 Start with Docker</a>
+    <a href="#roadmap" class="btn btn-secondary">📅 View 30-Day Roadmap</a>
+  </div>
+  <div style="margin-top: 48px;">
+    <div class="floating-terminal">
+      <div class="ft-line"><span class="ft-p">user@aws:~$</span><span class="ft-c"> kubectl get pods -n production</span></div>
+      <div class="ft-line" style="margin-left: 0;"><span class="ft-o">NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READY&nbsp;&nbsp;STATUS&nbsp;&nbsp;&nbsp;RESTARTS&nbsp;&nbsp;AGE</span></div>
+      <div class="ft-line"><span class="ft-s">myapp-7d9c4f-abc12&nbsp;&nbsp;&nbsp;&nbsp;1/1&nbsp;&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5m</span></div>
+      <div class="ft-line"><span class="ft-s">myapp-7d9c4f-def34&nbsp;&nbsp;&nbsp;&nbsp;1/1&nbsp;&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5m</span></div>
+      <div class="ft-line"><span class="ft-s">myapp-7d9c4f-ghi56&nbsp;&nbsp;&nbsp;&nbsp;1/1&nbsp;&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5m</span></div>
+      <div class="ft-line"><span class="ft-p">user@aws:~$</span><span class="ft-c"> kubectl scale deployment myapp --replicas=10</span></div>
+      <div class="ft-line"><span class="ft-i">deployment.apps/myapp scaled → 10 replicas ✓</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item"><div class="n">80+</div><div class="l">Hands-on Labs</div></div>
+    <div class="stat-item"><div class="n">200+</div><div class="l">Real Commands</div></div>
+    <div class="stat-item"><div class="n">150+</div><div class="l">Interview Q&As</div></div>
+    <div class="stat-item"><div class="n">50+</div><div class="l">Common Errors Fixed</div></div>
+    <div class="stat-item"><div class="n">30</div><div class="l">Days to Mastery</div></div>
+  </div>
+
+  <!-- MODULE CARDS -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Learning Modules</h2>
+      <p>Follow the path in order, or jump to any module. Each module builds on the last.</p>
+    </div>
+    <div class="card-grid">
+
+      <a href="docker.html" class="module-card docker" style="text-decoration:none; color:inherit;">
+        <div class="module-icon">🐳</div>
+        <div class="module-title">Docker</div>
+        <div class="module-desc">Containers from scratch to multi-stage builds. Write Dockerfiles, compose multi-service apps, push to AWS ECR. Learn networking, volumes, and security.</div>
+        <div class="module-progress-bar" data-module-progress="docker">
+          <div class="module-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="module-meta">
+          <span class="meta-badge">Week 1</span>
+          <span class="meta-badge">20 Labs</span>
+          <span class="meta-badge">Beginner → Advanced</span>
+        </div>
+      </a>
+
+      <a href="kubernetes.html" class="module-card k8s" style="text-decoration:none; color:inherit;">
+        <div class="module-icon">☸️</div>
+        <div class="module-title">Kubernetes</div>
+        <div class="module-desc">Deploy, scale, and manage containers on AWS EKS. Pods, Deployments, Services, Ingress, RBAC, HPA, Helm charts, and production-grade patterns.</div>
+        <div class="module-progress-bar" data-module-progress="k8s">
+          <div class="module-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="module-meta">
+          <span class="meta-badge">Week 2–3</span>
+          <span class="meta-badge">30 Labs</span>
+          <span class="meta-badge">EKS Focus</span>
+        </div>
+      </a>
+
+      <a href="cicd.html" class="module-card cicd" style="text-decoration:none; color:inherit;">
+        <div class="module-icon">⚙️</div>
+        <div class="module-title">CI/CD Pipelines</div>
+        <div class="module-desc">Build GitHub Actions workflows, Jenkins pipelines, and ArgoCD GitOps. Automate test → build → push → deploy to EKS end-to-end.</div>
+        <div class="module-progress-bar" data-module-progress="cicd">
+          <div class="module-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="module-meta">
+          <span class="meta-badge">Week 4</span>
+          <span class="meta-badge">20 Labs</span>
+          <span class="meta-badge">Production Pipelines</span>
+        </div>
+      </a>
+
+      <a href="aws.html" class="module-card aws" style="text-decoration:none; color:inherit;">
+        <div class="module-icon">☁️</div>
+        <div class="module-title">AWS Cloud</div>
+        <div class="module-desc">EKS cluster setup, ECR registry, IAM roles for service accounts, ALB Ingress, EBS/EFS storage, CloudWatch monitoring, and Route 53 DNS.</div>
+        <div class="module-progress-bar" data-module-progress="aws">
+          <div class="module-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="module-meta">
+          <span class="meta-badge">All Weeks</span>
+          <span class="meta-badge">Real Cloud</span>
+          <span class="meta-badge">Industry Standard</span>
+        </div>
+      </a>
+
+      <a href="interview.html" class="module-card interview" style="text-decoration:none; color:inherit;">
+        <div class="module-icon">💼</div>
+        <div class="module-title">Interview Prep</div>
+        <div class="module-desc">150+ real interview questions with full answers: Docker internals, Kubernetes architecture, CI/CD design patterns, system design, and live troubleshooting scenarios.</div>
+        <div class="module-meta">
+          <span class="meta-badge">150+ Questions</span>
+          <span class="meta-badge">Easy / Medium / Hard</span>
+          <span class="meta-badge">System Design</span>
+        </div>
+      </a>
+
+      <a href="troubleshoot.html" class="module-card troubleshoot" style="text-decoration:none; color:inherit;">
+        <div class="module-icon">🔧</div>
+        <div class="module-title">Error Encyclopedia</div>
+        <div class="module-desc">50+ real-world errors with root cause analysis and exact fix commands. ImagePullBackOff, CrashLoopBackOff, OOMKilled, pending pods, network issues, and more.</div>
+        <div class="module-meta">
+          <span class="meta-badge">50+ Errors</span>
+          <span class="meta-badge">Root Cause Analysis</span>
+          <span class="meta-badge">Fix Commands</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- 30-DAY ROADMAP -->
+  <section class="section" id="roadmap">
+    <div class="section-header">
+      <h2>📅 Your 30-Day Plan</h2>
+      <p>A structured path from zero to production-ready DevOps engineer.</p>
+    </div>
+
+    <div class="week-grid">
+      <div class="week-card">
+        <div class="week-label" style="color: var(--docker-blue)">Week 1 — Days 1–7</div>
+        <div class="week-title">🐳 Docker Mastery</div>
+        <ul class="week-items">
+          <li>What containers are & why they exist</li>
+          <li>Docker architecture: daemon, images, layers</li>
+          <li>Writing production Dockerfiles</li>
+          <li>Multi-stage builds (95% size reduction)</li>
+          <li>Docker Compose multi-service apps</li>
+          <li>Networking: bridge, host, overlay</li>
+          <li>Volumes & data persistence</li>
+          <li>Push images to AWS ECR</li>
+        </ul>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label" style="color: var(--k8s-blue)">Week 2 — Days 8–14</div>
+        <div class="week-title">☸️ Kubernetes Fundamentals</div>
+        <ul class="week-items">
+          <li>K8s architecture: control plane & nodes</li>
+          <li>Pods, Deployments, ReplicaSets</li>
+          <li>Services: ClusterIP, NodePort, LoadBalancer</li>
+          <li>ConfigMaps & Secrets</li>
+          <li>Namespaces & resource limits</li>
+          <li>Persistent Volumes & PVCs</li>
+          <li>Deploy app to AWS EKS</li>
+          <li>kubectl mastery (20+ commands)</li>
+        </ul>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label" style="color: var(--purple)">Week 3 — Days 15–21</div>
+        <div class="week-title">⚡ Kubernetes Advanced</div>
+        <ul class="week-items">
+          <li>Ingress & ALB on AWS</li>
+          <li>RBAC: Roles, ClusterRoles, Bindings</li>
+          <li>HPA & VPA autoscaling</li>
+          <li>DaemonSets, StatefulSets, Jobs</li>
+          <li>Helm: package & deploy charts</li>
+          <li>Resource quotas & LimitRanges</li>
+          <li>Network Policies</li>
+          <li>Production patterns & best practices</li>
+        </ul>
+      </div>
+
+      <div class="week-card">
+        <div class="week-label" style="color: var(--cicd-orange)">Week 4 — Days 22–30</div>
+        <div class="week-title">⚙️ CI/CD & GitOps</div>
+        <ul class="week-items">
+          <li>GitHub Actions: full pipeline</li>
+          <li>Build → Test → Push to ECR</li>
+          <li>Deploy to EKS on merge to main</li>
+          <li>ArgoCD GitOps deployment</li>
+          <li>Jenkins pipeline (Jenkinsfile)</li>
+          <li>Blue-green & canary deployments</li>
+          <li>Secrets management with AWS Secrets Manager</li>
+          <li>Monitoring: Prometheus + Grafana</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS COVERED -->
+  <section class="section">
+    <div class="section-header">
+      <h2>🛠️ Tools You'll Master</h2>
+    </div>
+    <div class="tools-row">
+      <div class="tool-badge"><span class="tool-icon">🐳</span> Docker</div>
+      <div class="tool-badge"><span class="tool-icon">☸️</span> Kubernetes</div>
+      <div class="tool-badge"><span class="tool-icon">☁️</span> AWS EKS</div>
+      <div class="tool-badge"><span class="tool-icon">📦</span> AWS ECR</div>
+      <div class="tool-badge"><span class="tool-icon">⚙️</span> GitHub Actions</div>
+      <div class="tool-badge"><span class="tool-icon">🔄</span> ArgoCD</div>
+      <div class="tool-badge"><span class="tool-icon">🔧</span> Jenkins</div>
+      <div class="tool-badge"><span class="tool-icon">⛵</span> Helm</div>
+      <div class="tool-badge"><span class="tool-icon">📊</span> Prometheus</div>
+      <div class="tool-badge"><span class="tool-icon">📈</span> Grafana</div>
+      <div class="tool-badge"><span class="tool-icon">🔐</span> AWS IAM</div>
+      <div class="tool-badge"><span class="tool-icon">🌐</span> AWS ALB</div>
+      <div class="tool-badge"><span class="tool-icon">💾</span> AWS EBS/EFS</div>
+      <div class="tool-badge"><span class="tool-icon">🔑</span> AWS Secrets Manager</div>
+      <div class="tool-badge"><span class="tool-icon">📡</span> Route 53</div>
+      <div class="tool-badge"><span class="tool-icon">👁️</span> CloudWatch</div>
+    </div>
+  </section>
+
+  <!-- AWS SECTION -->
+  <div class="aws-section">
+    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
+      <span style="font-size: 3rem;">☁️</span>
+      <div>
+        <h2 style="color: var(--aws-orange);">Real AWS Deployment Throughout</h2>
+        <p style="color: var(--text-secondary); margin:0;">Every module includes actual AWS deployment steps. You're not learning theory — you're running real workloads.</p>
+      </div>
+    </div>
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+      <div style="background: rgba(255,153,0,0.06); border: 1px solid rgba(255,153,0,0.2); border-radius: var(--radius-sm); padding: 16px;">
+        <div style="font-weight:700; color: var(--aws-orange); margin-bottom:6px;">📦 AWS ECR</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary);">Push your Docker images to AWS's private container registry. Used in every pipeline.</div>
+      </div>
+      <div style="background: rgba(255,153,0,0.06); border: 1px solid rgba(255,153,0,0.2); border-radius: var(--radius-sm); padding: 16px;">
+        <div style="font-weight:700; color: var(--aws-orange); margin-bottom:6px;">☸️ AWS EKS</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary);">Deploy and manage Kubernetes clusters. Real 3-node cluster with autoscaling.</div>
+      </div>
+      <div style="background: rgba(255,153,0,0.06); border: 1px solid rgba(255,153,0,0.2); border-radius: var(--radius-sm); padding: 16px;">
+        <div style="font-weight:700; color: var(--aws-orange); margin-bottom:6px;">⚙️ GitHub Actions → EKS</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary);">Full CI/CD pipeline: push code → test → build → push ECR → deploy EKS.</div>
+      </div>
+      <div style="background: rgba(255,153,0,0.06); border: 1px solid rgba(255,153,0,0.2); border-radius: var(--radius-sm); padding: 16px;">
+        <div style="font-weight:700; color: var(--aws-orange); margin-bottom:6px;">🌐 ALB Ingress</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary);">Expose your app to the internet via AWS Application Load Balancer with TLS.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+    <div class="section-header">
+      <h2>How Each Lesson Works</h2>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">📖</div>
+        <h3 style="margin-bottom: 8px;">1. Read the Concept</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Understand the why before the how. Visual diagrams show how every component connects.</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">⌨️</div>
+        <h3 style="margin-bottom: 8px;">2. Type It in the Terminal</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Every lesson has an interactive terminal. Type real Docker and Kubernetes commands — you see exactly what production output looks like.</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">🏗️</div>
+        <h3 style="margin-bottom: 8px;">3. Build on AWS</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Complete instructions to run every lab on real AWS infrastructure: EKS, ECR, ALB.</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 2rem; margin-bottom: 12px;">🧠</div>
+        <h3 style="margin-bottom: 8px;">4. Test Your Knowledge</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Quiz yourself after each lesson. Interview questions mirror what top companies actually ask.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer style="padding: 40px 24px; text-align: center; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">
+  <p>DevOps Academy — Your 30-day path from zero to production-ready.</p>
+  <p style="margin-top: 8px;"><a href="docker.html" class="btn btn-primary" style="margin-top:16px;">🐳 Start Learning Docker Now →</a></p>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Troubleshooting Guide — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .ts-filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; align-items:center; }
+    .ts-filter-btn { padding:6px 16px; border-radius:100px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer; transition:all .2s; }
+    .ts-filter-btn:hover, .ts-filter-btn.active { background:var(--blue-dark); color:#fff; border-color:var(--blue-dark); }
+    .ts-filter-btn.docker.active  { background:#0db7ed; border-color:#0db7ed; }
+    .ts-filter-btn.k8s.active    { background:#326ce5; border-color:#326ce5; }
+    .ts-filter-btn.cicd.active   { background:#f05033; border-color:#f05033; }
+    .ts-filter-btn.aws.active    { background:#ff9900; border-color:#ff9900; }
+    .ts-search { padding:8px 14px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-size:0.875rem; width:280px; font-family:var(--font-sans); }
+    .ts-search:focus { outline:none; border-color:var(--blue); }
+
+    .ts-section { margin:40px 0 16px; }
+    .ts-section-title { font-size:1.2rem; font-weight:700; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+
+    .ts-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; transition:border-color .2s; }
+    .ts-card:hover { border-color:var(--border-bright); }
+    .ts-card-header { padding:16px 20px; cursor:pointer; display:flex; align-items:center; gap:12px; }
+    .ts-card-header:hover { background:var(--bg-secondary); }
+    .ts-error-pill { font-family:var(--font-mono); font-size:0.75rem; background:rgba(255,123,114,0.12); color:var(--red); border:1px solid rgba(255,123,114,0.25); border-radius:4px; padding:2px 8px; flex-shrink:0; }
+    .ts-card-title { font-size:0.9rem; font-weight:600; flex:1; }
+    .ts-card-tags { display:flex; gap:6px; flex-shrink:0; }
+    .ts-tag { font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:100px; }
+    .ts-tag.docker  { background:rgba(13,183,237,0.15); color:#0db7ed; }
+    .ts-tag.k8s     { background:rgba(50,108,229,0.15); color:#326ce5; }
+    .ts-tag.cicd    { background:rgba(240,80,51,0.15); color:#f05033; }
+    .ts-tag.aws     { background:rgba(255,153,0,0.15); color:#ff9900; }
+    .ts-tag.hard    { background:rgba(255,123,114,0.15); color:var(--red); }
+    .ts-tag.medium  { background:rgba(227,179,65,0.15); color:var(--yellow); }
+    .ts-tag.easy    { background:rgba(63,185,80,0.15); color:var(--green); }
+    .ts-chevron { color:var(--text-muted); font-size:0.8rem; transition:transform .2s; margin-left:auto; }
+    .ts-card.open .ts-chevron { transform:rotate(90deg); }
+
+    .ts-card-body { display:none; padding:0 20px 20px; border-top:1px solid var(--border); }
+    .ts-card.open .ts-card-body { display:block; }
+
+    .ts-symptoms { margin:16px 0 12px; }
+    .ts-symptoms-title { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:8px; }
+    .ts-symptom { font-family:var(--font-mono); font-size:0.8rem; color:var(--red); background:rgba(255,123,114,0.07); border-left:3px solid rgba(255,123,114,0.4); padding:6px 10px; margin-bottom:4px; border-radius:0 4px 4px 0; }
+
+    .ts-step { display:flex; gap:12px; margin-bottom:12px; }
+    .ts-step-num { width:24px; height:24px; border-radius:50%; background:var(--blue-dark); color:#fff; font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+    .ts-step-body { flex:1; }
+    .ts-step-body strong { font-size:0.85rem; display:block; margin-bottom:4px; }
+    .ts-step-body p { font-size:0.82rem; color:var(--text-secondary); margin:0 0 6px; }
+
+    .ts-hidden { display:none !important; }
+
+    .ts-cheatsheet { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:16px; }
+    .ts-cheatsheet h3 { font-size:1rem; font-weight:700; margin-bottom:16px; }
+    .ts-cmd-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:8px; }
+    .ts-cmd { display:flex; flex-direction:column; gap:4px; }
+    .ts-cmd code { font-family:var(--font-mono); font-size:0.78rem; background:var(--bg-secondary); border:1px solid var(--border); padding:5px 10px; border-radius:4px; color:var(--blue); }
+    .ts-cmd span { font-size:0.73rem; color:var(--text-muted); padding-left:4px; }
+
+    .flowchart { background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin:20px 0; }
+    .flow-title { font-size:0.85rem; font-weight:700; color:var(--text-secondary); margin-bottom:16px; }
+    .flow-node { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 14px; font-size:0.8rem; display:inline-block; }
+    .flow-node.decision { background:rgba(88,166,255,0.08); border-color:var(--blue); color:var(--blue); }
+    .flow-node.action { background:rgba(63,185,80,0.08); border-color:var(--green); color:var(--green); }
+    .flow-node.error { background:rgba(255,123,114,0.08); border-color:var(--red); color:var(--red); }
+    .flow-arrow { color:var(--text-muted); font-size:1.2rem; margin:0 6px; }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link active">🔧 Troubleshoot</a>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:40px;padding-bottom:80px;">
+
+  <div class="section-header">
+    <h1>🔧 Troubleshooting Guide</h1>
+    <p>Real errors, real fixes. Searchable by error message, tool, and symptom. Covers Docker, Kubernetes, CI/CD, and AWS.</p>
+  </div>
+
+  <div class="ts-filter-bar">
+    <input type="text" class="ts-search" id="ts-search" placeholder="🔍 Search by error, symptom..." oninput="tsFilter()">
+    <button class="ts-filter-btn active" onclick="tsFilterTopic('all',this)">All</button>
+    <button class="ts-filter-btn docker" onclick="tsFilterTopic('docker',this)">🐳 Docker</button>
+    <button class="ts-filter-btn k8s" onclick="tsFilterTopic('k8s',this)">☸️ Kubernetes</button>
+    <button class="ts-filter-btn cicd" onclick="tsFilterTopic('cicd',this)">⚙️ CI/CD</button>
+    <button class="ts-filter-btn aws" onclick="tsFilterTopic('aws',this)">☁️ AWS</button>
+  </div>
+
+  <!-- ===== DOCKER ===== -->
+  <div class="ts-section" data-section-topic="docker">
+    <div class="ts-section-title">🐳 Docker Errors</div>
+  </div>
+
+  <div class="ts-card" data-topic="docker" data-text="cannot connect to docker daemon docker.sock permission denied is the docker daemon running">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Cannot connect to Docker daemon</span>
+      <span class="ts-card-title">Docker daemon not running or permission denied</span>
+      <div class="ts-card-tags"><span class="ts-tag docker">Docker</span><span class="ts-tag easy">Easy</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?</div>
+        <div class="ts-symptom">permission denied while trying to connect to the Docker daemon socket</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Check if Docker is running</strong><div class="code-block" style="margin:6px 0">sudo systemctl status docker</div><p>If inactive/dead: <code>sudo systemctl start docker && sudo systemctl enable docker</code></p></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Add your user to the docker group (permission denied fix)</strong><div class="code-block" style="margin:6px 0">sudo usermod -aG docker $USER
+newgrp docker   # Apply without logout</div><p>Then verify: <code>docker run hello-world</code></p></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>On macOS — Docker Desktop not started</strong><p>Open Docker Desktop from Applications. The whale icon in the menu bar must be running before any <code>docker</code> commands work.</p></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="docker" data-text="no space left on device docker build pull image overlay2 disk full">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">no space left on device</span>
+      <span class="ts-card-title">Docker disk space exhausted — images, containers, volumes</span>
+      <div class="ts-card-tags"><span class="ts-tag docker">Docker</span><span class="ts-tag easy">Easy</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">write /var/lib/docker/overlay2/...: no space left on device</div>
+        <div class="ts-symptom">failed to write to /dev/stdout: no space left on device</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Check disk usage</strong><div class="code-block" style="margin:6px 0">df -h /var/lib/docker
+docker system df   # Docker-specific breakdown</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Safe cleanup — removes dangling resources only</strong><div class="code-block" style="margin:6px 0">docker system prune         # Remove stopped containers + dangling images
+docker image prune -a       # Remove ALL unused images (more aggressive)
+docker volume prune         # Remove unused volumes</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Nuclear option — full reset</strong><div class="code-block" style="margin:6px 0">docker system prune -a --volumes   # ⚠️ Removes everything not running</div><p>On Docker Desktop: Settings → Troubleshoot → Clean / Purge data</p></div></div>
+      <div class="callout info" style="margin-top:12px"><div class="callout-icon">💡</div><div class="callout-body"><div class="callout-title">Prevent This in CI</div><div class="callout-text">Add <code>docker system prune -af</code> as a post-build step in your CI pipeline. CI runners accumulate images fast across many builds.</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="docker" data-text="port already in use bind address already in use 0.0.0.0 EADDRINUSE">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">port is already allocated</span>
+      <span class="ts-card-title">Port conflict — another process using the same port</span>
+      <div class="ts-card-tags"><span class="ts-tag docker">Docker</span><span class="ts-tag easy">Easy</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Bind for 0.0.0.0:8080 failed: port is already allocated</div>
+        <div class="ts-symptom">Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Find what's using the port</strong><div class="code-block" style="margin:6px 0">lsof -i :8080          # macOS/Linux
+netstat -tulpn | grep 8080  # Linux
+# Windows: netstat -ano | findstr :8080</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Option A — Use a different host port</strong><div class="code-block" style="margin:6px 0">docker run -p 8081:8080 my-image   # Map host:8081 → container:8080</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Option B — Stop the conflicting container</strong><div class="code-block" style="margin:6px 0">docker ps   # Find container using the port
+docker stop &lt;container-id&gt;</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="docker" data-text="dockerfile COPY failed no such file or directory build context">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">COPY failed: file not found</span>
+      <span class="ts-card-title">Dockerfile COPY/ADD — file not in build context</span>
+      <div class="ts-card-tags"><span class="ts-tag docker">Docker</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">COPY failed: file not found in build context or excluded by .dockerignore: stat app.jar: file does not exist</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Understand build context</strong><p>The build context is the directory you pass to <code>docker build</code>. Only files IN that directory (and not in <code>.dockerignore</code>) are accessible to COPY. Paths in COPY are relative to the build context root, not your current directory.</p></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Check your build command</strong><div class="code-block" style="margin:6px 0">docker build -t my-app .         # Context = current directory
+docker build -t my-app -f Dockerfile.prod ./src  # Context = ./src</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Check .dockerignore isn't excluding the file</strong><div class="code-block" style="margin:6px 0">cat .dockerignore   # Make sure your file isn't listed here</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">4</div><div class="ts-step-body"><strong>Common multi-stage build mistake</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Wrong — can't COPY from outside build context</span>
+COPY ../other-service/lib.jar /app/
+
+<span class="cb-comment"># Right — use multi-stage or restructure build context</span>
+FROM maven:3.9 AS build
+COPY . .
+RUN mvn package
+FROM openjdk:21
+COPY --from=build /app/target/app.jar /app/</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="docker" data-text="exec format error container exited immediately wrong architecture platform amd64 arm">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">exec format error</span>
+      <span class="ts-card-title">Wrong architecture — building on M1/M2 Mac for AMD64 Linux</span>
+      <div class="ts-card-tags"><span class="ts-tag docker">Docker</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">standard_init_linux.go: exec user process caused "exec format error"</div>
+        <div class="ts-symptom">WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8)</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Build for the target platform explicitly</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Build for Linux AMD64 (what EKS nodes run)</span>
+docker build --platform linux/amd64 -t my-app:latest .</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Build multi-platform image (supports both)</strong><div class="code-block" style="margin:6px 0">docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t my-registry/my-app:latest \
+  --push .</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>In GitHub Actions — always specify platform</strong><div class="code-block" style="margin:6px 0">- name: Build and push
+  uses: docker/build-push-action@v5
+  with:
+    platforms: linux/amd64  # Explicit for EKS (x86 nodes)
+    push: true
+    tags: ${{ env.ECR_REGISTRY }}/my-app:${{ github.sha }}</div></div></div>
+    </div>
+  </div>
+
+  <!-- ===== KUBERNETES ===== -->
+  <div class="ts-section" data-section-topic="k8s">
+    <div class="ts-section-title">☸️ Kubernetes Errors</div>
+  </div>
+
+  <div class="ts-card" data-topic="k8s" data-text="CrashLoopBackOff pod keeps restarting crashing container exit code">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">CrashLoopBackOff</span>
+      <span class="ts-card-title">Pod keeps crashing and restarting — diagnostic workflow</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">STATUS: CrashLoopBackOff  RESTARTS: 5 (Last: 2m ago)</div>
+        <div class="ts-symptom">Back-off restarting failed container</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Get the exit code and last logs</strong><div class="code-block" style="margin:6px 0">kubectl describe pod &lt;pod-name&gt;     # Check Events and Exit Code
+kubectl logs &lt;pod-name&gt; --previous  # Logs from the crashed container</div><p>Exit Code 1 = app error. Exit Code 137 = OOMKilled. Exit Code 139 = segfault.</p></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>OOMKilled (Exit 137) — increase memory limit</strong><div class="code-block" style="margin:6px 0">resources:
+  requests:
+    memory: "256Mi"
+  limits:
+    memory: "512Mi"   # Increase this if OOMKilled</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>App crashes on start — test image locally</strong><div class="code-block" style="margin:6px 0">docker run --rm -it my-image:tag sh   # Does the container start?
+docker run --rm my-image:tag          # Does it run and stay up?</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">4</div><div class="ts-step-body"><strong>Missing env var or secret — check container env</strong><div class="code-block" style="margin:6px 0">kubectl exec -it &lt;pod-name&gt; -- env | sort   # List all env vars in running pod
+kubectl get secret &lt;secret-name&gt; -o yaml    # Check secret exists</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="k8s" data-text="ImagePullBackOff ErrImagePull cannot pull image registry ECR authentication">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">ImagePullBackOff</span>
+      <span class="ts-card-title">Kubernetes can't pull the container image</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag k8s" style="background:rgba(255,153,0,0.15);color:#ff9900;">AWS</span><span class="ts-tag easy">Easy</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Failed to pull image "123456.dkr.ecr.us-east-1.amazonaws.com/app:latest": ... unauthorized</div>
+        <div class="ts-symptom">STATUS: ImagePullBackOff | ErrImagePull</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Verify the image exists and tag is correct</strong><div class="code-block" style="margin:6px 0">aws ecr describe-images --repository-name my-app --region us-east-1
+# Check: does the tag you're deploying actually exist?</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>EKS — check node IAM role has ECR permissions</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Node role must have this policy attached:</span>
+arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+<span class="cb-comment"># Check current node role</span>
+kubectl get nodes -o wide
+aws iam list-attached-role-policies --role-name &lt;node-role-name&gt;</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Private registry — check imagePullSecret</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Create secret from Docker config</span>
+kubectl create secret docker-registry regcred \
+  --docker-server=&lt;registry&gt; \
+  --docker-username=&lt;user&gt; \
+  --docker-password=&lt;token&gt;
+
+<span class="cb-comment"># Add to Pod spec</span>
+imagePullSecrets:
+  - name: regcred</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="k8s" data-text="Pending pod scheduling insufficient cpu memory resources taints tolerations node selector">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Pending</span>
+      <span class="ts-card-title">Pod stuck in Pending — can't be scheduled</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">STATUS: Pending  (no RESTARTS, stays there indefinitely)</div>
+        <div class="ts-symptom">0/3 nodes are available: 3 Insufficient cpu</div>
+        <div class="ts-symptom">0/3 nodes are available: 3 node(s) didn't match pod's node affinity</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Read the scheduler message</strong><div class="code-block" style="margin:6px 0">kubectl describe pod &lt;pod-name&gt; | grep -A 20 Events</div><p>The Events section tells you exactly WHY scheduling failed.</p></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Insufficient CPU/Memory — check node capacity</strong><div class="code-block" style="margin:6px 0">kubectl describe nodes | grep -A 5 "Allocated resources"
+kubectl top nodes    # requires metrics-server</div><p>Fix: scale node group, reduce pod resource requests, or add nodes.</p></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Taint/Toleration mismatch</strong><div class="code-block" style="margin:6px 0">kubectl get nodes -o custom-columns=NAME:.metadata.name,TAINTS:.spec.taints
+
+<span class="cb-comment"># Add toleration to pod spec if node has taint</span>
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "gpu"
+    effect: "NoSchedule"</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">4</div><div class="ts-step-body"><strong>PVC not bound — storage class or zone issue</strong><div class="code-block" style="margin:6px 0">kubectl get pvc   # Status should be Bound, not Pending
+kubectl describe pvc &lt;name&gt;   # Check Events for provisioner errors</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="k8s" data-text="OOMKilled out of memory killed container memory limit pod restart 137">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">OOMKilled</span>
+      <span class="ts-card-title">Container killed — out of memory</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Last State: Terminated  Reason: OOMKilled  Exit Code: 137</div>
+        <div class="ts-symptom">STATUS: CrashLoopBackOff with increasing restart count</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Confirm it's OOMKilled</strong><div class="code-block" style="margin:6px 0">kubectl describe pod &lt;pod-name&gt; | grep -A 5 "Last State"
+# Should show: Reason: OOMKilled, Exit Code: 137</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Check actual memory usage before setting limits</strong><div class="code-block" style="margin:6px 0">kubectl top pods --containers -n &lt;namespace&gt;
+kubectl top nodes</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Increase memory limit (rule of thumb: 2x average usage)</strong><div class="code-block" style="margin:6px 0">resources:
+  requests:
+    memory: "256Mi"   # Scheduler uses this for placement
+  limits:
+    memory: "512Mi"   # OOM kill threshold — set 25-50% above peak</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">4</div><div class="ts-step-body"><strong>JVM apps — set heap size relative to container limit</strong><div class="code-block" style="margin:6px 0">env:
+  - name: JAVA_OPTS
+    value: "-Xmx400m -Xms256m"   # Xmx must be < memory limit</div><p>Java 17+ has container-aware defaults — use <code>-XX:MaxRAMPercentage=75.0</code> instead of fixed Xmx.</p></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="k8s" data-text="service not reachable connection refused endpoint not matching selector label">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">connection refused</span>
+      <span class="ts-card-title">Service not routing traffic — selector/endpoint mismatch</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag hard">Hard</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">curl: (7) Failed to connect to my-svc.default.svc.cluster.local port 80: Connection refused</div>
+        <div class="ts-symptom">upstream connect error or disconnect/reset before headers</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Check if Service has Endpoints</strong><div class="code-block" style="margin:6px 0">kubectl get endpoints my-svc
+# Should show pod IPs — if &lt;none&gt;, the selector matches nothing</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Verify selector matches pod labels exactly</strong><div class="code-block" style="margin:6px 0">kubectl get svc my-svc -o yaml | grep -A 5 selector
+kubectl get pods --show-labels | grep &lt;app-name&gt;
+# Label in Service selector MUST match label on pod — case-sensitive</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Verify pod is Ready (not just Running)</strong><div class="code-block" style="margin:6px 0">kubectl get pods   # READY column must show 1/1 not 0/1
+# Pods only enter Endpoints when readinessProbe passes</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">4</div><div class="ts-step-body"><strong>Test connectivity from inside the cluster</strong><div class="code-block" style="margin:6px 0">kubectl run debug --image=busybox --rm -it -- sh
+# Inside the pod:
+wget -qO- http://my-svc.default.svc.cluster.local:80</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="k8s" data-text="kubectl error certificate signed by unknown authority context forbidden RBAC unauthorized">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Unauthorized / Forbidden</span>
+      <span class="ts-card-title">kubectl access denied — RBAC or kubeconfig issue</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag hard">Hard</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Error from server (Forbidden): pods is forbidden: User "jane" cannot list resource "pods"</div>
+        <div class="ts-symptom">error: You must be logged in to the server (Unauthorized)</div>
+        <div class="ts-symptom">Unable to connect to the server: x509: certificate signed by unknown authority</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Check current context</strong><div class="code-block" style="margin:6px 0">kubectl config current-context     # Are you in the right cluster?
+kubectl config get-contexts        # List all contexts
+kubectl config use-context prod    # Switch context</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Refresh EKS kubeconfig credentials</strong><div class="code-block" style="margin:6px 0">aws eks update-kubeconfig --region us-east-1 --name my-cluster
+# This refreshes your auth token (EKS tokens expire after 15 minutes)</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>RBAC Forbidden — check role bindings</strong><div class="code-block" style="margin:6px 0">kubectl auth can-i list pods --as=jane -n production
+kubectl get rolebindings,clusterrolebindings --all-namespaces | grep jane
+
+<span class="cb-comment"># Grant access:</span>
+kubectl create rolebinding jane-viewer \
+  --clusterrole=view \
+  --user=jane \
+  --namespace=production</div></div></div>
+    </div>
+  </div>
+
+  <!-- ===== CI/CD ===== -->
+  <div class="ts-section" data-section-topic="cicd">
+    <div class="ts-section-title">⚙️ CI/CD Errors</div>
+  </div>
+
+  <div class="ts-card" data-topic="cicd" data-text="github actions permission denied OIDC credentials aws role assume secret token">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Not authorized to perform sts:AssumeRoleWithWebIdentity</span>
+      <span class="ts-card-title">GitHub Actions can't assume AWS IAM role (OIDC)</span>
+      <div class="ts-card-tags"><span class="ts-tag cicd">CI/CD</span><span class="ts-tag aws">AWS</span><span class="ts-tag hard">Hard</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Error: Not authorized to perform sts:AssumeRoleWithWebIdentity</div>
+        <div class="ts-symptom">Error: Could not load credentials from any providers</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Verify workflow has OIDC permissions</strong><div class="code-block" style="margin:6px 0">permissions:
+  id-token: write   # ← MUST have this
+  contents: read</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Check IAM role trust policy</strong><div class="code-block" style="margin:6px 0">{
+  "Principal": {
+    "Federated": "arn:aws:iam::ACCOUNT:oidc-provider/token.actions.githubusercontent.com"
+  },
+  "Condition": {
+    "StringEquals": {
+      "token.actions.githubusercontent.com:sub": "repo:ORG/REPO:ref:refs/heads/main"
+    }
+  }
+}
+<span class="cb-comment"># The sub condition must match your repo and branch EXACTLY</span></div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Verify OIDC provider exists in IAM</strong><div class="code-block" style="margin:6px 0">aws iam list-open-id-connect-providers
+# Must include: token.actions.githubusercontent.com</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="cicd" data-text="github actions docker build push ECR denied registry login authentication">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">denied: Your authorization token has expired</span>
+      <span class="ts-card-title">Docker push to ECR fails — authentication token expired</span>
+      <div class="ts-card-tags"><span class="ts-tag cicd">CI/CD</span><span class="ts-tag aws">AWS</span><span class="ts-tag easy">Easy</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">denied: Your authorization token has expired. Reauthenticate and try again.</div>
+        <div class="ts-symptom">no basic auth credentials</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>ECR login tokens expire after 12 hours — re-authenticate</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># In GitHub Actions — use the official action</span>
+- name: Login to Amazon ECR
+  uses: aws-actions/amazon-ecr-login@v2
+  # This handles auth automatically using the assumed AWS role</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Manual login (if doing it manually)</strong><div class="code-block" style="margin:6px 0">aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin \
+  $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+<span class="cb-comment"># Must run this BEFORE every docker push, not just once per job</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="cicd" data-text="pipeline slow long build time cache docker layers npm pip packages">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Build taking 10+ minutes</span>
+      <span class="ts-card-title">CI pipeline is too slow — caching strategies</span>
+      <div class="ts-card-tags"><span class="ts-tag cicd">CI/CD</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Every run installs all dependencies from scratch (5-8 min for npm install)</div>
+        <div class="ts-symptom">Docker image build ignores layer cache — rebuilds everything</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Cache npm/pip/maven dependencies in GitHub Actions</strong><div class="code-block" style="margin:6px 0">- uses: actions/cache@v4
+  with:
+    path: ~/.npm
+    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+    restore-keys: ${{ runner.os }}-node-</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Optimize Dockerfile layer order for cache hits</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># BAD — copies code before installing deps, cache busts every change</span>
+COPY . .
+RUN npm install
+
+<span class="cb-comment"># GOOD — install deps first (cached until package.json changes)</span>
+COPY package*.json ./
+RUN npm ci
+COPY . .</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Use Docker layer cache with GitHub Actions</strong><div class="code-block" style="margin:6px 0">- uses: docker/build-push-action@v5
+  with:
+    cache-from: type=gha
+    cache-to: type=gha,mode=max
+    push: true
+    tags: ${{ env.IMAGE_TAG }}</div></div></div>
+    </div>
+  </div>
+
+  <!-- ===== AWS ===== -->
+  <div class="ts-section" data-section-topic="aws">
+    <div class="ts-section-title">☁️ AWS Errors</div>
+  </div>
+
+  <div class="ts-card" data-topic="aws" data-text="eksctl create cluster timeout stuck cloudformation rollback VPC limit subnet">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">CREATE_FAILED</span>
+      <span class="ts-card-title">EKS cluster creation fails or times out</span>
+      <div class="ts-card-tags"><span class="ts-tag aws">AWS</span><span class="ts-tag hard">Hard</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">CREATE_FAILED: The maximum number of VPCs has been reached</div>
+        <div class="ts-symptom">eksctl create cluster: timed out waiting for CloudFormation stack</div>
+        <div class="ts-symptom">No output in eksctl after 10+ minutes</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Check CloudFormation stack for the actual error</strong><div class="code-block" style="margin:6px 0">aws cloudformation describe-stack-events \
+  --stack-name eksctl-my-cluster-cluster \
+  --query 'StackEvents[?ResourceStatus==`CREATE_FAILED`]'</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>VPC limit hit — request increase or delete old VPCs</strong><div class="code-block" style="margin:6px 0">aws ec2 describe-vpcs --query 'length(Vpcs)'  # Default limit is 5
+# Request limit increase: AWS Console → Service Quotas → VPCs per Region</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Clean up failed stack before retrying</strong><div class="code-block" style="margin:6px 0">eksctl delete cluster --name my-cluster --region us-east-1
+# OR via CloudFormation console — delete the ROLLBACK_COMPLETE stacks</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="aws" data-text="terraform state lock dynamodb LockID stuck cannot acquire state lock backend">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Error acquiring the state lock</span>
+      <span class="ts-card-title">Terraform state locked — DynamoDB lock stuck</span>
+      <div class="ts-card-tags"><span class="ts-tag aws">AWS</span><span class="ts-tag cicd">CI/CD</span><span class="ts-tag medium">Medium</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">Error acquiring the state lock: ConditionalCheckFailedException: The conditional request failed</div>
+        <div class="ts-symptom">Lock Info: ID: abc123, Who: CI Runner, Created: 2h ago</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Verify the lock is truly stale (no apply in progress)</strong><p>Check if a CI job is currently running. Check CloudTrail for recent Terraform activity. Only force-unlock if you're 100% sure no apply is running — concurrent applies can corrupt state.</p></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Force unlock with the Lock ID</strong><div class="code-block" style="margin:6px 0">terraform force-unlock &lt;LOCK-ID&gt;
+# The Lock ID is shown in the error message</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Manual DynamoDB cleanup (if terraform command fails)</strong><div class="code-block" style="margin:6px 0">aws dynamodb delete-item \
+  --table-name terraform-state-lock \
+  --key '{"LockID": {"S": "my-bucket/path/to/terraform.tfstate-md5"}}'</div></div></div>
+    </div>
+  </div>
+
+  <div class="ts-card" data-topic="aws" data-text="ALB ingress pending no address target health check failing 504 502">
+    <div class="ts-card-header" onclick="tsToggle(this.parentElement)">
+      <span class="ts-error-pill">Ingress ADDRESS pending</span>
+      <span class="ts-card-title">Kubernetes Ingress stuck with no ALB address assigned</span>
+      <div class="ts-card-tags"><span class="ts-tag k8s">K8s</span><span class="ts-tag aws">AWS</span><span class="ts-tag hard">Hard</span></div>
+      <span class="ts-chevron">›</span>
+    </div>
+    <div class="ts-card-body">
+      <div class="ts-symptoms">
+        <div class="ts-symptoms-title">Symptoms</div>
+        <div class="ts-symptom">kubectl get ingress → ADDRESS column is blank after 5+ minutes</div>
+        <div class="ts-symptom">No ALB appearing in AWS Console after applying Ingress resource</div>
+      </div>
+      <div class="ts-step"><div class="ts-step-num">1</div><div class="ts-step-body"><strong>Check if AWS Load Balancer Controller is running</strong><div class="code-block" style="margin:6px 0">kubectl get pods -n kube-system | grep aws-load-balancer
+kubectl logs -n kube-system -l app.kubernetes.io/name=aws-load-balancer-controller</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">2</div><div class="ts-step-body"><strong>Check Ingress class annotation</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Must have correct annotation</span>
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing  # or internal
+    alb.ingress.kubernetes.io/target-type: ip          # Required for EKS</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">3</div><div class="ts-step-body"><strong>Check controller IAM permissions</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Controller needs these IAM permissions (usually via IRSA)</span>
+elasticloadbalancing:CreateLoadBalancer
+elasticloadbalancing:DescribeLoadBalancers
+ec2:DescribeSubnets
+<span class="cb-comment"># Check controller's service account annotation:</span>
+kubectl describe sa aws-load-balancer-controller -n kube-system | grep eks.amazonaws.com</div></div></div>
+      <div class="ts-step"><div class="ts-step-num">4</div><div class="ts-step-body"><strong>Tag subnets for ALB discovery</strong><div class="code-block" style="margin:6px 0"><span class="cb-comment"># Public subnets for internet-facing ALB must have tag:</span>
+kubernetes.io/role/elb = 1
+<span class="cb-comment"># Private subnets for internal ALB:</span>
+kubernetes.io/role/internal-elb = 1
+<span class="cb-comment"># Also tag with cluster name:</span>
+kubernetes.io/cluster/my-cluster = shared</div></div></div>
+    </div>
+  </div>
+
+  <!-- ===== CHEAT SHEETS ===== -->
+  <div style="margin-top:60px">
+    <div class="section-header" style="margin-bottom:24px">
+      <h2>Quick Reference — Diagnostic Commands</h2>
+      <p>Run these first when something goes wrong.</p>
+    </div>
+
+    <div class="ts-cheatsheet" data-topic="k8s">
+      <h3>☸️ Kubernetes — First 5 Commands When Things Break</h3>
+      <div class="ts-cmd-grid">
+        <div class="ts-cmd"><code>kubectl get pods -A</code><span>List all pods in all namespaces + status</span></div>
+        <div class="ts-cmd"><code>kubectl describe pod &lt;name&gt;</code><span>Events, resource requests, container state — start here</span></div>
+        <div class="ts-cmd"><code>kubectl logs &lt;pod&gt; --previous</code><span>Logs from the last crashed container</span></div>
+        <div class="ts-cmd"><code>kubectl get events --sort-by=.lastTimestamp</code><span>Cluster-wide events sorted by time</span></div>
+        <div class="ts-cmd"><code>kubectl rollout status deploy/&lt;name&gt;</code><span>Is a rollout stuck? Shows progress</span></div>
+        <div class="ts-cmd"><code>kubectl rollout undo deploy/&lt;name&gt;</code><span>Roll back to previous version immediately</span></div>
+        <div class="ts-cmd"><code>kubectl top pods --containers</code><span>Actual CPU/memory usage per container</span></div>
+        <div class="ts-cmd"><code>kubectl exec -it &lt;pod&gt; -- bash</code><span>Shell into a running pod for live debug</span></div>
+        <div class="ts-cmd"><code>kubectl get endpoints &lt;svc&gt;</code><span>Is the Service backed by healthy pods?</span></div>
+        <div class="ts-cmd"><code>kubectl auth can-i &lt;verb&gt; &lt;resource&gt;</code><span>Test RBAC permissions for current user</span></div>
+      </div>
+    </div>
+
+    <div class="ts-cheatsheet" data-topic="docker">
+      <h3>🐳 Docker — Diagnostic Commands</h3>
+      <div class="ts-cmd-grid">
+        <div class="ts-cmd"><code>docker ps -a</code><span>All containers including stopped ones</span></div>
+        <div class="ts-cmd"><code>docker logs &lt;container&gt; --tail 50</code><span>Last 50 lines of container output</span></div>
+        <div class="ts-cmd"><code>docker inspect &lt;container&gt;</code><span>Full container config — env vars, mounts, network</span></div>
+        <div class="ts-cmd"><code>docker system df</code><span>Disk usage breakdown by images/containers/volumes</span></div>
+        <div class="ts-cmd"><code>docker exec -it &lt;container&gt; sh</code><span>Shell into running container</span></div>
+        <div class="ts-cmd"><code>docker stats</code><span>Live CPU/memory/network usage per container</span></div>
+        <div class="ts-cmd"><code>docker history &lt;image&gt;</code><span>Layer sizes — find bloated layers</span></div>
+        <div class="ts-cmd"><code>docker system prune -af</code><span>Remove all unused images/containers (CI cleanup)</span></div>
+      </div>
+    </div>
+
+    <div class="ts-cheatsheet" data-topic="aws">
+      <h3>☁️ AWS CLI — Diagnostic Commands</h3>
+      <div class="ts-cmd-grid">
+        <div class="ts-cmd"><code>aws sts get-caller-identity</code><span>Who am I? — verify IAM credentials are working</span></div>
+        <div class="ts-cmd"><code>aws eks update-kubeconfig --name &lt;cluster&gt;</code><span>Refresh kubectl credentials for EKS</span></div>
+        <div class="ts-cmd"><code>aws ecr describe-repositories</code><span>List ECR repos in current region</span></div>
+        <div class="ts-cmd"><code>aws ec2 describe-instances --query 'Reservations[].Instances[].State'</code><span>Check instance states</span></div>
+        <div class="ts-cmd"><code>aws cloudformation describe-stack-events --stack-name &lt;name&gt;</code><span>Why did my stack fail?</span></div>
+        <div class="ts-cmd"><code>aws logs tail &lt;log-group&gt; --follow</code><span>Stream CloudWatch logs in terminal</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function tsToggle(card) {
+  card.classList.toggle('open');
+}
+
+let currentTopic = 'all';
+
+function tsFilterTopic(topic, btn) {
+  currentTopic = topic;
+  document.querySelectorAll('.ts-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  tsFilter();
+}
+
+function tsFilter() {
+  const query = document.getElementById('ts-search').value.toLowerCase();
+
+  document.querySelectorAll('.ts-card').forEach(card => {
+    const cardTopic = card.dataset.topic;
+    const cardText = (card.dataset.text || '') + ' ' + card.innerText.toLowerCase();
+    const topicMatch = currentTopic === 'all' || cardTopic === currentTopic;
+    const textMatch = !query || cardText.includes(query);
+    card.classList.toggle('ts-hidden', !(topicMatch && textMatch));
+  });
+
+  document.querySelectorAll('[data-section-topic]').forEach(section => {
+    const sectionTopic = section.dataset.sectionTopic;
+    const visible = currentTopic === 'all' || currentTopic === sectionTopic;
+    section.classList.toggle('ts-hidden', !visible);
+  });
+
+  document.querySelectorAll('.ts-cheatsheet[data-topic]').forEach(sheet => {
+    const sheetTopic = sheet.dataset.topic;
+    const visible = currentTopic === 'all' || currentTopic === sheetTopic;
+    sheet.classList.toggle('ts-hidden', !visible);
+  });
+}
+</script>
+</body>
+</html>

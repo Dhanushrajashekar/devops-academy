@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux for DevOps — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .cmd-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+    .cmd-table th { background:var(--bg-tertiary); padding:8px 12px; text-align:left; font-weight:700; color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; }
+    .cmd-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    .cmd-table tr:last-child td { border-bottom:none; }
+    .cmd-table code { font-family:var(--font-mono); font-size:0.8rem; color:var(--blue); background:var(--bg-secondary); padding:2px 6px; border-radius:3px; }
+    .perm-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0; }
+    .perm-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; text-align:center; }
+    .perm-box .pb-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+    .perm-box .pb-val { font-size:1.8rem; font-weight:800; color:var(--green); font-family:var(--font-mono); }
+    .perm-box .pb-desc { font-size:0.75rem; color:var(--text-secondary); margin-top:4px; }
+    .signal-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin:16px 0; }
+    .signal-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; }
+    .signal-card .sig-num { font-family:var(--font-mono); font-size:0.75rem; color:var(--yellow); font-weight:700; }
+    .signal-card .sig-name { font-size:0.85rem; font-weight:700; margin:2px 0; }
+    .signal-card .sig-desc { font-size:0.75rem; color:var(--text-secondary); }
+    .day-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin:20px 0; }
+    .day-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; }
+    .day-card .dc-week { font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--blue); margin-bottom:4px; }
+    .day-card .dc-title { font-size:0.9rem; font-weight:700; margin-bottom:8px; }
+    .day-card ul { list-style:none; padding:0; margin:0; }
+    .day-card ul li { font-size:0.78rem; color:var(--text-secondary); padding:3px 0; display:flex; gap:6px; }
+    .day-card ul li::before { content:'→'; color:var(--green); flex-shrink:0; }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link active">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle r="12" cx="16" cy="16"/>
+        <circle class="progress-fill" r="12" cx="16" cy="16" style="stroke-dasharray:75.4; stroke-dashoffset:75.4;"/>
+      </svg>
+      <div class="pct progress-pct">0%</div>
+    </div>
+    <span class="progress-pct">0%</span> done
+  </div>
+</nav>
+
+<div class="container" style="padding-top:32px;padding-bottom:64px;">
+  <div class="curriculum-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">🐧 Linux Curriculum</div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 1–2 — Foundations</div>
+        <div class="sidebar-item" data-lesson="lx-filesystem"><div class="check-icon"></div> File System & Navigation</div>
+        <div class="sidebar-item" data-lesson="lx-permissions"><div class="check-icon"></div> Permissions & Ownership</div>
+        <div class="sidebar-item" data-lesson="lx-commands"><div class="check-icon"></div> Essential Commands Cheat Sheet</div>
+        <div class="sidebar-item" data-lesson="lx-text"><div class="check-icon"></div> Text Processing (grep, awk, sed)</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 2–3 — System Admin</div>
+        <div class="sidebar-item" data-lesson="lx-processes"><div class="check-icon"></div> Process Management</div>
+        <div class="sidebar-item" data-lesson="lx-users"><div class="check-icon"></div> Users, Groups & sudo</div>
+        <div class="sidebar-item" data-lesson="lx-packages"><div class="check-icon"></div> Package Management</div>
+        <div class="sidebar-item" data-lesson="lx-disk"><div class="check-icon"></div> Disk, Storage & Logs</div>
+        <div class="sidebar-item" data-lesson="lx-ssh"><div class="check-icon"></div> SSH & Remote Access</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 3–4 — Scripting</div>
+        <div class="sidebar-item" data-lesson="lx-bash"><div class="check-icon"></div> Bash Scripting</div>
+        <div class="sidebar-item" data-lesson="lx-cron"><div class="check-icon"></div> Cron & Systemd Services</div>
+        <div class="sidebar-item" data-lesson="lx-plan"><div class="check-icon"></div> 📅 30-Day Practice Plan</div>
+        <div class="sidebar-item" data-lesson="lx-lab"><div class="check-icon"></div> 🔬 Hands-On Lab Terminal</div>
+        <div class="sidebar-item" data-lesson="lx-quiz"><div class="check-icon"></div> 🧠 Interview Quiz</div>
+      </div>
+    </aside>
+
+    <main class="lesson-content">
+
+      <!-- FILE SYSTEM -->
+      <div class="lesson-panel" data-panel="lx-filesystem">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>File System & Navigation</h1>
+            <p>The Linux file system is a tree starting at <code>/</code>. Everything is a file — even devices and network sockets.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Foundation</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>The Linux Directory Tree</h2>
+          <table class="cmd-table">
+            <thead><tr><th>Directory</th><th>Purpose</th><th>What You'll Find</th></tr></thead>
+            <tbody>
+              <tr><td><code>/</code></td><td>Root — top of everything</td><td>All directories branch from here</td></tr>
+              <tr><td><code>/etc</code></td><td>Configuration files</td><td>nginx.conf, ssh/sshd_config, hosts, passwd, fstab</td></tr>
+              <tr><td><code>/var</code></td><td>Variable data (changes at runtime)</td><td>/var/log (logs), /var/lib (databases), /var/spool</td></tr>
+              <tr><td><code>/home</code></td><td>User home directories</td><td>/home/alice, /home/bob — personal files</td></tr>
+              <tr><td><code>/root</code></td><td>Root user's home</td><td>Only accessible by root</td></tr>
+              <tr><td><code>/bin</code> <code>/usr/bin</code></td><td>Essential user binaries</td><td>ls, cp, mv, bash, python3, git</td></tr>
+              <tr><td><code>/sbin</code> <code>/usr/sbin</code></td><td>System admin binaries</td><td>fdisk, iptables, sshd — need root to use</td></tr>
+              <tr><td><code>/tmp</code></td><td>Temporary files (cleared on reboot)</td><td>Build artifacts, temp downloads</td></tr>
+              <tr><td><code>/proc</code></td><td>Virtual filesystem — kernel/process info</td><td>/proc/cpuinfo, /proc/meminfo, /proc/PID/</td></tr>
+              <tr><td><code>/dev</code></td><td>Device files</td><td>/dev/sda (disk), /dev/null, /dev/random</td></tr>
+              <tr><td><code>/opt</code></td><td>Optional/third-party software</td><td>Manually installed apps (e.g., /opt/myapp)</td></tr>
+              <tr><td><code>/usr/local</code></td><td>Locally compiled software</td><td>kubectl, helm installed manually go here</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Navigation Commands</h2>
+          <div class="code-block">
+pwd                    <span class="cb-comment"># Print Working Directory — where am I?</span>
+ls                     <span class="cb-comment"># List files</span>
+ls -la                 <span class="cb-comment"># Long format + hidden files (files starting with .)</span>
+ls -lh                 <span class="cb-comment"># Human-readable file sizes (KB, MB, GB)</span>
+ls -lt                 <span class="cb-comment"># Sort by modification time (newest first)</span>
+
+cd /etc                <span class="cb-comment"># Change to absolute path</span>
+cd ../logs             <span class="cb-comment"># Relative — go up one, then into logs</span>
+cd ~                   <span class="cb-comment"># Go to your home directory</span>
+cd -                   <span class="cb-comment"># Go back to previous directory</span>
+
+<span class="cb-comment"># Finding files</span>
+find / -name "*.conf" 2>/dev/null          <span class="cb-comment"># Find all .conf files</span>
+find /var/log -mtime -1                    <span class="cb-comment"># Modified in last 24 hours</span>
+find /home -size +100M                     <span class="cb-comment"># Files larger than 100MB</span>
+locate nginx.conf                          <span class="cb-comment"># Fast search (uses DB — run updatedb first)</span></div>
+
+          <h2>File Operations</h2>
+          <div class="code-block">
+<span class="cb-comment"># Create</span>
+touch file.txt             <span class="cb-comment"># Create empty file / update timestamp</span>
+mkdir -p dir/sub/sub2      <span class="cb-comment"># Create nested directories</span>
+
+<span class="cb-comment"># Copy, Move, Delete</span>
+cp file.txt backup.txt     <span class="cb-comment"># Copy file</span>
+cp -r dir/ dir_backup/     <span class="cb-comment"># Copy directory recursively</span>
+mv old.txt new.txt         <span class="cb-comment"># Rename or move</span>
+rm file.txt                <span class="cb-comment"># Delete file</span>
+rm -rf directory/          <span class="cb-comment"># Delete directory recursively — NO confirmation!</span>
+
+<span class="cb-comment"># View files</span>
+cat file.txt               <span class="cb-comment"># Print entire file</span>
+less file.txt              <span class="cb-comment"># Paginated view (q to quit, / to search)</span>
+head -20 file.txt          <span class="cb-comment"># First 20 lines</span>
+tail -50 file.txt          <span class="cb-comment"># Last 50 lines</span>
+tail -f /var/log/syslog    <span class="cb-comment"># Follow log in real-time (Ctrl+C to stop)</span>
+
+<span class="cb-comment"># Links</span>
+ln -s /etc/nginx/nginx.conf ~/nginx.conf  <span class="cb-comment"># Symlink (like a shortcut)</span></div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: What is the difference between a hard link and a soft link?</div>
+              <div class="callout-text">
+                <strong>Hard link:</strong> Points to the same inode (data blocks on disk). Both the original and link must be on the same filesystem. Deleting the original doesn't break the hard link.<br><br>
+                <strong>Soft link (symlink):</strong> Points to the original file's path. If the original is deleted, the symlink breaks. Works across filesystems. Used for: version aliasing (python → python3.11), shared config files.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="window.location='index.html'">← Home</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-filesystem')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-permissions]').click()">Next: Permissions →</button>
+        </div>
+      </div>
+
+      <!-- PERMISSIONS -->
+      <div class="lesson-panel" data-panel="lx-permissions">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Permissions & Ownership</h1>
+            <p>Linux permissions control who can read, write, and execute every file. This comes up in every Linux interview.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Reading Permission Strings</h2>
+          <div class="code-block">
+$ ls -la /etc/passwd
+-rw-r--r-- 1 root root 2847 Jan 15 10:23 /etc/passwd
+│└┬┘└┬┘└┬┘
+│ │  │  └── Other (everyone else): r-- = read only
+│ │  └───── Group (root group):    r-- = read only
+│ └──────── Owner (root user):     rw- = read + write
+└────────── File type: - = regular file, d = directory, l = symlink</div>
+
+          <div class="perm-grid">
+            <div class="perm-box">
+              <div class="pb-label">r — Read</div>
+              <div class="pb-val">4</div>
+              <div class="pb-desc">View file contents<br>List directory contents</div>
+            </div>
+            <div class="perm-box">
+              <div class="pb-label">w — Write</div>
+              <div class="pb-val">2</div>
+              <div class="pb-desc">Modify file<br>Create/delete files in dir</div>
+            </div>
+            <div class="perm-box">
+              <div class="pb-label">x — Execute</div>
+              <div class="pb-val">1</div>
+              <div class="pb-desc">Run as program<br>Enter directory (cd into it)</div>
+            </div>
+          </div>
+
+          <h2>chmod — Change Permissions</h2>
+          <div class="code-block">
+<span class="cb-comment"># Numeric (octal) mode — add up r+w+x for each group</span>
+chmod 755 script.sh    <span class="cb-comment"># rwxr-xr-x — owner: all, group+others: read+execute</span>
+chmod 644 file.txt     <span class="cb-comment"># rw-r--r-- — owner: read+write, group+others: read</span>
+chmod 600 id_rsa       <span class="cb-comment"># rw------- — owner only (required for SSH private keys!)</span>
+chmod 777 file         <span class="cb-comment"># rwxrwxrwx — everyone everything (NEVER in production)</span>
+
+<span class="cb-comment"># Symbolic mode — easier to understand</span>
+chmod u+x script.sh    <span class="cb-comment"># Add execute for user (owner)</span>
+chmod g-w file.txt     <span class="cb-comment"># Remove write from group</span>
+chmod o=r file.txt     <span class="cb-comment"># Set others to read-only exactly</span>
+chmod a+r file.txt     <span class="cb-comment"># Add read for all (user+group+others)</span>
+chmod -R 755 /var/www  <span class="cb-comment"># Recursive — apply to all files in directory</span></div>
+
+          <h2>chown — Change Ownership</h2>
+          <div class="code-block">
+chown alice file.txt           <span class="cb-comment"># Change owner to alice</span>
+chown alice:developers file.txt <span class="cb-comment"># Change owner AND group</span>
+chown -R www-data:www-data /var/www/html  <span class="cb-comment"># Recursive (web server files)</span>
+chgrp developers project/      <span class="cb-comment"># Change group only</span></div>
+
+          <h2>Common Permission Patterns</h2>
+          <table class="cmd-table">
+            <thead><tr><th>Octal</th><th>String</th><th>Use Case</th></tr></thead>
+            <tbody>
+              <tr><td><code>755</code></td><td>rwxr-xr-x</td><td>Scripts, directories, web root — owner can modify, others can read/execute</td></tr>
+              <tr><td><code>644</code></td><td>rw-r--r--</td><td>Config files, web files — owner edits, others read</td></tr>
+              <tr><td><code>600</code></td><td>rw-------</td><td>SSH private keys, secret files — owner only</td></tr>
+              <tr><td><code>700</code></td><td>rwx------</td><td>Private scripts — owner only</td></tr>
+              <tr><td><code>400</code></td><td>r--------</td><td>Read-only sensitive files (SSL certs, API keys)</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body">
+              <div class="callout-title">SSH will refuse your private key if permissions are wrong</div>
+              <div class="callout-text"><code>WARNING: UNPROTECTED PRIVATE KEY FILE!</code><br>SSH requires private keys to be <strong>600</strong> (owner read/write only). Fix: <code>chmod 600 ~/.ssh/id_rsa</code>. This is one of the most common Linux interview gotchas.</div>
+            </div>
+          </div>
+
+          <h2>sudo — Running as Root</h2>
+          <div class="code-block">
+sudo command           <span class="cb-comment"># Run single command as root</span>
+sudo -i                <span class="cb-comment"># Switch to root shell (use sparingly)</span>
+sudo -u alice command  <span class="cb-comment"># Run as a different user</span>
+sudo !!                <span class="cb-comment"># Re-run last command with sudo</span>
+
+<span class="cb-comment"># Who can use sudo? Check /etc/sudoers</span>
+sudo visudo            <span class="cb-comment"># Edit sudoers safely (never edit directly)</span>
+
+<span class="cb-comment"># Example sudoers entry:</span>
+alice ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx
+<span class="cb-comment"># alice can restart nginx without a password, on any host</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-filesystem]').click()">← File System</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-permissions')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-commands]').click()">Next: Commands →</button>
+        </div>
+      </div>
+
+      <!-- COMMANDS CHEAT SHEET -->
+      <div class="lesson-panel" data-panel="lx-commands">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Essential Commands Cheat Sheet</h1>
+            <p>The 50 commands that cover 90% of daily Linux work. Learn these cold.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>File & Directory</h2>
+          <table class="cmd-table">
+            <thead><tr><th>Command</th><th>What It Does</th><th>Key Flags</th></tr></thead>
+            <tbody>
+              <tr><td><code>ls -la</code></td><td>List all files with permissions</td><td><code>-l</code> long, <code>-a</code> hidden, <code>-h</code> human sizes, <code>-t</code> by time</td></tr>
+              <tr><td><code>find</code></td><td>Search files by name, size, time, type</td><td><code>-name</code> <code>-size</code> <code>-mtime</code> <code>-type f/d</code></td></tr>
+              <tr><td><code>cp -r</code></td><td>Copy files/directories</td><td><code>-r</code> recursive, <code>-p</code> preserve timestamps</td></tr>
+              <tr><td><code>tar</code></td><td>Archive/compress files</td><td><code>-czf</code> create gzip, <code>-xzf</code> extract gzip, <code>-tf</code> list contents</td></tr>
+              <tr><td><code>diff</code></td><td>Compare two files</td><td><code>-u</code> unified format (like git diff)</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Search & Text</h2>
+          <table class="cmd-table">
+            <thead><tr><th>Command</th><th>What It Does</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><code>grep</code></td><td>Search text in files</td><td><code>grep -r "ERROR" /var/log/</code></td></tr>
+              <tr><td><code>grep -v</code></td><td>Exclude matching lines</td><td><code>grep -v "DEBUG" app.log</code></td></tr>
+              <tr><td><code>grep -c</code></td><td>Count matching lines</td><td><code>grep -c "ERROR" app.log</code></td></tr>
+              <tr><td><code>wc -l</code></td><td>Count lines in file</td><td><code>cat file | wc -l</code></td></tr>
+              <tr><td><code>sort | uniq</code></td><td>Remove duplicates</td><td><code>cat ips.txt | sort | uniq -c | sort -rn</code></td></tr>
+              <tr><td><code>cut</code></td><td>Extract columns</td><td><code>cut -d: -f1 /etc/passwd</code> — get usernames</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Networking</h2>
+          <table class="cmd-table">
+            <thead><tr><th>Command</th><th>What It Does</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><code>ip addr</code></td><td>Show IP addresses and interfaces</td><td><code>ip addr show eth0</code></td></tr>
+              <tr><td><code>ip route</code></td><td>Show routing table</td><td><code>ip route show</code></td></tr>
+              <tr><td><code>ss -tulpn</code></td><td>Show listening ports and processes</td><td>Replaces old <code>netstat -tulpn</code></td></tr>
+              <tr><td><code>ping</code></td><td>Test reachability</td><td><code>ping -c 4 8.8.8.8</code></td></tr>
+              <tr><td><code>traceroute</code></td><td>Show path to host</td><td><code>traceroute google.com</code></td></tr>
+              <tr><td><code>curl</code></td><td>HTTP requests from CLI</td><td><code>curl -I https://example.com</code> — headers only</td></tr>
+              <tr><td><code>wget</code></td><td>Download files</td><td><code>wget -O file.zip https://url/file.zip</code></td></tr>
+              <tr><td><code>dig</code></td><td>DNS lookup</td><td><code>dig google.com A</code></td></tr>
+              <tr><td><code>nslookup</code></td><td>DNS lookup (simpler)</td><td><code>nslookup google.com 8.8.8.8</code></td></tr>
+            </tbody>
+          </table>
+
+          <h2>System Info</h2>
+          <table class="cmd-table">
+            <thead><tr><th>Command</th><th>What It Does</th></tr></thead>
+            <tbody>
+              <tr><td><code>uname -a</code></td><td>Kernel version and architecture</td></tr>
+              <tr><td><code>uptime</code></td><td>How long system has been running + load average</td></tr>
+              <tr><td><code>df -h</code></td><td>Disk space usage on all mounted filesystems</td></tr>
+              <tr><td><code>du -sh *</code></td><td>Disk usage of each item in current directory</td></tr>
+              <tr><td><code>free -h</code></td><td>RAM usage (total / used / free / cache)</td></tr>
+              <tr><td><code>top</code> / <code>htop</code></td><td>Live process viewer with CPU + memory</td></tr>
+              <tr><td><code>lscpu</code></td><td>CPU info (cores, architecture, speed)</td></tr>
+              <tr><td><code>lsblk</code></td><td>List block devices (disks, partitions)</td></tr>
+              <tr><td><code>env</code></td><td>Show all environment variables</td></tr>
+              <tr><td><code>history</code></td><td>Command history. <code>!123</code> re-runs command 123</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Pipes & Redirection</h2>
+          <div class="code-block">
+<span class="cb-comment"># Pipe — send output of one command to another</span>
+cat /var/log/syslog | grep "error" | tail -20
+
+<span class="cb-comment"># Redirection</span>
+command > file.txt       <span class="cb-comment"># Write stdout to file (overwrites)</span>
+command >> file.txt      <span class="cb-comment"># Append stdout to file</span>
+command 2> errors.txt    <span class="cb-comment"># Write stderr to file</span>
+command 2>&1 | tee out.txt  <span class="cb-comment"># Both stdout+stderr to file AND terminal</span>
+command &> /dev/null     <span class="cb-comment"># Discard all output</span>
+
+<span class="cb-comment"># Useful combinations</span>
+ps aux | grep nginx                           <span class="cb-comment"># Find nginx process</span>
+du -sh /var/log/* | sort -rh | head -10       <span class="cb-comment"># Top 10 largest log files</span>
+cat access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -20
+<span class="cb-comment"># ^ Top 20 IPs hitting your web server</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-permissions]').click()">← Permissions</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-commands')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-text]').click()">Next: Text Processing →</button>
+        </div>
+      </div>
+
+      <!-- TEXT PROCESSING -->
+      <div class="lesson-panel" data-panel="lx-text">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Text Processing — grep, awk, sed</h1>
+            <p>The Swiss Army knife of Linux. Parse logs, transform files, extract data — without opening a text editor.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>grep — Search</h2>
+          <div class="code-block">
+grep "ERROR" app.log                   <span class="cb-comment"># Lines containing ERROR</span>
+grep -i "error" app.log                <span class="cb-comment"># Case insensitive</span>
+grep -r "TODO" /src/                   <span class="cb-comment"># Recursive through directory</span>
+grep -n "ERROR" app.log                <span class="cb-comment"># Show line numbers</span>
+grep -v "DEBUG" app.log                <span class="cb-comment"># Exclude DEBUG lines</span>
+grep -A 3 "FATAL" app.log             <span class="cb-comment"># Show 3 lines After match</span>
+grep -B 2 "FATAL" app.log             <span class="cb-comment"># Show 2 lines Before match</span>
+grep -C 5 "FATAL" app.log             <span class="cb-comment"># Show 5 lines Context (before+after)</span>
+grep -E "ERROR|WARN" app.log          <span class="cb-comment"># Extended regex — match ERROR or WARN</span>
+grep -c "ERROR" app.log               <span class="cb-comment"># Count matches (not lines with output)</span></div>
+
+          <h2>sed — Stream Editor (Find & Replace)</h2>
+          <div class="code-block">
+<span class="cb-comment"># Basic substitution: s/find/replace/flags</span>
+sed 's/foo/bar/' file.txt             <span class="cb-comment"># Replace first occurrence per line</span>
+sed 's/foo/bar/g' file.txt            <span class="cb-comment"># Replace ALL occurrences (global)</span>
+sed 's/foo/bar/gi' file.txt           <span class="cb-comment"># Case insensitive global replace</span>
+sed -i 's/localhost/prod.db/g' app.conf  <span class="cb-comment"># Edit file IN-PLACE (⚠️ no undo)</span>
+sed -i.bak 's/old/new/g' file.txt    <span class="cb-comment"># In-place + keep .bak backup</span>
+
+<span class="cb-comment"># Delete lines</span>
+sed '/^#/d' config.conf               <span class="cb-comment"># Delete comment lines (starting with #)</span>
+sed '/^$/d' file.txt                  <span class="cb-comment"># Delete blank lines</span>
+sed '5d' file.txt                     <span class="cb-comment"># Delete line 5</span>
+
+<span class="cb-comment"># Print specific lines</span>
+sed -n '10,20p' file.txt              <span class="cb-comment"># Print lines 10–20</span></div>
+
+          <h2>awk — Column Processing</h2>
+          <div class="code-block">
+<span class="cb-comment"># awk sees each line as fields: $1 $2 $3... $NF = last field</span>
+awk '{print $1}' file.txt             <span class="cb-comment"># Print first column</span>
+awk '{print $1, $3}' file.txt         <span class="cb-comment"># Print 1st and 3rd columns</span>
+awk -F: '{print $1}' /etc/passwd      <span class="cb-comment"># Use : as delimiter — print usernames</span>
+awk '{print NR, $0}' file.txt         <span class="cb-comment"># Add line numbers (NR = Number of Row)</span>
+
+<span class="cb-comment"># Filtering</span>
+awk '$3 > 100' data.txt               <span class="cb-comment"># Print lines where 3rd field > 100</span>
+awk '/ERROR/ {print $0}' app.log      <span class="cb-comment"># Print lines matching ERROR</span>
+awk 'NR==5' file.txt                  <span class="cb-comment"># Print only line 5</span>
+
+<span class="cb-comment"># Real-world: parse nginx access log</span>
+awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -10
+<span class="cb-comment"># → Top 10 client IPs by request count</span>
+
+awk '$9 == 500' /var/log/nginx/access.log
+<span class="cb-comment"># → All requests that returned HTTP 500</span></div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: "Show me only the ERROR lines from this log file, with 2 lines of context"</div>
+              <div class="callout-text"><code>grep -C 2 "ERROR" /var/log/app.log</code><br><br>Then they might follow up: "Now count how many errors per hour." Answer: <code>grep "ERROR" app.log | awk '{print $2}' | cut -d: -f1 | sort | uniq -c</code> (extracts the hour from timestamps and counts by hour).</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-commands]').click()">← Commands</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-text')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-processes]').click()">Next: Processes →</button>
+        </div>
+      </div>
+
+      <!-- PROCESSES -->
+      <div class="lesson-panel" data-panel="lx-processes">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Process Management</h1>
+            <p>View, control, and troubleshoot running processes. Essential for production debugging.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Viewing Processes</h2>
+          <div class="code-block">
+ps aux                    <span class="cb-comment"># All processes: USER PID %CPU %MEM COMMAND</span>
+ps aux | grep nginx       <span class="cb-comment"># Find nginx process</span>
+ps -ef --forest           <span class="cb-comment"># Tree view showing parent-child relationships</span>
+
+top                       <span class="cb-comment"># Live process monitor (q to quit)</span>
+htop                      <span class="cb-comment"># Better top — colour, mouse support (install if missing)</span>
+
+<span class="cb-comment"># top keyboard shortcuts:</span>
+<span class="cb-comment"># P = sort by CPU | M = sort by memory | k = kill process | q = quit</span></div>
+
+          <h2>Signals — Killing Processes</h2>
+          <div class="signal-grid">
+            <div class="signal-card"><div class="sig-num">SIGTERM (15)</div><div class="sig-name">Graceful Stop</div><div class="sig-desc">Ask process to stop cleanly. Default for <code>kill</code>. Process can handle cleanup.</div></div>
+            <div class="signal-card"><div class="sig-num">SIGKILL (9)</div><div class="sig-name">Force Kill</div><div class="sig-desc">Kernel kills immediately. Cannot be caught or ignored. Last resort only.</div></div>
+            <div class="signal-card"><div class="sig-num">SIGHUP (1)</div><div class="sig-name">Reload Config</div><div class="sig-desc">Reload config without restart. Used by nginx, sshd, cron.</div></div>
+            <div class="signal-card"><div class="sig-num">SIGINT (2)</div><div class="sig-name">Interrupt</div><div class="sig-desc">What Ctrl+C sends. Interrupt the running process.</div></div>
+          </div>
+          <div class="code-block">
+kill 1234              <span class="cb-comment"># Send SIGTERM to PID 1234 (graceful)</span>
+kill -9 1234           <span class="cb-comment"># Send SIGKILL (force — only if SIGTERM fails)</span>
+kill -HUP 1234         <span class="cb-comment"># Reload config (nginx: reload without dropping connections)</span>
+killall nginx          <span class="cb-comment"># Kill all processes named nginx</span>
+pkill -f "python app"  <span class="cb-comment"># Kill by matching command string</span>
+
+<span class="cb-comment"># Find PID of a process</span>
+pgrep nginx            <span class="cb-comment"># Print PID(s) of nginx</span>
+pidof sshd             <span class="cb-comment"># Get PID of sshd</span></div>
+
+          <h2>Background Jobs</h2>
+          <div class="code-block">
+command &              <span class="cb-comment"># Run in background</span>
+jobs                   <span class="cb-comment"># List background jobs</span>
+fg %1                  <span class="cb-comment"># Bring job 1 to foreground</span>
+bg %1                  <span class="cb-comment"># Resume job 1 in background</span>
+Ctrl+Z                 <span class="cb-comment"># Suspend foreground process</span>
+
+nohup command &        <span class="cb-comment"># Run even after logout (ignores SIGHUP)</span>
+
+<span class="cb-comment"># Better: use screen or tmux for persistent sessions</span>
+tmux new -s mysession  <span class="cb-comment"># Create named tmux session</span>
+tmux attach -t mysession  <span class="cb-comment"># Re-attach after logout</span></div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: What's the difference between kill -9 and kill -15?</div>
+              <div class="callout-text"><strong>SIGTERM (15, default):</strong> Politely asks the process to stop. The process can catch this signal, save state, close connections, and shut down cleanly. This is correct in production.<br><br><strong>SIGKILL (9):</strong> The kernel forcefully terminates the process immediately — the process cannot intercept this. Files may be left unclosed, connections broken mid-stream. Use only when SIGTERM fails after waiting 30+ seconds.</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-text]').click()">← Text Processing</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-processes')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-users]').click()">Next: Users →</button>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="lesson-panel" data-panel="lx-users">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Users, Groups & sudo</h1>
+            <p>Linux multi-user system management — who can do what.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Key Files</h2>
+          <div class="code-block">
+/etc/passwd    <span class="cb-comment"># User accounts: username:x:UID:GID:comment:home:shell</span>
+/etc/shadow    <span class="cb-comment"># Hashed passwords (root-only readable)</span>
+/etc/group     <span class="cb-comment"># Groups: groupname:x:GID:members</span>
+/etc/sudoers   <span class="cb-comment"># Who can use sudo and how</span>
+
+<span class="cb-comment"># Read /etc/passwd</span>
+cat /etc/passwd | cut -d: -f1    <span class="cb-comment"># List all usernames</span>
+id alice                          <span class="cb-comment"># Show UID, GID, groups for alice</span>
+whoami                            <span class="cb-comment"># Current username</span>
+who                               <span class="cb-comment"># Who is logged in right now</span>
+last                              <span class="cb-comment"># Login history</span></div>
+
+          <h2>User Management</h2>
+          <div class="code-block">
+<span class="cb-comment"># Create user</span>
+useradd -m -s /bin/bash alice    <span class="cb-comment"># -m: create home dir, -s: set shell</span>
+passwd alice                      <span class="cb-comment"># Set password</span>
+
+<span class="cb-comment"># Modify user</span>
+usermod -aG sudo alice            <span class="cb-comment"># Add alice to sudo group (-a = append)</span>
+usermod -aG docker alice          <span class="cb-comment"># Add to docker group</span>
+usermod -s /bin/bash alice        <span class="cb-comment"># Change shell</span>
+usermod -L alice                  <span class="cb-comment"># Lock account (disable login)</span>
+usermod -U alice                  <span class="cb-comment"># Unlock account</span>
+
+<span class="cb-comment"># Delete user</span>
+userdel alice                     <span class="cb-comment"># Delete user (keep home dir)</span>
+userdel -r alice                  <span class="cb-comment"># Delete user AND home directory</span>
+
+<span class="cb-comment"># Groups</span>
+groupadd developers               <span class="cb-comment"># Create group</span>
+groups alice                      <span class="cb-comment"># Show alice's groups</span></div>
+
+          <h2>Switch Users</h2>
+          <div class="code-block">
+su - alice         <span class="cb-comment"># Switch to alice's environment (full login shell)</span>
+su alice           <span class="cb-comment"># Switch to alice (keeps current env)</span>
+sudo su -          <span class="cb-comment"># Become root (if you have sudo access)</span>
+exit               <span class="cb-comment"># Return to previous user</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-processes]').click()">← Processes</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-users')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-packages]').click()">Next: Packages →</button>
+        </div>
+      </div>
+
+      <!-- PACKAGES -->
+      <div class="lesson-panel" data-panel="lx-packages">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Package Management</h1>
+            <p>Installing, updating, and removing software. Know both apt (Debian/Ubuntu) and yum/dnf (RHEL/Amazon Linux).</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~15 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>apt — Debian / Ubuntu</h2>
+          <div class="code-block">
+sudo apt update                    <span class="cb-comment"># Refresh package list (run before install)</span>
+sudo apt upgrade                   <span class="cb-comment"># Upgrade all installed packages</span>
+sudo apt install nginx             <span class="cb-comment"># Install nginx</span>
+sudo apt install -y nginx          <span class="cb-comment"># Install without prompting (for scripts)</span>
+sudo apt remove nginx              <span class="cb-comment"># Remove (keep config files)</span>
+sudo apt purge nginx               <span class="cb-comment"># Remove + delete config files</span>
+sudo apt autoremove                <span class="cb-comment"># Remove unused dependencies</span>
+apt search nginx                   <span class="cb-comment"># Search for packages</span>
+apt show nginx                     <span class="cb-comment"># Show package info, version, dependencies</span>
+dpkg -l | grep nginx               <span class="cb-comment"># List installed packages matching nginx</span>
+dpkg -L nginx                      <span class="cb-comment"># List files installed by nginx package</span></div>
+
+          <h2>yum / dnf — RHEL / CentOS / Amazon Linux</h2>
+          <div class="code-block">
+sudo yum update                    <span class="cb-comment"># Update all packages (Amazon Linux 2)</span>
+sudo dnf update                    <span class="cb-comment"># Same but newer (Amazon Linux 2023, RHEL 8+)</span>
+sudo yum install nginx -y          <span class="cb-comment"># Install nginx</span>
+sudo yum remove nginx              <span class="cb-comment"># Remove</span>
+yum search nginx                   <span class="cb-comment"># Search</span>
+rpm -qa | grep nginx               <span class="cb-comment"># List installed RPM packages</span></div>
+
+          <table class="cmd-table" style="margin-top:20px">
+            <thead><tr><th>Task</th><th>apt (Ubuntu/Debian)</th><th>yum/dnf (RHEL/Amazon)</th></tr></thead>
+            <tbody>
+              <tr><td>Update package list</td><td><code>apt update</code></td><td><code>yum check-update</code></td></tr>
+              <tr><td>Install</td><td><code>apt install pkg</code></td><td><code>yum install pkg</code></td></tr>
+              <tr><td>Remove</td><td><code>apt remove pkg</code></td><td><code>yum remove pkg</code></td></tr>
+              <tr><td>List installed</td><td><code>dpkg -l</code></td><td><code>rpm -qa</code></td></tr>
+              <tr><td>Which package owns file</td><td><code>dpkg -S /bin/ls</code></td><td><code>rpm -qf /bin/ls</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-users]').click()">← Users</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-packages')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-disk]').click()">Next: Disk & Logs →</button>
+        </div>
+      </div>
+
+      <!-- DISK & LOGS -->
+      <div class="lesson-panel" data-panel="lx-disk">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Disk, Storage & Logs</h1>
+            <p>Find what's eating your disk, read system logs, mount storage.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Disk Usage</h2>
+          <div class="code-block">
+df -h                            <span class="cb-comment"># Disk Free — filesystem usage overview</span>
+df -h /var                       <span class="cb-comment"># Check specific path</span>
+du -sh /var/log                  <span class="cb-comment"># Total size of /var/log</span>
+du -sh /var/log/* | sort -rh | head -10  <span class="cb-comment"># Top 10 largest items</span>
+du -ah /home/alice | sort -rh | head -20  <span class="cb-comment"># Largest files in home dir</span>
+
+lsblk                            <span class="cb-comment"># List block devices (disks + partitions)</span>
+fdisk -l                         <span class="cb-comment"># Partition table (requires root)</span>
+mount | column -t                <span class="cb-comment"># Show all mounted filesystems</span></div>
+
+          <h2>Reading Logs</h2>
+          <div class="code-block">
+<span class="cb-comment"># Important log files</span>
+/var/log/syslog          <span class="cb-comment"># General system messages (Ubuntu)</span>
+/var/log/messages        <span class="cb-comment"># General system messages (RHEL)</span>
+/var/log/auth.log        <span class="cb-comment"># Authentication, sudo, SSH logins</span>
+/var/log/kern.log        <span class="cb-comment"># Kernel messages</span>
+/var/log/nginx/          <span class="cb-comment"># Nginx access + error logs</span>
+/var/log/docker/         <span class="cb-comment"># Docker daemon logs</span>
+
+<span class="cb-comment"># Real-time log following</span>
+tail -f /var/log/syslog
+journalctl -f                    <span class="cb-comment"># Follow systemd journal (all services)</span>
+journalctl -u nginx -f           <span class="cb-comment"># Follow nginx service logs only</span>
+journalctl --since "1 hour ago"  <span class="cb-comment"># Last hour of logs</span>
+journalctl -p err                <span class="cb-comment"># Only error level and above</span>
+journalctl -n 100                <span class="cb-comment"># Last 100 lines</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-packages]').click()">← Packages</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-disk')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-ssh]').click()">Next: SSH →</button>
+        </div>
+      </div>
+
+      <!-- SSH -->
+      <div class="lesson-panel" data-panel="lx-ssh">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>SSH & Remote Access</h1>
+            <p>SSH is how you manage every Linux server remotely. Know it inside out.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>SSH Basics</h2>
+          <div class="code-block">
+ssh user@server                   <span class="cb-comment"># Connect (uses password or default key)</span>
+ssh -i ~/.ssh/mykey.pem ec2-user@1.2.3.4  <span class="cb-comment"># Specify private key</span>
+ssh -p 2222 user@server           <span class="cb-comment"># Non-standard port</span>
+ssh -L 8080:localhost:80 user@server  <span class="cb-comment"># Local port forward</span>
+
+<span class="cb-comment"># Exit SSH session</span>
+exit   <span class="cb-comment"># or Ctrl+D</span></div>
+
+          <h2>SSH Key Authentication (No Password)</h2>
+          <div class="code-block">
+<span class="cb-comment"># Step 1: Generate key pair on your local machine</span>
+ssh-keygen -t ed25519 -C "my-laptop"
+<span class="cb-comment"># Creates: ~/.ssh/id_ed25519 (private) + ~/.ssh/id_ed25519.pub (public)</span>
+
+<span class="cb-comment"># Step 2: Copy public key to server</span>
+ssh-copy-id user@server
+<span class="cb-comment"># OR manually append to server's ~/.ssh/authorized_keys</span>
+
+<span class="cb-comment"># Step 3: Set correct permissions</span>
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+chmod 600 ~/.ssh/authorized_keys   <span class="cb-comment"># On the server</span></div>
+
+          <h2>SSH Config File — Stop Typing Long Commands</h2>
+          <div class="code-block">
+<span class="cb-comment"># ~/.ssh/config</span>
+Host prod-web
+    HostName 10.0.1.50
+    User ec2-user
+    IdentityFile ~/.ssh/prod.pem
+    Port 22
+
+Host bastion
+    HostName 52.10.20.30
+    User ubuntu
+    IdentityFile ~/.ssh/bastion.pem
+
+Host prod-db
+    HostName 10.0.3.100
+    User postgres
+    IdentityFile ~/.ssh/prod.pem
+    ProxyJump bastion    <span class="cb-comment"># Connect via bastion host (jump host)</span>
+
+<span class="cb-comment"># Now just type:</span>
+ssh prod-web
+ssh prod-db   <span class="cb-comment"># Automatically goes through bastion</span></div>
+
+          <h2>Hardening SSH (/etc/ssh/sshd_config)</h2>
+          <div class="code-block">
+PermitRootLogin no           <span class="cb-comment"># Never allow root login directly</span>
+PasswordAuthentication no    <span class="cb-comment"># Key-only auth (after setting up keys!)</span>
+Port 2222                    <span class="cb-comment"># Non-standard port (reduces noise, not real security)</span>
+AllowUsers alice bob         <span class="cb-comment"># Whitelist specific users</span>
+MaxAuthTries 3               <span class="cb-comment"># Limit brute force attempts</span>
+
+<span class="cb-comment"># After editing:</span>
+sudo sshd -t                 <span class="cb-comment"># Test config before reloading!</span>
+sudo systemctl reload sshd</div>
+
+          <h2>SCP & rsync — File Transfer</h2>
+          <div class="code-block">
+scp file.txt user@server:/home/user/          <span class="cb-comment"># Copy TO server</span>
+scp user@server:/var/log/app.log ./           <span class="cb-comment"># Copy FROM server</span>
+scp -r ./dir user@server:/opt/               <span class="cb-comment"># Copy directory</span>
+
+rsync -avz ./src/ user@server:/opt/app/      <span class="cb-comment"># Sync directory (only changed files)</span>
+rsync -avz --delete ./src/ user@server:/opt/ <span class="cb-comment"># Mirror (deletes files not in src)</span></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-disk]').click()">← Disk & Logs</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-ssh')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-bash]').click()">Next: Bash Scripting →</button>
+        </div>
+      </div>
+
+      <!-- BASH SCRIPTING -->
+      <div class="lesson-panel" data-panel="lx-bash">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Bash Scripting</h1>
+            <p>Automate repetitive tasks. Interviewers often ask you to write a script on the spot.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~35 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Script Structure</h2>
+          <div class="code-block">
+#!/bin/bash
+<span class="cb-comment"># ↑ Shebang — tells OS to use bash to run this script</span>
+set -e          <span class="cb-comment"># Exit immediately on any error</span>
+set -u          <span class="cb-comment"># Treat unset variables as errors</span>
+set -o pipefail <span class="cb-comment"># Catch errors in pipes</span>
+
+echo "Script started at $(date)"</div>
+
+          <h2>Variables & Input</h2>
+          <div class="code-block">
+NAME="Alice"                      <span class="cb-comment"># Variable (no spaces around =)</span>
+echo "Hello $NAME"                <span class="cb-comment"># Use variable</span>
+echo "Hello ${NAME}s"             <span class="cb-comment"># Use variable with text after (curly braces)</span>
+
+<span class="cb-comment"># Command-line arguments</span>
+$0  <span class="cb-comment"># Script name</span>
+$1  <span class="cb-comment"># First argument</span>
+$2  <span class="cb-comment"># Second argument</span>
+$#  <span class="cb-comment"># Number of arguments</span>
+$@  <span class="cb-comment"># All arguments</span>
+
+<span class="cb-comment"># Command substitution</span>
+TODAY=$(date +%Y-%m-%d)
+DISK_USAGE=$(df -h / | tail -1 | awk '{print $5}')
+echo "Disk: $DISK_USAGE"
+
+<span class="cb-comment"># Read user input</span>
+read -p "Enter username: " USERNAME</div>
+
+          <h2>Conditionals</h2>
+          <div class="code-block">
+<span class="cb-comment"># If / elif / else</span>
+if [ "$1" == "start" ]; then
+    echo "Starting..."
+elif [ "$1" == "stop" ]; then
+    echo "Stopping..."
+else
+    echo "Usage: $0 start|stop"
+    exit 1
+fi
+
+<span class="cb-comment"># Common test conditions</span>
+[ -f /etc/nginx.conf ]    <span class="cb-comment"># File exists</span>
+[ -d /var/log ]           <span class="cb-comment"># Directory exists</span>
+[ -z "$VAR" ]             <span class="cb-comment"># Variable is empty</span>
+[ -n "$VAR" ]             <span class="cb-comment"># Variable is not empty</span>
+[ "$A" == "$B" ]          <span class="cb-comment"># String equality</span>
+[ $NUM -gt 10 ]           <span class="cb-comment"># Number greater than</span></div>
+
+          <h2>Loops</h2>
+          <div class="code-block">
+<span class="cb-comment"># For loop</span>
+for server in web1 web2 web3; do
+    echo "Deploying to $server..."
+    ssh $server "sudo systemctl restart app"
+done
+
+<span class="cb-comment"># For loop over files</span>
+for file in /var/log/*.log; do
+    echo "Processing: $file"
+    gzip "$file"
+done
+
+<span class="cb-comment"># While loop</span>
+COUNT=0
+while [ $COUNT -lt 5 ]; do
+    echo "Attempt $COUNT"
+    COUNT=$((COUNT + 1))
+done</div>
+
+          <h2>Real-World Script Example</h2>
+          <div class="code-block">
+#!/bin/bash
+set -euo pipefail
+
+<span class="cb-comment"># Deployment script</span>
+APP_NAME="myapp"
+DEPLOY_DIR="/opt/$APP_NAME"
+LOG_FILE="/var/log/${APP_NAME}-deploy.log"
+
+log() { echo "[$(date '+%H:%M:%S')] $1" | tee -a "$LOG_FILE"; }
+
+log "Starting deployment of $APP_NAME"
+
+<span class="cb-comment"># Check if running as root</span>
+if [ "$(id -u)" != "0" ]; then
+    log "ERROR: Must run as root"
+    exit 1
+fi
+
+<span class="cb-comment"># Backup current version</span>
+if [ -d "$DEPLOY_DIR" ]; then
+    log "Backing up current version..."
+    cp -r "$DEPLOY_DIR" "${DEPLOY_DIR}.bak.$(date +%Y%m%d%H%M%S)"
+fi
+
+<span class="cb-comment"># Deploy</span>
+log "Deploying new version..."
+systemctl stop "$APP_NAME" || true
+rsync -avz /tmp/release/ "$DEPLOY_DIR/"
+systemctl start "$APP_NAME"
+
+<span class="cb-comment"># Health check</span>
+sleep 5
+if systemctl is-active --quiet "$APP_NAME"; then
+    log "Deployment successful!"
+else
+    log "ERROR: Service failed to start. Rolling back..."
+    cp -r "${DEPLOY_DIR}.bak."* "$DEPLOY_DIR"
+    systemctl start "$APP_NAME"
+    exit 1
+fi</div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-ssh]').click()">← SSH</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-bash')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-cron]').click()">Next: Cron & Systemd →</button>
+        </div>
+      </div>
+
+      <!-- CRON & SYSTEMD -->
+      <div class="lesson-panel" data-panel="lx-cron">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Cron & Systemd Services</h1>
+            <p>Schedule jobs and manage long-running services — the backbone of Linux automation.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Cron — Scheduled Jobs</h2>
+          <div class="code-block">
+crontab -e    <span class="cb-comment"># Edit your crontab (opens in $EDITOR)</span>
+crontab -l    <span class="cb-comment"># List current crontab entries</span>
+crontab -r    <span class="cb-comment"># Remove crontab (⚠️ no confirmation!)</span>
+
+<span class="cb-comment"># Cron syntax: minute hour day month weekday command</span>
+<span class="cb-comment">#   *    *    *    *     *</span>
+<span class="cb-comment">#   │    │    │    │     └── Day of week (0=Sun, 6=Sat)</span>
+<span class="cb-comment">#   │    │    │    └──────── Month (1-12)</span>
+<span class="cb-comment">#   │    │    └───────────── Day of month (1-31)</span>
+<span class="cb-comment">#   │    └────────────────── Hour (0-23)</span>
+<span class="cb-comment">#   └─────────────────────── Minute (0-59)</span>
+
+0 2 * * *     /opt/backup.sh          <span class="cb-comment"># Daily at 2:00 AM</span>
+*/5 * * * *   /opt/healthcheck.sh     <span class="cb-comment"># Every 5 minutes</span>
+0 9 * * 1-5   /opt/report.sh         <span class="cb-comment"># Weekdays at 9 AM</span>
+0 0 1 * *     /opt/monthly.sh        <span class="cb-comment"># 1st of every month</span>
+@reboot       /opt/startup.sh        <span class="cb-comment"># Run once on boot</span></div>
+
+          <h2>Systemd — Service Management</h2>
+          <div class="code-block">
+<span class="cb-comment"># Control services</span>
+systemctl start nginx          <span class="cb-comment"># Start now</span>
+systemctl stop nginx           <span class="cb-comment"># Stop now</span>
+systemctl restart nginx        <span class="cb-comment"># Stop + start</span>
+systemctl reload nginx         <span class="cb-comment"># Reload config without stopping (if supported)</span>
+systemctl enable nginx         <span class="cb-comment"># Start automatically on boot</span>
+systemctl disable nginx        <span class="cb-comment"># Don't start on boot</span>
+systemctl status nginx         <span class="cb-comment"># Current status + recent logs</span>
+systemctl is-active nginx      <span class="cb-comment"># Returns 0 if active (for scripts)</span>
+systemctl list-units --type=service  <span class="cb-comment"># List all services</span>
+
+<span class="cb-comment"># Create your own service: /etc/systemd/system/myapp.service</span>
+[Unit]
+Description=My Application
+After=network.target
+
+[Service]
+Type=simple
+User=myapp
+WorkingDirectory=/opt/myapp
+ExecStart=/opt/myapp/bin/server
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+<span class="cb-comment"># Load and start</span>
+systemctl daemon-reload
+systemctl enable --now myapp</div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-bash]').click()">← Bash Scripting</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-cron')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-plan]').click()">Next: 30-Day Plan →</button>
+        </div>
+      </div>
+
+      <!-- 30-DAY PLAN -->
+      <div class="lesson-panel" data-panel="lx-plan">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>📅 Your 30-Day Linux Practice Plan</h1>
+            <p>Structured daily practice to reach interview level. 45–60 minutes per day.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">Plan</span></div>
+        </div>
+        <div class="content-body">
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">Free Linux practice environment</div>
+              <div class="callout-text">
+                <strong>Option 1 — WSL2 (Windows Subsystem for Linux):</strong> Run Ubuntu directly on Windows. <code>wsl --install</code> in PowerShell as admin.<br><br>
+                <strong>Option 2 — AWS Free Tier EC2:</strong> Launch a t2.micro Ubuntu instance (free for 12 months). SSH in and practice on a real server.<br><br>
+                <strong>Option 3 — killercoda.com:</strong> Browser-based Linux terminals, no install needed.
+              </div>
+            </div>
+          </div>
+
+          <div class="day-grid">
+            <div class="day-card">
+              <div class="dc-week">Week 1 — Navigation</div>
+              <div class="dc-title">Days 1–7: File System</div>
+              <ul>
+                <li>Navigate the full directory tree</li>
+                <li>Find files with find and locate</li>
+                <li>Master ls, cp, mv, rm, tar</li>
+                <li>Practice reading permissions with ls -la</li>
+                <li>Set permissions with chmod on 10 files</li>
+                <li>Create users, groups, change ownership</li>
+                <li>Review: explain each permission digit</li>
+              </ul>
+            </div>
+            <div class="day-card">
+              <div class="dc-week">Week 2 — Core Commands</div>
+              <div class="dc-title">Days 8–14: Text & Search</div>
+              <ul>
+                <li>grep logs for errors, with context</li>
+                <li>Use sed to replace text in config files</li>
+                <li>Use awk to extract columns from logs</li>
+                <li>Build 3 pipe chains to process a log file</li>
+                <li>Practice ps aux, top, kill signals</li>
+                <li>Install nginx, start/stop/enable with systemctl</li>
+                <li>Read journalctl for a service</li>
+              </ul>
+            </div>
+            <div class="day-card">
+              <div class="dc-week">Week 3 — Scripting</div>
+              <div class="dc-title">Days 15–21: Bash</div>
+              <ul>
+                <li>Write a backup script with set -e</li>
+                <li>Script with arguments ($1 $2 $#)</li>
+                <li>Add if/elif/else with file checks</li>
+                <li>Loop over servers and run a command via SSH</li>
+                <li>Set up a cron job to run your backup script</li>
+                <li>Create a systemd service for a script</li>
+                <li>Write a health check script with exit codes</li>
+              </ul>
+            </div>
+            <div class="day-card">
+              <div class="dc-week">Week 4 — Interview Prep</div>
+              <div class="dc-title">Days 22–30: Simulation</div>
+              <ul>
+                <li>Set up SSH key auth to a remote server</li>
+                <li>Harden sshd_config on a test VM</li>
+                <li>Diagnose a "disk full" scenario</li>
+                <li>Find and kill a zombie process</li>
+                <li>Write a deploy script from scratch</li>
+                <li>Take the interview quiz 3 times</li>
+                <li>Explain every answer out loud</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Daily Drill — Do These Every Day</h2>
+          <div class="code-block">
+<span class="cb-comment"># Morning warmup (5 minutes) — type these without looking</span>
+pwd && ls -la
+df -h && free -h
+ps aux | grep -v grep | wc -l   <span class="cb-comment"># How many processes running?</span>
+uptime
+tail -20 /var/log/syslog</div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-cron]').click()">← Cron & Systemd</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-plan')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-quiz]').click()">Next: Quiz →</button>
+        </div>
+      </div>
+
+      <!-- LAB TERMINAL -->
+      <div class="lesson-panel" data-panel="lx-lab">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🔬 Hands-On Lab — Linux Terminal</h1>
+            <p>Type real Linux commands and see real output. Practice everything from this module.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">Lab</span><span class="badge badge-green">Interactive</span></div>
+        </div>
+        <div class="content-body">
+
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">How to use this terminal</div>
+              <div class="callout-text">Type commands exactly as shown in the lessons. Use ↑↓ arrow keys for history. Type <code>help</code> to see all available commands. This simulates a real Ubuntu server — same output you'd see on AWS EC2.</div>
+            </div>
+          </div>
+
+          <div id="lx-terminal" data-terminal="linux" style="margin:20px 0"></div>
+
+          <h2 style="margin-top:28px">Lab Exercises — Do These in Order</h2>
+
+          <div class="compare-table" style="margin-top:12px">
+            <table class="compare-table">
+              <thead><tr><th>#</th><th>Task</th><th>Command to try</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Find out who you are and what system you're on</td><td><code>whoami</code> → <code>uname -a</code> → <code>uptime</code></td></tr>
+                <tr><td>2</td><td>List all files including hidden ones</td><td><code>ls -la</code></td></tr>
+                <tr><td>3</td><td>Read the app log file</td><td><code>cat app.log</code></td></tr>
+                <tr><td>4</td><td>Find only ERROR lines in the log</td><td><code>grep "ERROR" app.log</code></td></tr>
+                <tr><td>5</td><td>Count how many errors there are</td><td><code>grep -c "ERROR" app.log</code></td></tr>
+                <tr><td>6</td><td>See all running processes</td><td><code>ps aux</code></td></tr>
+                <tr><td>7</td><td>Find the nginx process specifically</td><td><code>ps aux | grep nginx</code></td></tr>
+                <tr><td>8</td><td>Check disk space — is anything nearly full?</td><td><code>df -h</code></td></tr>
+                <tr><td>9</td><td>Check memory usage</td><td><code>free -h</code></td></tr>
+                <tr><td>10</td><td>Set correct permissions on a config file</td><td><code>chmod 644 config.conf</code></td></tr>
+                <tr><td>11</td><td>Make a script executable</td><td><code>chmod 755 deploy.sh</code></td></tr>
+                <tr><td>12</td><td>Check nginx service status</td><td><code>systemctl status nginx</code></td></tr>
+                <tr><td>13</td><td>Restart nginx</td><td><code>systemctl restart nginx</code></td></tr>
+                <tr><td>14</td><td>Check what's listening on which ports</td><td><code>ss -tulpn</code></td></tr>
+                <tr><td>15</td><td>Stream the nginx access log live</td><td><code>tail -f /var/log/nginx/access.log</code></td></tr>
+                <tr><td>16</td><td>Check your environment variables</td><td><code>env</code></td></tr>
+                <tr><td>17</td><td>See what cron jobs are scheduled</td><td><code>crontab -l</code></td></tr>
+                <tr><td>18</td><td>Kill a process by PID</td><td><code>kill 2341</code> then <code>kill -9 2341</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout warning" style="margin-top:20px">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview simulation — answer these out loud</div>
+              <div class="callout-text">
+                After completing the exercises, close your eyes and answer:<br><br>
+                1. The disk at <code>/dev/sda1</code> is 91% full. What command shows you which directory is using the most space?<br>
+                2. A process (PID 2341) is not responding. What two commands do you run in order?<br>
+                3. nginx was working yesterday but isn't now. What's your first command?<br>
+                4. A developer needs to run a script. It fails with "Permission denied". What do you check?
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-plan]').click()">← 30-Day Plan</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-lab')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=lx-quiz]').click()">Next: Quiz →</button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="lesson-panel" data-panel="lx-quiz">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🧠 Linux Interview Quiz</h1>
+            <p>Real questions from Linux sysadmin and DevOps interviews. Aim for 100%.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-purple">Quiz</span></div>
+        </div>
+        <div class="content-body">
+          <div id="lx-quiz-container"></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=lx-plan]').click()">← 30-Day Plan</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('lx-quiz')">✓ Module Complete</button>
+          <button class="btn btn-primary" onclick="window.location='networking.html'">Next: Networking →</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/terminal.js"></script>
+<script>
+createQuiz('lx-quiz', [
+  {
+    question: "What does `chmod 644 file.txt` set the permissions to?",
+    options: [
+      "rwxrwxrwx — everyone can do everything",
+      "rw-r--r-- — owner can read+write, group and others can only read",
+      "rwxr-xr-x — owner full, group+others can read+execute",
+      "rw------- — owner only"
+    ],
+    correct: 1,
+    explanation: "644 = owner: 4+2=6 (rw-), group: 4 (r--), others: 4 (r--). This is the standard for web files and config files — the owner (usually www-data or root) can edit, everyone else can read. Remember: r=4, w=2, x=1. Add them up for each group."
+  },
+  {
+    question: "A process is not responding to `kill 1234`. What do you do next and why?",
+    options: [
+      "Reboot the server immediately",
+      "Run `kill -9 1234` — sends SIGKILL which the kernel enforces immediately and the process cannot ignore",
+      "Run `kill -1 1234` — this sends a stronger signal",
+      "Wait longer — kill always works eventually"
+    ],
+    correct: 1,
+    explanation: "kill with no signal sends SIGTERM (15) — a polite request the process can ignore or handle. If it's not responding, use kill -9 (SIGKILL) which is enforced by the kernel — the process cannot intercept, block, or ignore it. The kernel removes it from memory immediately. Use SIGKILL only as a last resort because the process won't clean up (open files, network connections)."
+  },
+  {
+    question: "You SSH into a server and get: WARNING: UNPROTECTED PRIVATE KEY FILE! What's wrong?",
+    options: [
+      "The key file is corrupted and needs to be regenerated",
+      "The permissions on your private key are too open — SSH requires 600 (owner read/write only)",
+      "You're using the wrong username",
+      "The server's sshd_config is misconfigured"
+    ],
+    correct: 1,
+    explanation: "SSH refuses to use private keys that are readable by anyone other than you. Fix: chmod 600 ~/.ssh/id_rsa (or whatever your key file is named). The correct permission is rw------- — only the owner can read or write it. This is a security requirement — if others could read your private key, your server would be compromised."
+  },
+  {
+    question: "What does `tail -f /var/log/nginx/access.log` do?",
+    options: [
+      "Shows the first 10 lines of the log file",
+      "Follows the log file in real-time, showing new lines as they are written",
+      "Searches the log file for errors",
+      "Counts the total number of lines in the file"
+    ],
+    correct: 1,
+    explanation: "tail -f (follow) is essential for live debugging. It shows the last 10 lines and then waits, printing any new lines written to the file as they appear. Ctrl+C to stop. Use it while hitting your web server to see requests in real-time. Also useful: journalctl -f for systemd services."
+  },
+  {
+    question: "What's the difference between `apt update` and `apt upgrade`?",
+    options: [
+      "They do the same thing",
+      "apt update refreshes the package list from repositories. apt upgrade actually installs newer versions of installed packages.",
+      "apt update installs packages, apt upgrade updates the apt tool itself",
+      "apt upgrade refreshes the package list, apt update installs updates"
+    ],
+    correct: 1,
+    explanation: "Always run apt update before apt upgrade — without it, apt doesn't know what newer versions exist. apt update = refresh the catalogue. apt upgrade = buy from the catalogue. apt update never installs or removes anything, it only downloads updated package metadata. On a new server: sudo apt update && sudo apt upgrade -y is the standard first step."
+  },
+  {
+    question: "A cron job is written as: `*/15 9-17 * * 1-5 /opt/job.sh`. When does it run?",
+    options: [
+      "Every 15 minutes, all day, every day",
+      "Every 15 minutes between 9am and 5pm, Monday through Friday",
+      "At 9:15am, 10:15am, ... on weekdays",
+      "15 times between 9am and 5pm on weekdays"
+    ],
+    correct: 1,
+    explanation: "Breaking it down: */15 = every 15 minutes, 9-17 = between hours 9 and 17 (9am to 5pm), * = any day of month, * = any month, 1-5 = Monday (1) to Friday (5). So this runs at :00 :15 :30 :45 past each hour, only from 9am to 5pm, only on weekdays. A common pattern for business-hours automation."
+  },
+  {
+    question: "You run `find / -name '*.log' -mtime +30 -delete` — what does this do?",
+    options: [
+      "Lists all .log files older than 30 minutes",
+      "Finds and DELETES all .log files that haven't been modified in more than 30 days — across the entire filesystem",
+      "Moves .log files older than 30 days to /tmp",
+      "Compresses .log files older than 30 days"
+    ],
+    correct: 1,
+    explanation: "Breakdown: find / = search from root (entire system), -name '*.log' = files ending in .log, -mtime +30 = not modified in more than 30 days, -delete = delete them. This is a real log cleanup command. ⚠️ ALWAYS test without -delete first: find / -name '*.log' -mtime +30 -ls to see what would be deleted. Running -delete on / by accident can remove critical files."
+  },
+  {
+    question: "What does `systemctl enable nginx` do, and how is it different from `systemctl start nginx`?",
+    options: [
+      "They are identical commands",
+      "enable = start nginx right now. start = schedule for next boot.",
+      "enable = configure nginx to start automatically on boot (creates symlink). start = start it NOW. You need both to run on boot AND right now.",
+      "enable = install nginx. start = run it."
+    ],
+    correct: 2,
+    explanation: "systemctl start: starts the service immediately, but not on next boot. systemctl enable: creates a symlink in /etc/systemd/system/multi-user.target.wants/ so it starts on boot, but doesn't start it now. For production: systemctl enable --now nginx does both in one command. If you only start without enabling, the next reboot will leave it down."
+  }
+]);
+</script>
+</body>
+</html>

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CI/CD Pipelines — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link active">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle r="12" cx="16" cy="16"/>
+        <circle class="progress-fill" r="12" cx="16" cy="16" style="stroke-dasharray:75.4; stroke-dashoffset:75.4;"/>
+      </svg>
+      <div class="pct progress-pct">0%</div>
+    </div>
+    <span class="progress-pct">0%</span> done
+  </div>
+</nav>
+
+<div class="container" style="padding-top:32px;padding-bottom:64px;">
+  <div class="curriculum-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">⚙️ CI/CD Curriculum</div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 4 — Pipelines</div>
+        <div class="sidebar-item" data-lesson="cicd-concepts"><div class="check-icon"></div> CI/CD Concepts</div>
+        <div class="sidebar-item" data-lesson="cicd-github-actions"><div class="check-icon"></div> GitHub Actions — Full Pipeline</div>
+        <div class="sidebar-item" data-lesson="cicd-gha-ecr-eks"><div class="check-icon"></div> GHA: Build → ECR → Deploy EKS</div>
+        <div class="sidebar-item" data-lesson="cicd-jenkins"><div class="check-icon"></div> Jenkins Pipeline (Jenkinsfile)</div>
+        <div class="sidebar-item" data-lesson="cicd-argocd"><div class="check-icon"></div> ArgoCD — GitOps</div>
+        <div class="sidebar-item" data-lesson="cicd-strategies"><div class="check-icon"></div> Blue-Green & Canary Deployments</div>
+        <div class="sidebar-item" data-lesson="cicd-secrets"><div class="check-icon"></div> Secrets in Pipelines</div>
+        <div class="sidebar-item" data-lesson="cicd-lab"><div class="check-icon"></div> 🔬 Lab: Full Pipeline to EKS</div>
+        <div class="sidebar-item" data-lesson="cicd-quiz"><div class="check-icon"></div> 🧠 Knowledge Check</div>
+      </div>
+    </aside>
+
+    <main class="lesson-content">
+
+      <!-- CI/CD CONCEPTS -->
+      <div class="lesson-panel" data-panel="cicd-concepts">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>CI/CD Concepts</h1>
+            <p>Continuous Integration, Delivery, and Deployment — what they actually mean.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Foundation</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>CI vs CD vs CD</h2>
+          <table class="compare-table">
+            <thead><tr><th>Term</th><th>What It Means</th><th>Automated?</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Continuous Integration (CI)</strong></td><td>Every code push triggers: build + lint + test. Fast feedback on broken code.</td><td>Fully automated</td></tr>
+              <tr><td><strong>Continuous Delivery (CD)</strong></td><td>Every passing build is packaged and <em>ready</em> to deploy to production. A human presses deploy.</td><td>Auto up to staging; manual prod gate</td></tr>
+              <tr><td><strong>Continuous Deployment (CD)</strong></td><td>Every passing build automatically deploys to production. No human gate.</td><td>Fully automated end-to-end</td></tr>
+            </tbody>
+          </table>
+
+          <h2>The Pipeline Flow</h2>
+          <div class="arch-diagram">
+            <svg width="700" height="100" viewBox="0 0 700 100" style="max-width:100%">
+              <defs>
+                <marker id="arr-cicd" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+                </marker>
+              </defs>
+              <rect x="5" y="25" width="90" height="50" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="50" y="48" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">git push</text>
+              <text x="50" y="63" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Trigger</text>
+              <line x1="95" y1="50" x2="115" y2="50" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-cicd)"/>
+
+              <rect x="115" y="25" width="90" height="50" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="160" y="48" fill="#3fb950" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">Test &amp; Lint</text>
+              <text x="160" y="63" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">CI stage</text>
+              <line x1="205" y1="50" x2="225" y2="50" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-cicd)"/>
+
+              <rect x="225" y="25" width="90" height="50" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="270" y="48" fill="#3fb950" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">Build Image</text>
+              <text x="270" y="63" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">docker build</text>
+              <line x1="315" y1="50" x2="335" y2="50" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-cicd)"/>
+
+              <rect x="335" y="25" width="90" height="50" rx="8" fill="#1c2128" stroke="#ff9900" stroke-width="1.5"/>
+              <text x="380" y="48" fill="#ff9900" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">Push ECR</text>
+              <text x="380" y="63" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">docker push</text>
+              <line x1="425" y1="50" x2="445" y2="50" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-cicd)"/>
+
+              <rect x="445" y="25" width="90" height="50" rx="8" fill="#1c2128" stroke="#a371f7" stroke-width="1.5"/>
+              <text x="490" y="48" fill="#a371f7" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">Deploy EKS</text>
+              <text x="490" y="63" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">kubectl apply</text>
+              <line x1="535" y1="50" x2="555" y2="50" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-cicd)"/>
+
+              <rect x="555" y="25" width="115" height="50" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="612" y="48" fill="#3fb950" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">✓ Production</text>
+              <text x="612" y="63" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Live in ~5 min</text>
+            </svg>
+          </div>
+
+          <h2>Why CI/CD Matters</h2>
+          <table class="compare-table">
+            <thead><tr><th>Without CI/CD</th><th>With CI/CD</th></tr></thead>
+            <tbody>
+              <tr><td>Manual deployments → human error</td><td>Automated, consistent every time</td></tr>
+              <tr><td>Deploy monthly → huge risky releases</td><td>Deploy daily/hourly → small safe changes</td></tr>
+              <tr><td>Hours to find broken code</td><td>Broken code caught in minutes</td></tr>
+              <tr><td>"Works on my machine"</td><td>Tested in identical environment</td></tr>
+              <tr><td>Fear of deploying</td><td>Confidence to deploy anytime</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">DORA Metrics — What Companies Measure</div>
+              <div class="callout-text">
+                Elite companies (Google, Netflix, Amazon) achieve:<br>
+                • <strong>Deployment frequency</strong>: multiple times per day<br>
+                • <strong>Lead time for changes</strong>: less than 1 hour (code → production)<br>
+                • <strong>Change failure rate</strong>: less than 5%<br>
+                • <strong>MTTR</strong> (recovery time): less than 1 hour<br><br>
+                These are real interview talking points.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="window.location='kubernetes.html'">← Kubernetes Module</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-concepts')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=cicd-github-actions]').click()">Next: GitHub Actions →</button>
+        </div>
+      </div>
+
+      <!-- GITHUB ACTIONS -->
+      <div class="lesson-panel" data-panel="cicd-github-actions">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>GitHub Actions — Full Pipeline</h1>
+            <p>Every component of a production GitHub Actions workflow explained.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">Industry Standard</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Workflow Anatomy</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">.github/workflows/ci.yml — fully annotated</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Workflow name — shown in GitHub Actions UI</span>
+<span class="attr">name</span>: <span class="val">CI Pipeline</span>
+
+<span class="cmt"># TRIGGERS — when does this run?</span>
+<span class="attr">on</span>:
+  <span class="attr">push</span>:
+    <span class="attr">branches</span>: [<span class="val">main</span>, <span class="val">develop</span>]  <span class="cmt"># run on push to these branches</span>
+  <span class="attr">pull_request</span>:
+    <span class="attr">branches</span>: [<span class="val">main</span>]            <span class="cmt"># run on PRs targeting main</span>
+  <span class="attr">workflow_dispatch</span>:              <span class="cmt"># allow manual trigger from UI</span>
+
+<span class="cmt"># ENV vars available to all jobs</span>
+<span class="attr">env</span>:
+  <span class="attr">AWS_REGION</span>: <span class="val">us-east-1</span>
+  <span class="attr">ECR_REPOSITORY</span>: <span class="val">myapp</span>
+
+<span class="attr">jobs</span>:
+  <span class="cmt"># ===== JOB 1: Test =====</span>
+  <span class="attr">test</span>:
+    <span class="attr">name</span>: <span class="val">Run Tests</span>
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>    <span class="cmt"># GitHub-hosted runner (free)</span>
+    <span class="attr">steps</span>:
+      - <span class="attr">name</span>: <span class="val">Checkout code</span>
+        <span class="attr">uses</span>: <span class="val">actions/checkout@v4</span>   <span class="cmt"># clones your repo</span>
+
+      - <span class="attr">name</span>: <span class="val">Setup Node.js</span>
+        <span class="attr">uses</span>: <span class="val">actions/setup-node@v4</span>
+        <span class="attr">with</span>:
+          <span class="attr">node-version</span>: <span class="val">'18'</span>
+          <span class="attr">cache</span>: <span class="val">'npm'</span>             <span class="cmt"># cache node_modules between runs</span>
+
+      - <span class="attr">name</span>: <span class="val">Install dependencies</span>
+        <span class="attr">run</span>: <span class="val">npm ci</span>
+
+      - <span class="attr">name</span>: <span class="val">Run linting</span>
+        <span class="attr">run</span>: <span class="val">npm run lint</span>
+
+      - <span class="attr">name</span>: <span class="val">Run unit tests</span>
+        <span class="attr">run</span>: <span class="val">npm test -- --coverage</span>
+
+      - <span class="attr">name</span>: <span class="val">Upload coverage report</span>
+        <span class="attr">uses</span>: <span class="val">actions/upload-artifact@v4</span>
+        <span class="attr">with</span>:
+          <span class="attr">name</span>: <span class="val">coverage</span>
+          <span class="attr">path</span>: <span class="val">coverage/</span>
+
+  <span class="cmt"># ===== JOB 2: Build & Push to ECR =====</span>
+  <span class="attr">build</span>:
+    <span class="attr">name</span>: <span class="val">Build &amp; Push Image</span>
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="attr">needs</span>: <span class="val">test</span>                  <span class="cmt"># only runs if test job passes</span>
+    <span class="attr">if</span>: <span class="val">github.ref == 'refs/heads/main'</span>  <span class="cmt"># only on main branch</span>
+    <span class="attr">outputs</span>:
+      <span class="attr">image-tag</span>: <span class="val">${{ steps.meta.outputs.tags }}</span>
+    <span class="attr">steps</span>:
+      - <span class="attr">uses</span>: <span class="val">actions/checkout@v4</span>
+
+      - <span class="attr">name</span>: <span class="val">Configure AWS credentials</span>
+        <span class="attr">uses</span>: <span class="val">aws-actions/configure-aws-credentials@v4</span>
+        <span class="attr">with</span>:
+          <span class="attr">role-to-assume</span>: <span class="val">${{ secrets.AWS_ROLE_ARN }}</span>  <span class="cmt"># OIDC — no static keys!</span>
+          <span class="attr">aws-region</span>: <span class="val">${{ env.AWS_REGION }}</span>
+
+      - <span class="attr">name</span>: <span class="val">Login to Amazon ECR</span>
+        <span class="attr">id</span>: <span class="val">login-ecr</span>
+        <span class="attr">uses</span>: <span class="val">aws-actions/amazon-ecr-login@v2</span>
+
+      - <span class="attr">name</span>: <span class="val">Set image tag</span>
+        <span class="attr">id</span>: <span class="val">meta</span>
+        <span class="attr">run</span>: |
+          <span class="val">echo "IMAGE_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV</span>
+          <span class="val">echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV</span>
+
+      - <span class="attr">name</span>: <span class="val">Build and push Docker image</span>
+        <span class="attr">run</span>: |
+          <span class="val">docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .</span>
+          <span class="val">docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest</span>
+          <span class="val">docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG</span>
+          <span class="val">docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest</span>
+          <span class="val">echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT</span></pre>
+          </div>
+
+          <h2>Key GitHub Actions Concepts</h2>
+          <table class="compare-table">
+            <thead><tr><th>Concept</th><th>Explanation</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Workflow</strong></td><td>A YAML file in .github/workflows/</td><td>ci.yml, deploy.yml</td></tr>
+              <tr><td><strong>Job</strong></td><td>A set of steps that run on one runner. Jobs run in parallel by default.</td><td>test, build, deploy</td></tr>
+              <tr><td><strong>Step</strong></td><td>A single task: either a shell command (run:) or an Action (uses:)</td><td>npm test, docker build</td></tr>
+              <tr><td><strong>Action</strong></td><td>A reusable unit from marketplace</td><td>actions/checkout@v4</td></tr>
+              <tr><td><strong>Runner</strong></td><td>The VM that runs your job</td><td>ubuntu-latest (free), self-hosted</td></tr>
+              <tr><td><strong>needs:</strong></td><td>Job dependency — wait for another job to finish</td><td>build needs test</td></tr>
+              <tr><td><strong>secrets:</strong></td><td>Encrypted variables from repo settings</td><td>secrets.AWS_ROLE_ARN</td></tr>
+              <tr><td><strong>env:</strong></td><td>Environment variables for the workflow/job/step</td><td>env.AWS_REGION</td></tr>
+              <tr><td><strong>outputs:</strong></td><td>Pass data between jobs</td><td>image tag from build to deploy</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=cicd-concepts]').click()">← Concepts</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-github-actions')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=cicd-gha-ecr-eks]').click()">Next: Full Pipeline →</button>
+        </div>
+      </div>
+
+      <!-- GHA → ECR → EKS -->
+      <div class="lesson-panel" data-panel="cicd-gha-ecr-eks">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Full Pipeline: GitHub Actions → ECR → EKS</h1>
+            <p>Complete production pipeline. Every push to main deploys to your EKS cluster.</p>
+          </div>
+          <div class="lesson-badges">
+            <span class="badge badge-orange">AWS Production</span>
+            <span class="badge badge-red">Industry Standard</span>
+          </div>
+        </div>
+        <div class="content-body">
+
+          <h2>Step 1: Set Up OIDC (No Static AWS Keys)</h2>
+          <p>The production way — GitHub Actions assumes an IAM role via OIDC. <strong>Never store AWS_ACCESS_KEY_ID as a secret.</strong></p>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><span class="code-block-title">Create OIDC provider and IAM role</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Create OIDC identity provider in AWS IAM</span>
+aws iam create-open-id-connect-provider \
+  --url https://token.actions.githubusercontent.com \
+  --client-id-list sts.amazonaws.com \
+  --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+
+<span class="cmt"># Create trust policy (replace YOUR_GITHUB_ORG/REPO)</span>
+cat > trust-policy.json << 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {
+      "Federated": "arn:aws:iam::123456789:oidc-provider/token.actions.githubusercontent.com"
+    },
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Condition": {
+      "StringLike": {
+        "token.actions.githubusercontent.com:sub": "repo:YOUR_GITHUB_ORG/REPO:*"
+      }
+    }
+  }]
+}
+EOF
+
+<span class="cmt"># Create IAM role</span>
+aws iam create-role \
+  --role-name github-actions-eks-role \
+  --assume-role-policy-document file://trust-policy.json
+
+<span class="cmt"># Attach policies</span>
+aws iam attach-role-policy \
+  --role-name github-actions-eks-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
+
+<span class="cmt"># Add the role ARN to GitHub repo secrets as AWS_ROLE_ARN</span></pre>
+          </div>
+
+          <h2>Step 2: Grant GitHub Actions Access to EKS</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Get current aws-auth ConfigMap</span>
+kubectl get configmap aws-auth -n kube-system -o yaml
+
+<span class="cmt"># Add the GitHub Actions role to aws-auth</span>
+eksctl create iamidentitymapping \
+  --cluster prod-cluster \
+  --region us-east-1 \
+  --arn arn:aws:iam::123456789:role/github-actions-eks-role \
+  --group system:masters \
+  --username github-actions</pre>
+          </div>
+
+          <h2>Step 3: The Complete Workflow</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">.github/workflows/deploy.yml — production pipeline</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="attr">name</span>: <span class="val">Build, Test and Deploy to EKS</span>
+
+<span class="attr">on</span>:
+  <span class="attr">push</span>:
+    <span class="attr">branches</span>: [<span class="val">main</span>]
+  <span class="attr">workflow_dispatch</span>:
+
+<span class="attr">env</span>:
+  <span class="attr">AWS_REGION</span>: <span class="val">us-east-1</span>
+  <span class="attr">EKS_CLUSTER</span>: <span class="val">prod-cluster</span>
+  <span class="attr">ECR_REPOSITORY</span>: <span class="val">myapp</span>
+  <span class="attr">NAMESPACE</span>: <span class="val">production</span>
+  <span class="attr">DEPLOYMENT_NAME</span>: <span class="val">myapp-deployment</span>
+
+<span class="attr">jobs</span>:
+  <span class="attr">test</span>:
+    <span class="attr">name</span>: <span class="val">🧪 Test</span>
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="attr">steps</span>:
+      - <span class="attr">uses</span>: <span class="val">actions/checkout@v4</span>
+      - <span class="attr">uses</span>: <span class="val">actions/setup-node@v4</span>
+        <span class="attr">with</span>: { <span class="attr">node-version</span>: <span class="val">'18'</span>, <span class="attr">cache</span>: <span class="val">'npm'</span> }
+      - <span class="attr">run</span>: <span class="val">npm ci</span>
+      - <span class="attr">run</span>: <span class="val">npm run lint</span>
+      - <span class="attr">run</span>: <span class="val">npm test</span>
+
+  <span class="attr">build-and-push</span>:
+    <span class="attr">name</span>: <span class="val">🐳 Build &amp; Push to ECR</span>
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="attr">needs</span>: <span class="val">test</span>
+    <span class="attr">outputs</span>:
+      <span class="attr">image-tag</span>: <span class="val">${{ steps.build.outputs.image-tag }}</span>
+      <span class="attr">ecr-registry</span>: <span class="val">${{ steps.login-ecr.outputs.registry }}</span>
+    <span class="attr">steps</span>:
+      - <span class="attr">uses</span>: <span class="val">actions/checkout@v4</span>
+
+      - <span class="attr">name</span>: <span class="val">Configure AWS credentials via OIDC</span>
+        <span class="attr">uses</span>: <span class="val">aws-actions/configure-aws-credentials@v4</span>
+        <span class="attr">with</span>:
+          <span class="attr">role-to-assume</span>: <span class="val">${{ secrets.AWS_ROLE_ARN }}</span>
+          <span class="attr">aws-region</span>: <span class="val">${{ env.AWS_REGION }}</span>
+
+      - <span class="attr">name</span>: <span class="val">Login to ECR</span>
+        <span class="attr">id</span>: <span class="val">login-ecr</span>
+        <span class="attr">uses</span>: <span class="val">aws-actions/amazon-ecr-login@v2</span>
+
+      - <span class="attr">name</span>: <span class="val">Build, tag, push image</span>
+        <span class="attr">id</span>: <span class="val">build</span>
+        <span class="attr">env</span>:
+          <span class="attr">REGISTRY</span>: <span class="val">${{ steps.login-ecr.outputs.registry }}</span>
+          <span class="attr">IMAGE_TAG</span>: <span class="val">${{ github.sha }}</span>
+        <span class="attr">run</span>: |
+          <span class="val">docker build \</span>
+            <span class="val">--build-arg APP_VERSION=${{ github.sha }} \</span>
+            <span class="val">-t $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \</span>
+            <span class="val">-t $REGISTRY/$ECR_REPOSITORY:latest \</span>
+            <span class="val">.</span>
+          <span class="val">docker push $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG</span>
+          <span class="val">docker push $REGISTRY/$ECR_REPOSITORY:latest</span>
+          <span class="val">echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT</span>
+
+  <span class="attr">deploy</span>:
+    <span class="attr">name</span>: <span class="val">🚀 Deploy to EKS</span>
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="attr">needs</span>: <span class="val">build-and-push</span>
+    <span class="attr">environment</span>: <span class="val">production</span>   <span class="cmt"># requires manual approval if configured</span>
+    <span class="attr">steps</span>:
+      - <span class="attr">uses</span>: <span class="val">actions/checkout@v4</span>
+
+      - <span class="attr">name</span>: <span class="val">Configure AWS credentials</span>
+        <span class="attr">uses</span>: <span class="val">aws-actions/configure-aws-credentials@v4</span>
+        <span class="attr">with</span>:
+          <span class="attr">role-to-assume</span>: <span class="val">${{ secrets.AWS_ROLE_ARN }}</span>
+          <span class="attr">aws-region</span>: <span class="val">${{ env.AWS_REGION }}</span>
+
+      - <span class="attr">name</span>: <span class="val">Update kubeconfig</span>
+        <span class="attr">run</span>: |
+          <span class="val">aws eks update-kubeconfig \</span>
+            <span class="val">--name $EKS_CLUSTER \</span>
+            <span class="val">--region $AWS_REGION</span>
+
+      - <span class="attr">name</span>: <span class="val">Deploy to EKS (rolling update)</span>
+        <span class="attr">env</span>:
+          <span class="attr">REGISTRY</span>: <span class="val">${{ needs.build-and-push.outputs.ecr-registry }}</span>
+          <span class="attr">IMAGE_TAG</span>: <span class="val">${{ needs.build-and-push.outputs.image-tag }}</span>
+        <span class="attr">run</span>: |
+          <span class="val">kubectl set image deployment/$DEPLOYMENT_NAME \</span>
+            <span class="val">myapp=$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \</span>
+            <span class="val">--namespace $NAMESPACE</span>
+
+          <span class="val">kubectl rollout status deployment/$DEPLOYMENT_NAME \</span>
+            <span class="val">--namespace $NAMESPACE \</span>
+            <span class="val">--timeout=5m</span>
+
+      - <span class="attr">name</span>: <span class="val">Verify deployment</span>
+        <span class="attr">run</span>: |
+          <span class="val">kubectl get pods -n $NAMESPACE</span>
+          <span class="val">kubectl get ingress -n $NAMESPACE</span>
+
+      - <span class="attr">name</span>: <span class="val">Notify on failure (rollback)</span>
+        <span class="attr">if</span>: <span class="val">failure()</span>
+        <span class="attr">run</span>: |
+          <span class="val">echo "Deployment failed! Rolling back..."</span>
+          <span class="val">kubectl rollout undo deployment/$DEPLOYMENT_NAME -n $NAMESPACE</span>
+          <span class="val">kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE</span></pre>
+          </div>
+
+          <h2>Add Manual Approval for Production</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">text</span><span class="code-block-title">GitHub repo settings</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre>Settings → Environments → New environment → "production"
+→ Required reviewers: add yourself or your team
+→ Now the "deploy" job pauses and waits for a human to approve</pre>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=cicd-github-actions]').click()">← GitHub Actions</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-gha-ecr-eks')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=cicd-jenkins]').click()">Next: Jenkins →</button>
+        </div>
+      </div>
+
+      <!-- JENKINS -->
+      <div class="lesson-panel" data-panel="cicd-jenkins">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Jenkins Pipeline (Jenkinsfile)</h1>
+            <p>Declarative Jenkinsfile for Docker → ECR → EKS. Still widely used in enterprises.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Enterprise Standard</span><span class="badge badge-orange">Interview Common</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Declarative Jenkinsfile</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">groovy</span><span class="code-block-title">Jenkinsfile</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="kw">pipeline</span> {
+    <span class="kw">agent</span> {
+        <span class="kw">kubernetes</span> {            <span class="cmt">// run pipeline inside K8s pod</span>
+            <span class="kw">yaml</span> <span class="str">"""
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24-dind
+    securityContext:
+      privileged: true
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command: ['sleep', 'infinity']
+"""</span>
+        }
+    }
+
+    <span class="kw">environment</span> {
+        AWS_REGION          = <span class="str">'us-east-1'</span>
+        ECR_REGISTRY        = <span class="str">"123456789.dkr.ecr.us-east-1.amazonaws.com"</span>
+        ECR_REPOSITORY      = <span class="str">'myapp'</span>
+        EKS_CLUSTER         = <span class="str">'prod-cluster'</span>
+        IMAGE_TAG           = <span class="fn">sh</span>(script: <span class="str">'git rev-parse --short HEAD'</span>, returnStdout: <span class="kw">true</span>).trim()
+        AWS_CREDENTIALS_ID  = <span class="str">'aws-credentials'</span>  <span class="cmt">// Jenkins credential ID</span>
+    }
+
+    <span class="kw">stages</span> {
+        <span class="kw">stage</span>(<span class="str">'Checkout'</span>) {
+            <span class="kw">steps</span> {
+                <span class="fn">checkout</span> scm
+                <span class="fn">sh</span> <span class="str">'echo "Building commit: ${IMAGE_TAG}"'</span>
+            }
+        }
+
+        <span class="kw">stage</span>(<span class="str">'Test'</span>) {
+            <span class="kw">steps</span> {
+                <span class="fn">sh</span> <span class="str">'''
+                    npm ci
+                    npm run lint
+                    npm test
+                '''</span>
+            }
+            <span class="kw">post</span> {
+                <span class="kw">always</span> {
+                    <span class="fn">junit</span> <span class="str">'test-results/*.xml'</span>
+                }
+            }
+        }
+
+        <span class="kw">stage</span>(<span class="str">'Build Docker Image'</span>) {
+            <span class="kw">steps</span> {
+                <span class="fn">container</span>(<span class="str">'docker'</span>) {
+                    <span class="fn">sh</span> <span class="str">"""
+                        docker build \
+                          -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
+                          -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest \
+                          .
+                    """</span>
+                }
+            }
+        }
+
+        <span class="kw">stage</span>(<span class="str">'Push to ECR'</span>) {
+            <span class="kw">steps</span> {
+                <span class="fn">container</span>(<span class="str">'docker'</span>) {
+                    <span class="fn">withCredentials</span>([[<span class="fn">$class</span>: <span class="str">'AmazonWebServicesCredentialsBinding'</span>,
+                                       credentialsId: AWS_CREDENTIALS_ID]]) {
+                        <span class="fn">sh</span> <span class="str">"""
+                            aws ecr get-login-password --region ${AWS_REGION} | \
+                              docker login --username AWS --password-stdin ${ECR_REGISTRY}
+                            docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+                            docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
+                        """</span>
+                    }
+                }
+            }
+        }
+
+        <span class="kw">stage</span>(<span class="str">'Deploy to Staging'</span>) {
+            <span class="kw">steps</span> {
+                <span class="fn">container</span>(<span class="str">'kubectl'</span>) {
+                    <span class="fn">withCredentials</span>([[<span class="fn">$class</span>: <span class="str">'AmazonWebServicesCredentialsBinding'</span>,
+                                       credentialsId: AWS_CREDENTIALS_ID]]) {
+                        <span class="fn">sh</span> <span class="str">"""
+                            aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}
+                            kubectl set image deployment/myapp-deployment \
+                              myapp=${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
+                              -n staging
+                            kubectl rollout status deployment/myapp-deployment -n staging --timeout=5m
+                        """</span>
+                    }
+                }
+            }
+        }
+
+        <span class="kw">stage</span>(<span class="str">'Approve Production'</span>) {
+            <span class="kw">when</span> { <span class="fn">branch</span> <span class="str">'main'</span> }
+            <span class="kw">steps</span> {
+                <span class="fn">timeout</span>(time: <span class="num">24</span>, unit: <span class="str">'HOURS'</span>) {
+                    <span class="fn">input</span> message: <span class="str">"Deploy ${IMAGE_TAG} to Production?"</span>,
+                          ok: <span class="str">'Deploy Now'</span>
+                }
+            }
+        }
+
+        <span class="kw">stage</span>(<span class="str">'Deploy to Production'</span>) {
+            <span class="kw">when</span> { <span class="fn">branch</span> <span class="str">'main'</span> }
+            <span class="kw">steps</span> {
+                <span class="fn">container</span>(<span class="str">'kubectl'</span>) {
+                    <span class="fn">withCredentials</span>([[<span class="fn">$class</span>: <span class="str">'AmazonWebServicesCredentialsBinding'</span>,
+                                       credentialsId: AWS_CREDENTIALS_ID]]) {
+                        <span class="fn">sh</span> <span class="str">"""
+                            kubectl set image deployment/myapp-deployment \
+                              myapp=${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
+                              -n production
+                            kubectl rollout status deployment/myapp-deployment -n production --timeout=10m
+                        """</span>
+                    }
+                }
+            }
+        }
+    }
+
+    <span class="kw">post</span> {
+        <span class="kw">success</span> {
+            <span class="fn">slackSend</span>(channel: <span class="str">'#deployments'</span>,
+                       color: <span class="str">'good'</span>,
+                       message: <span class="str">"✅ Deployed ${IMAGE_TAG} to production"</span>)
+        }
+        <span class="kw">failure</span> {
+            <span class="fn">slackSend</span>(channel: <span class="str">'#deployments'</span>,
+                       color: <span class="str">'danger'</span>,
+                       message: <span class="str">"❌ Pipeline FAILED for ${IMAGE_TAG}"</span>)
+            <span class="fn">container</span>(<span class="str">'kubectl'</span>) {
+                <span class="fn">sh</span> <span class="str">'kubectl rollout undo deployment/myapp-deployment -n production || true'</span>
+            }
+        }
+    }
+}</pre>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=cicd-gha-ecr-eks]').click()">← Full Pipeline</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-jenkins')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=cicd-argocd]').click()">Next: ArgoCD →</button>
+        </div>
+      </div>
+
+      <!-- ARGOCD -->
+      <div class="lesson-panel" data-panel="cicd-argocd">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>ArgoCD — GitOps</h1>
+            <p>Git is the source of truth. ArgoCD syncs your cluster to match your repo automatically.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">GitOps Pattern</span><span class="badge badge-red">Interview Hot Topic</span></div>
+        </div>
+        <div class="content-body">
+          <h2>What is GitOps?</h2>
+          <p>In GitOps, the desired state of your infrastructure is stored in Git. ArgoCD continuously watches the repo and syncs the cluster to match it. No more "kubectl apply" in pipelines — just git push.</p>
+
+          <div class="arch-diagram">
+            <svg width="650" height="120" viewBox="0 0 650 120" style="max-width:100%">
+              <defs>
+                <marker id="arr-argo" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+                </marker>
+              </defs>
+              <rect x="5" y="35" width="110" height="50" rx="8" fill="#1c2128" stroke="#f0883e"/>
+              <text x="60" y="57" fill="#f0883e" font-size="11" text-anchor="middle" font-family="sans-serif" font-weight="bold">Developer</text>
+              <text x="60" y="73" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">git push k8s/</text>
+              <line x1="115" y1="60" x2="140" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-argo)"/>
+
+              <rect x="140" y="35" width="110" height="50" rx="8" fill="#1c2128" stroke="#333"/>
+              <text x="195" y="57" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="sans-serif" font-weight="bold">Git Repo</text>
+              <text x="195" y="73" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">k8s/ manifests</text>
+
+              <text x="275" y="55" fill="#8b949e" font-size="20">⟵</text>
+              <text x="265" y="75" fill="#3fb950" font-size="9" font-family="sans-serif">polls/watches</text>
+
+              <rect x="295" y="20" width="130" height="80" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+              <text x="360" y="48" fill="#3fb950" font-size="12" text-anchor="middle" font-family="sans-serif" font-weight="bold">ArgoCD</text>
+              <text x="360" y="65" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Detects diff between</text>
+              <text x="360" y="78" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Git state vs cluster</text>
+              <text x="360" y="91" fill="#3fb950" font-size="9" text-anchor="middle" font-family="sans-serif">Auto-syncs ✓</text>
+              <line x1="425" y1="60" x2="450" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arr-argo)"/>
+
+              <rect x="450" y="35" width="145" height="50" rx="8" fill="#1c2128" stroke="#326ce5" stroke-width="2"/>
+              <text x="522" y="57" fill="#326ce5" font-size="12" text-anchor="middle" font-family="sans-serif" font-weight="bold">EKS Cluster</text>
+              <text x="522" y="73" fill="#8b949e" font-size="9" text-anchor="middle" font-family="sans-serif">Always matches Git ✓</text>
+            </svg>
+          </div>
+
+          <h2>Install ArgoCD on EKS</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Install ArgoCD</span>
+kubectl create namespace argocd
+kubectl apply -n argocd -f \
+  https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+<span class="cmt"># Wait for pods</span>
+kubectl wait --for=condition=ready pod \
+  -l app.kubernetes.io/name=argocd-server \
+  -n argocd --timeout=300s
+
+<span class="cmt"># Expose ArgoCD UI (LoadBalancer)</span>
+kubectl patch svc argocd-server -n argocd \
+  -p '{"spec": {"type": "LoadBalancer"}}'
+
+<span class="cmt"># Get initial admin password</span>
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d
+
+<span class="cmt"># Get ArgoCD URL</span>
+kubectl get svc argocd-server -n argocd \
+  -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+
+<span class="cmt"># Login via CLI</span>
+argocd login &lt;ARGOCD_URL&gt; --username admin --password &lt;PASSWORD&gt;</pre>
+          </div>
+
+          <h2>Create an ArgoCD Application</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">argocd-app.yaml</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="attr">apiVersion</span>: <span class="val">argoproj.io/v1alpha1</span>
+<span class="attr">kind</span>: <span class="val">Application</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp</span>
+  <span class="attr">namespace</span>: <span class="val">argocd</span>
+<span class="attr">spec</span>:
+  <span class="attr">project</span>: <span class="val">default</span>
+  <span class="attr">source</span>:
+    <span class="attr">repoURL</span>: <span class="val">https://github.com/myorg/myapp-k8s-config</span>
+    <span class="attr">targetRevision</span>: <span class="val">HEAD</span>
+    <span class="attr">path</span>: <span class="val">k8s/production</span>         <span class="cmt"># folder with K8s YAML files</span>
+  <span class="attr">destination</span>:
+    <span class="attr">server</span>: <span class="val">https://kubernetes.default.svc</span>
+    <span class="attr">namespace</span>: <span class="val">production</span>
+  <span class="attr">syncPolicy</span>:
+    <span class="attr">automated</span>:
+      <span class="attr">prune</span>: <span class="kw">true</span>             <span class="cmt"># delete K8s resources removed from Git</span>
+      <span class="attr">selfHeal</span>: <span class="kw">true</span>          <span class="cmt"># revert manual kubectl changes</span>
+    <span class="attr">syncOptions</span>:
+      - <span class="val">CreateNamespace=true</span>
+    <span class="attr">retry</span>:
+      <span class="attr">limit</span>: <span class="num">5</span>
+      <span class="attr">backoff</span>:
+        <span class="attr">duration</span>: <span class="val">5s</span>
+        <span class="attr">maxDuration</span>: <span class="val">3m</span>
+        <span class="attr">factor</span>: <span class="num">2</span></pre>
+          </div>
+
+          <h2>GitOps Workflow with CI/CD + ArgoCD</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">.github/workflows/gitops.yml — update image tag in Git</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="attr">name</span>: <span class="val">GitOps Deploy</span>
+<span class="attr">on</span>:
+  <span class="attr">push</span>:
+    <span class="attr">branches</span>: [<span class="val">main</span>]
+
+<span class="attr">jobs</span>:
+  <span class="attr">build-and-update</span>:
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="attr">steps</span>:
+      <span class="cmt"># ... test, build, push to ECR steps ...</span>
+
+      - <span class="attr">name</span>: <span class="val">Update image tag in k8s-config repo</span>
+        <span class="attr">run</span>: |
+          <span class="cmt"># Clone the separate K8s config repo</span>
+          <span class="val">git clone https://x-access-token:${{ secrets.CONFIG_REPO_TOKEN }}@github.com/myorg/myapp-k8s-config</span>
+          <span class="val">cd myapp-k8s-config</span>
+
+          <span class="cmt"># Update the image tag in the deployment YAML</span>
+          <span class="val">sed -i "s|image: .*myapp:.*|image: ${ECR_REGISTRY}/myapp:${GITHUB_SHA}|" \</span>
+            <span class="val">k8s/production/deployment.yaml</span>
+
+          <span class="cmt"># Commit and push — ArgoCD detects this and deploys!</span>
+          <span class="val">git config user.email "github-actions@github.com"</span>
+          <span class="val">git config user.name "GitHub Actions"</span>
+          <span class="val">git add -A</span>
+          <span class="val">git commit -m "chore: update myapp image to ${GITHUB_SHA}"</span>
+          <span class="val">git push</span></pre>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">GitOps vs Traditional CD — Interview Answer</div>
+              <div class="callout-text">Traditional CD: CI pipeline runs kubectl apply directly against the cluster. It needs cluster credentials in CI, and manual kubectl changes aren't tracked.<br><br>GitOps (ArgoCD): Git is the single source of truth. CI only updates Git. ArgoCD pulls and syncs. Benefits: audit trail, easy rollback (git revert), no cluster credentials in CI, self-healing (reverts manual changes).</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=cicd-jenkins]').click()">← Jenkins</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-argocd')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=cicd-strategies]').click()">Next: Deployment Strategies →</button>
+        </div>
+      </div>
+
+      <!-- DEPLOYMENT STRATEGIES -->
+      <div class="lesson-panel" data-panel="cicd-strategies">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Blue-Green & Canary Deployments</h1>
+            <p>Zero-downtime deployment strategies used at Netflix, Amazon, Google.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Interview Favorite</span><span class="badge badge-orange">Production Pattern</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Deployment Strategy Comparison</h2>
+          <table class="compare-table">
+            <thead><tr><th>Strategy</th><th>How It Works</th><th>Downtime</th><th>Rollback Speed</th><th>Resource Cost</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Recreate</strong></td><td>Kill all v1 pods, start all v2 pods</td><td>Yes</td><td>Slow</td><td>1x</td></tr>
+              <tr><td><strong>Rolling Update</strong></td><td>Replace pods one at a time</td><td>No</td><td>Medium (rollout undo)</td><td>1x + surge</td></tr>
+              <tr><td><strong>Blue-Green</strong></td><td>Run v1 and v2 simultaneously, switch traffic instantly</td><td>No</td><td>Instant (switch back)</td><td>2x</td></tr>
+              <tr><td><strong>Canary</strong></td><td>Route 5-10% traffic to v2, monitor, then increase</td><td>No</td><td>Fast (remove canary)</td><td>1.1x</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Blue-Green on Kubernetes</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">blue-green deployment</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># BLUE deployment (current production — v1)</span>
+<span class="attr">apiVersion</span>: <span class="val">apps/v1</span>
+<span class="attr">kind</span>: <span class="val">Deployment</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp-blue</span>
+<span class="attr">spec</span>:
+  <span class="attr">replicas</span>: <span class="num">3</span>
+  <span class="attr">selector</span>:
+    <span class="attr">matchLabels</span>: { <span class="attr">app</span>: <span class="val">myapp</span>, <span class="attr">slot</span>: <span class="val">blue</span> }
+  <span class="attr">template</span>:
+    <span class="attr">metadata</span>:
+      <span class="attr">labels</span>: { <span class="attr">app</span>: <span class="val">myapp</span>, <span class="attr">slot</span>: <span class="val">blue</span> }
+    <span class="attr">spec</span>:
+      <span class="attr">containers</span>:
+        - <span class="attr">image</span>: <span class="val">123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:v1.0.0</span>
+---
+<span class="cmt"># GREEN deployment (new version — v2)</span>
+<span class="attr">apiVersion</span>: <span class="val">apps/v1</span>
+<span class="attr">kind</span>: <span class="val">Deployment</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp-green</span>
+<span class="attr">spec</span>:
+  <span class="attr">replicas</span>: <span class="num">3</span>
+  <span class="attr">selector</span>:
+    <span class="attr">matchLabels</span>: { <span class="attr">app</span>: <span class="val">myapp</span>, <span class="attr">slot</span>: <span class="val">green</span> }
+  <span class="attr">template</span>:
+    <span class="attr">metadata</span>:
+      <span class="attr">labels</span>: { <span class="attr">app</span>: <span class="val">myapp</span>, <span class="attr">slot</span>: <span class="val">green</span> }
+    <span class="attr">spec</span>:
+      <span class="attr">containers</span>:
+        - <span class="attr">image</span>: <span class="val">123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:v2.0.0</span>
+---
+<span class="cmt"># SERVICE — points to blue OR green via selector</span>
+<span class="attr">apiVersion</span>: <span class="val">v1</span>
+<span class="attr">kind</span>: <span class="val">Service</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp-service</span>
+<span class="attr">spec</span>:
+  <span class="attr">selector</span>:
+    <span class="attr">app</span>: <span class="val">myapp</span>
+    <span class="attr">slot</span>: <span class="val">blue</span>   <span class="cmt"># ← switch this to "green" to deploy!</span>
+  <span class="attr">ports</span>:
+    - { <span class="attr">port</span>: <span class="num">80</span>, <span class="attr">targetPort</span>: <span class="num">3000</span> }</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">bash</span><span class="code-block-title">Switch traffic blue → green (instant, zero downtime)</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre><span class="cmt"># Deploy green (v2) alongside blue (v1)</span>
+kubectl apply -f green-deployment.yaml
+
+<span class="cmt"># Test green internally</span>
+kubectl run test --image=curlimages/curl --rm -it --restart=Never \
+  -- curl http://myapp-green-service/health
+
+<span class="cmt"># Switch ALL traffic from blue to green (atomic, no downtime)</span>
+kubectl patch service myapp-service \
+  -p '{"spec":{"selector":{"slot":"green"}}}'
+
+<span class="cmt"># Verify</span>
+kubectl get service myapp-service -o yaml | grep slot
+
+<span class="cmt"># Rollback = switch back to blue (instant!)</span>
+kubectl patch service myapp-service \
+  -p '{"spec":{"selector":{"slot":"blue"}}}'
+
+<span class="cmt"># Clean up old blue deployment when satisfied</span>
+kubectl delete deployment myapp-blue</pre>
+          </div>
+
+          <h2>Canary Deployment</h2>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-block-lang">yaml</span><span class="code-block-title">canary deployment — 10% traffic to v2</span><button class="copy-btn">⎘ Copy</button></div>
+            <pre"><span class="cmt"># Main deployment: 9 replicas of v1</span>
+<span class="attr">apiVersion</span>: <span class="val">apps/v1</span>
+<span class="attr">kind</span>: <span class="val">Deployment</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp-stable</span>
+<span class="attr">spec</span>:
+  <span class="attr">replicas</span>: <span class="num">9</span>             <span class="cmt"># 9 out of 10 pods</span>
+  <span class="attr">selector</span>:
+    <span class="attr">matchLabels</span>: { <span class="attr">app</span>: <span class="val">myapp</span> }
+  <span class="attr">template</span>:
+    <span class="attr">metadata</span>:
+      <span class="attr">labels</span>: { <span class="attr">app</span>: <span class="val">myapp</span>, <span class="attr">track</span>: <span class="val">stable</span> }
+    <span class="attr">spec</span>:
+      <span class="attr">containers</span>:
+        - <span class="attr">image</span>: <span class="val">myapp:v1.0.0</span>
+---
+<span class="cmt"># Canary: 1 replica of v2 (10% of traffic)</span>
+<span class="attr">apiVersion</span>: <span class="val">apps/v1</span>
+<span class="attr">kind</span>: <span class="val">Deployment</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp-canary</span>
+<span class="attr">spec</span>:
+  <span class="attr">replicas</span>: <span class="num">1</span>             <span class="cmt"># 1 out of 10 pods = 10% traffic</span>
+  <span class="attr">selector</span>:
+    <span class="attr">matchLabels</span>: { <span class="attr">app</span>: <span class="val">myapp</span> }
+  <span class="attr">template</span>:
+    <span class="attr">metadata</span>:
+      <span class="attr">labels</span>: { <span class="attr">app</span>: <span class="val">myapp</span>, <span class="attr">track</span>: <span class="val">canary</span> }
+    <span class="attr">spec</span>:
+      <span class="attr">containers</span>:
+        - <span class="attr">image</span>: <span class="val">myapp:v2.0.0</span>
+---
+<span class="cmt"># ONE service routes to BOTH (by matching app: myapp label)</span>
+<span class="attr">apiVersion</span>: <span class="val">v1</span>
+<span class="attr">kind</span>: <span class="val">Service</span>
+<span class="attr">metadata</span>:
+  <span class="attr">name</span>: <span class="val">myapp-service</span>
+<span class="attr">spec</span>:
+  <span class="attr">selector</span>:
+    <span class="attr">app</span>: <span class="val">myapp</span>             <span class="cmt"># matches BOTH stable and canary pods</span></pre>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=cicd-argocd]').click()">← ArgoCD</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-strategies')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=cicd-quiz]').click()">Next: Knowledge Check →</button>
+        </div>
+      </div>
+
+      <!-- CICD QUIZ -->
+      <div class="lesson-panel" data-panel="cicd-quiz">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🧠 CI/CD Knowledge Check</h1>
+            <p>Test your pipeline knowledge before the full lab.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-purple">8 Questions</span></div>
+        </div>
+        <div class="content-body">
+          <div id="cicd-quiz-container"></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=cicd-strategies]').click()">← Strategies</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('cicd-quiz')">✓ Mark Complete</button>
+          <a href="interview.html" class="btn btn-primary">Next: Interview Prep 💼 →</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="js/terminal.js"></script>
+<script src="js/app.js"></script>
+<script>
+createQuiz('cicd-quiz-container', [
+  {
+    question: "What is the difference between Continuous Delivery and Continuous Deployment?",
+    options: [
+      "They are the same thing with different names",
+      "Continuous Delivery requires manual approval to push to production; Continuous Deployment is fully automated end-to-end",
+      "Continuous Delivery is for frontend, Deployment is for backend",
+      "Continuous Deployment skips testing"
+    ],
+    correct: 1,
+    explanation: "Continuous Delivery: automated pipeline produces a release candidate ready for production — but a human clicks 'deploy'. Continuous Deployment: every passing pipeline automatically deploys to production with no human gate. Most companies do Continuous Delivery for production, Continuous Deployment to staging."
+  },
+  {
+    question: "Why should you use OIDC (role assumption) instead of AWS_ACCESS_KEY_ID in GitHub Actions?",
+    options: [
+      "OIDC is faster than access keys",
+      "OIDC keys never expire while access keys do",
+      "Static access keys are a security risk if leaked. OIDC issues short-lived tokens via trust relationship — no long-lived credentials stored in GitHub",
+      "AWS doesn't support access keys in GitHub"
+    ],
+    correct: 2,
+    explanation: "Static AWS credentials stored as GitHub secrets can be leaked via log output, forked PRs, or repo compromise. OIDC trust allows GitHub Actions to assume an IAM role using a federated JWT — the token is valid for minutes only and never stored. This is the AWS and GitHub recommended approach."
+  },
+  {
+    question: "In a GitHub Actions workflow, job B has `needs: job-a`. When does job B run?",
+    options: [
+      "Job B runs in parallel with job A",
+      "Job B runs only after job A completes successfully",
+      "Job B runs only if job A fails",
+      "Job B runs regardless of job A's outcome"
+    ],
+    correct: 1,
+    explanation: "needs: creates a dependency. Job B waits for job A to complete successfully before starting. If job A fails, job B is skipped (unless you also add `if: always()`). Jobs without needs run in parallel by default."
+  },
+  {
+    question: "What is the key advantage of GitOps with ArgoCD over traditional kubectl apply in pipelines?",
+    options: [
+      "ArgoCD is faster than kubectl",
+      "GitOps doesn't require Docker",
+      "Git becomes the single source of truth. Manual kubectl changes are reverted. Full audit trail. No cluster credentials in CI. Easy rollback via git revert.",
+      "ArgoCD automatically scales clusters"
+    ],
+    correct: 2,
+    explanation: "In GitOps: the cluster ALWAYS matches what's in Git. Benefits: audit trail (every change is a git commit), rollback = git revert, no cluster creds in CI pipeline, selfHeal reverts manual kubectl changes. The single source of truth eliminates drift between environments."
+  },
+  {
+    question: "During a canary deployment, 1 pod runs v2 alongside 9 pods running v1. What percentage of traffic goes to v2?",
+    options: [
+      "1%",
+      "5%",
+      "10%",
+      "Depends on Service type"
+    ],
+    correct: 2,
+    explanation: "The Service load-balances across ALL matching pods. With 9 v1 pods and 1 v2 pod (total 10), kube-proxy routes ~10% of requests to v2 and ~90% to v1. To increase the canary: scale up canary replicas and/or scale down stable replicas."
+  },
+  {
+    question: "A deployment rollout is stuck at 50% for 10 minutes. What do you check first?",
+    options: [
+      "Check if AWS is having an outage",
+      "kubectl rollout status to see what's happening, then kubectl describe pod on the new pods to read events",
+      "Delete the deployment and redeploy",
+      "Increase the node count"
+    ],
+    correct: 1,
+    explanation: "kubectl rollout status shows progress. Then kubectl describe pod <new-pod> shows Events — usually: image pull failure (ImagePullBackOff), readinessProbe failing, or OOMKilled. The Events section is always the first place to look. The rollout pauses at maxUnavailable pods if new pods aren't becoming ready."
+  },
+  {
+    question: "What is the advantage of Blue-Green deployment over Rolling Update?",
+    options: [
+      "Blue-Green uses 50% less resources",
+      "Blue-Green is faster",
+      "Instant rollback — just switch the Service selector back to blue. No need to wait for pods to roll back.",
+      "Blue-Green works without Kubernetes"
+    ],
+    correct: 2,
+    explanation: "Rolling update rollback (kubectl rollout undo) takes time as pods are replaced one by one. Blue-green rollback is atomic and instant — change one label in the Service selector and 100% of traffic switches back immediately. The tradeoff: 2x resource cost during deployment."
+  },
+  {
+    question: "What does `docker build --build-arg APP_VERSION=$GITHUB_SHA` do?",
+    options: [
+      "Runs the build on a specific GitHub SHA",
+      "Passes the git commit SHA as a build-time variable, accessible via ARG in Dockerfile",
+      "Tags the image with the git commit SHA",
+      "Builds only changed files since that commit"
+    ],
+    correct: 1,
+    explanation: "--build-arg passes variables to the Dockerfile's ARG instructions. In the Dockerfile: ARG APP_VERSION → ENV APP_VERSION=$APP_VERSION. This embeds the git commit SHA into the running container, so you can always know which code version is deployed. Useful for debugging and audit."
+  }
+]);
+</script>
+</body>
+</html>

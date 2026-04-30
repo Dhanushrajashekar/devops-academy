@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS for DevOps — DevOps Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .aws-hero { background: linear-gradient(135deg, #0f1a0f 0%, #0d1117 50%, #1a0d00 100%); border: 1px solid rgba(255,153,0,0.25); border-radius: var(--radius); padding: 32px; margin-bottom: 32px; }
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+    .service-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+    .service-card .svc-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .service-card .svc-name { font-size: 0.85rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .service-card .svc-desc { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4; }
+    .pricing-note { background: rgba(255,153,0,0.08); border: 1px solid rgba(255,153,0,0.2); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 0.8rem; color: var(--text-secondary); margin: 16px 0; }
+    .iam-matrix { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .iam-matrix th { background: var(--bg-tertiary); padding: 8px 12px; text-align: left; font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .iam-matrix td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .iam-matrix tr:last-child td { border-bottom: none; }
+    .policy-block { background: #010409; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: var(--font-mono); font-size: 0.8rem; color: #c9d1d9; line-height: 1.6; overflow-x: auto; margin: 16px 0; }
+    .policy-key { color: #79c0ff; }
+    .policy-str { color: #a5d6ff; }
+    .policy-val { color: #3fb950; }
+    .vpc-diagram { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin: 20px 0; }
+    .arch-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+    .arch-box { flex: 1; min-width: 180px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+    .arch-box .ab-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--aws-orange); margin-bottom: 8px; }
+    .arch-box ul { list-style: none; padding: 0; margin: 0; }
+    .arch-box ul li { font-size: 0.8rem; color: var(--text-secondary); padding: 3px 0; display: flex; align-items: flex-start; gap: 6px; }
+    .arch-box ul li::before { content: '•'; color: var(--aws-orange); flex-shrink: 0; }
+    .tier-badge-aws { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; background: rgba(255,153,0,0.15); color: var(--aws-orange); border: 1px solid rgba(255,153,0,0.3); }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><span class="logo-icon">🚀</span>DevOps Academy</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="linux.html" class="nav-link">🐧 Linux</a>
+    <a href="networking.html" class="nav-link">🌐 Networking</a>
+    <a href="docker.html" class="nav-link">🐳 Docker</a>
+    <a href="kubernetes.html" class="nav-link">☸️ Kubernetes</a>
+    <a href="cicd.html" class="nav-link">⚙️ CI/CD</a>
+    <a href="aws.html" class="nav-link active">☁️ AWS</a>
+    <a href="interview.html" class="nav-link">💼 Interview</a>
+    <a href="troubleshoot.html" class="nav-link">🔧 Troubleshoot</a>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle r="12" cx="16" cy="16"/>
+        <circle class="progress-fill" r="12" cx="16" cy="16" style="stroke-dasharray:75.4; stroke-dashoffset:75.4;"/>
+      </svg>
+      <div class="pct progress-pct">0%</div>
+    </div>
+    <span class="progress-pct">0%</span> done
+  </div>
+</nav>
+
+<div class="container" style="padding-top:32px;padding-bottom:64px;">
+  <div class="curriculum-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">☁️ AWS Curriculum</div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Week 3 — Cloud Infrastructure</div>
+        <div class="sidebar-item" data-lesson="aws-overview"><div class="check-icon"></div> AWS Overview & Core Services</div>
+        <div class="sidebar-item" data-lesson="aws-iam"><div class="check-icon"></div> IAM — Identity & Access</div>
+        <div class="sidebar-item" data-lesson="aws-vpc"><div class="check-icon"></div> VPC — Networking Deep Dive</div>
+        <div class="sidebar-item" data-lesson="aws-ec2"><div class="check-icon"></div> EC2 — Compute</div>
+        <div class="sidebar-item" data-lesson="aws-s3"><div class="check-icon"></div> S3 — Object Storage</div>
+        <div class="sidebar-item" data-lesson="aws-eks"><div class="check-icon"></div> EKS — Managed Kubernetes</div>
+        <div class="sidebar-item" data-lesson="aws-ecr"><div class="check-icon"></div> ECR — Container Registry</div>
+        <div class="sidebar-item" data-lesson="aws-iac"><div class="check-icon"></div> IaC: CloudFormation & Terraform</div>
+        <div class="sidebar-item" data-lesson="aws-monitoring"><div class="check-icon"></div> CloudWatch & Observability</div>
+        <div class="sidebar-item" data-lesson="aws-lab"><div class="check-icon"></div> 🔬 Lab: VPC + EKS Cluster</div>
+        <div class="sidebar-item" data-lesson="aws-quiz"><div class="check-icon"></div> 🧠 Knowledge Check</div>
+      </div>
+    </aside>
+
+    <main class="lesson-content">
+
+      <!-- AWS OVERVIEW -->
+      <div class="lesson-panel" data-panel="aws-overview">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>AWS Overview & Core Services</h1>
+            <p>The 20% of AWS that powers 80% of DevOps workloads — mapped to real job requirements.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Foundation</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <div class="aws-hero">
+            <h2 style="color:var(--aws-orange);margin-bottom:12px;">☁️ Why AWS Dominates DevOps</h2>
+            <p style="color:var(--text-secondary);font-size:0.9rem;">AWS holds ~32% of the cloud market. Most DevOps job descriptions list EC2, S3, IAM, and EKS. You don't need to know all 200+ AWS services — master the core 12 and you're interview-ready.</p>
+          </div>
+
+          <h2>The Core Services Map</h2>
+          <div class="service-grid">
+            <div class="service-card">
+              <div class="svc-icon">🖥️</div>
+              <div class="svc-name">EC2</div>
+              <div class="svc-desc">Virtual machines. The base compute layer. Launch, scale, terminate servers on demand.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">🪣</div>
+              <div class="svc-name">S3</div>
+              <div class="svc-desc">Object storage. Infinite capacity, 11 nines durability. Store artifacts, backups, static sites.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">🔐</div>
+              <div class="svc-name">IAM</div>
+              <div class="svc-desc">Identity & Access. Users, roles, policies. Everything in AWS is governed by IAM.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">🌐</div>
+              <div class="svc-name">VPC</div>
+              <div class="svc-desc">Virtual Private Cloud. Your isolated network. Subnets, routing, security groups, NAT.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">☸️</div>
+              <div class="svc-name">EKS</div>
+              <div class="svc-desc">Managed Kubernetes. AWS runs the control plane. You manage worker nodes and workloads.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">📦</div>
+              <div class="svc-name">ECR</div>
+              <div class="svc-desc">Elastic Container Registry. Private Docker image registry integrated with EKS and IAM.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">⚖️</div>
+              <div class="svc-name">ALB / ELB</div>
+              <div class="svc-desc">Application Load Balancer. Layer 7 routing, SSL termination, target groups for EC2/EKS.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">📊</div>
+              <div class="svc-name">CloudWatch</div>
+              <div class="svc-desc">Monitoring & logging. Metrics, alarms, log groups, dashboards, and Container Insights.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">🔑</div>
+              <div class="svc-name">Secrets Manager</div>
+              <div class="svc-desc">Secure secrets storage. Rotates credentials automatically. Integrated with EKS via CSI driver.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">🗄️</div>
+              <div class="svc-name">RDS</div>
+              <div class="svc-desc">Managed relational databases. Postgres, MySQL, Aurora. Multi-AZ for high availability.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">📬</div>
+              <div class="svc-name">SQS / SNS</div>
+              <div class="svc-desc">Message queuing & pub/sub. Decouple microservices. SQS = queue, SNS = broadcast.</div>
+            </div>
+            <div class="service-card">
+              <div class="svc-icon">🏗️</div>
+              <div class="svc-name">CloudFormation</div>
+              <div class="svc-desc">Infrastructure as Code. Define AWS resources in YAML/JSON templates. State managed by AWS.</div>
+            </div>
+          </div>
+
+          <h2>Global Infrastructure</h2>
+          <table class="compare-table">
+            <thead><tr><th>Concept</th><th>What It Is</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Region</strong></td><td>Geographic area with independent AWS infrastructure (26+ regions)</td><td>us-east-1 (N. Virginia), eu-west-1 (Ireland)</td></tr>
+              <tr><td><strong>Availability Zone (AZ)</strong></td><td>Isolated data center(s) within a region. 2-6 per region.</td><td>us-east-1a, us-east-1b, us-east-1c</td></tr>
+              <tr><td><strong>Edge Location</strong></td><td>CloudFront CDN cache point. 400+ worldwide.</td><td>Used by CloudFront for low-latency content delivery</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview Tip: High Availability = Multi-AZ</div>
+              <div class="callout-text">When an interviewer asks "how would you make this highly available?" — the answer always involves deploying across multiple AZs. Spread your EC2 instances, RDS replicas, and EKS nodes across at least 2 AZs so one data center failure doesn't take you down.</div>
+            </div>
+          </div>
+
+          <h2>The DevOps AWS Architecture</h2>
+          <div class="arch-row">
+            <div class="arch-box">
+              <div class="ab-title">Developer pushes code</div>
+              <ul>
+                <li>GitHub / GitLab repo</li>
+                <li>GitHub Actions trigger</li>
+                <li>Run tests, build Docker image</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Image stored in ECR</div>
+              <ul>
+                <li>docker push to ECR</li>
+                <li>Tagged with git SHA</li>
+                <li>Scanned for CVEs</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Deployed to EKS</div>
+              <ul>
+                <li>kubectl apply / ArgoCD</li>
+                <li>Nodes in private subnets</li>
+                <li>ALB routes traffic in</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Monitored in CloudWatch</div>
+              <ul>
+                <li>Container Insights</li>
+                <li>Alarms on error rates</li>
+                <li>Logs in Log Groups</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="window.location='cicd.html'">← CI/CD Module</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-overview')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-iam]').click()">Next: IAM →</button>
+        </div>
+      </div>
+
+      <!-- IAM -->
+      <div class="lesson-panel" data-panel="aws-iam">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>IAM — Identity & Access Management</h1>
+            <p>The security foundation of everything in AWS. Get this wrong and you get breached.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~30 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>The Four IAM Entities</h2>
+          <table class="compare-table">
+            <thead><tr><th>Entity</th><th>What It Is</th><th>When to Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>User</strong></td><td>A person or service with long-term credentials (username + password, access keys)</td><td>Human admins. Avoid for applications — use roles instead.</td></tr>
+              <tr><td><strong>Group</strong></td><td>Collection of users. Policies attached to group apply to all members.</td><td>Organize permissions: Developers group, Ops group, ReadOnly group.</td></tr>
+              <tr><td><strong>Role</strong></td><td>Assumed by entities (EC2, Lambda, EKS pods, CI/CD). Provides temporary credentials.</td><td>EC2 instance role, EKS node role, GitHub Actions OIDC role, cross-account access.</td></tr>
+              <tr><td><strong>Policy</strong></td><td>JSON document defining allowed/denied actions on resources.</td><td>Attached to Users, Groups, or Roles to grant permissions.</td></tr>
+            </tbody>
+          </table>
+
+          <h2>IAM Policy Structure</h2>
+          <div class="policy-block">
+<span class="policy-key">{</span>
+  <span class="policy-key">"Version"</span>: <span class="policy-str">"2012-10-17"</span>,
+  <span class="policy-key">"Statement"</span>: [
+    {
+      <span class="policy-key">"Sid"</span>: <span class="policy-str">"AllowS3ReadBucket"</span>,
+      <span class="policy-key">"Effect"</span>: <span class="policy-val">"Allow"</span>,          <span style="color:#6e7681">// Allow or Deny</span>
+      <span class="policy-key">"Action"</span>: [
+        <span class="policy-str">"s3:GetObject"</span>,
+        <span class="policy-str">"s3:ListBucket"</span>
+      ],
+      <span class="policy-key">"Resource"</span>: [
+        <span class="policy-str">"arn:aws:s3:::my-app-bucket"</span>,
+        <span class="policy-str">"arn:aws:s3:::my-app-bucket/*"</span>
+      ]
+    }
+  ]
+<span class="policy-key">}</span></div>
+
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body">
+              <div class="callout-title">Least Privilege — The Golden Rule</div>
+              <div class="callout-text">Grant <strong>only the permissions needed</strong>, nothing more. An EC2 instance that only reads from S3 should have <code>s3:GetObject</code> only — not <code>s3:*</code> or <code>*:*</code>. Most AWS breaches start with overly-permissive IAM policies.</div>
+            </div>
+          </div>
+
+          <h2>IAM Roles vs Access Keys</h2>
+          <table class="compare-table">
+            <thead><tr><th>Method</th><th>Credentials</th><th>Recommended?</th><th>Use Case</th></tr></thead>
+            <tbody>
+              <tr><td><strong>IAM Role</strong></td><td>Temporary STS credentials (15 min – 12 hr)</td><td>✅ Yes</td><td>EC2 instance role, EKS node/pod role, Lambda execution role</td></tr>
+              <tr><td><strong>OIDC Federation</strong></td><td>Temp credentials via identity provider</td><td>✅ Yes</td><td>GitHub Actions assuming AWS role without long-term keys</td></tr>
+              <tr><td><strong>Access Keys</strong></td><td>Long-term key ID + secret (never expire)</td><td>⚠️ Avoid</td><td>Local CLI dev only. Rotate frequently. Never commit to code.</td></tr>
+            </tbody>
+          </table>
+
+          <h2>IRSA — IAM Roles for Service Accounts (EKS)</h2>
+          <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">IRSA lets EKS pods assume IAM roles <strong>without node-level credentials</strong>. The pod gets its own role and only has the permissions it needs.</p>
+          <div class="code-block">
+<span class="cb-comment"># 1. Create IAM OIDC provider for the EKS cluster</span>
+eksctl utils associate-iam-oidc-provider \
+  --cluster my-cluster \
+  --approve
+
+<span class="cb-comment"># 2. Create IAM role for the service account</span>
+eksctl create iamserviceaccount \
+  --cluster my-cluster \
+  --namespace my-app \
+  --name my-app-sa \
+  --attach-policy-arn arn:aws:iam::123456789:policy/MyAppPolicy \
+  --approve
+
+<span class="cb-comment"># 3. Annotate the Kubernetes service account</span>
+kubectl annotate serviceaccount my-app-sa -n my-app \
+  eks.amazonaws.com/role-arn=arn:aws:iam::123456789:role/my-app-role</div>
+
+          <h2>GitHub Actions → AWS (Keyless Auth)</h2>
+          <div class="code-block">
+<span class="cb-comment"># .github/workflows/deploy.yml</span>
+permissions:
+  id-token: write   <span class="cb-comment"># Required for OIDC</span>
+  contents: read
+
+jobs:
+  deploy:
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789:role/github-actions-role
+          aws-region: us-east-1
+          <span class="cb-comment"># No access keys needed — OIDC generates temp credentials</span></div>
+
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-overview]').click()">← Overview</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-iam')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-vpc]').click()">Next: VPC →</button>
+        </div>
+      </div>
+
+      <!-- VPC -->
+      <div class="lesson-panel" data-panel="aws-vpc">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>VPC — Virtual Private Cloud</h1>
+            <p>Your isolated network in AWS. Understanding VPCs is required for any senior DevOps role.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~35 min</span></div>
+        </div>
+        <div class="content-body">
+
+          <h2>VPC Architecture</h2>
+          <div class="vpc-diagram">
+            <svg width="100%" height="340" viewBox="0 0 700 340" style="max-width:100%">
+              <defs>
+                <marker id="arr-vpc" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+                </marker>
+              </defs>
+              <!-- VPC outer -->
+              <rect x="10" y="10" width="680" height="320" rx="10" fill="none" stroke="#ff9900" stroke-width="2" stroke-dasharray="6 3"/>
+              <text x="20" y="32" fill="#ff9900" font-size="13" font-family="sans-serif" font-weight="bold">VPC: 10.0.0.0/16</text>
+
+              <!-- Internet Gateway -->
+              <rect x="290" y="14" width="120" height="30" rx="6" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="350" y="34" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle">Internet Gateway</text>
+
+              <!-- Public subnets -->
+              <rect x="20" y="55" width="200" height="120" rx="8" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="120" y="75" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Public Subnet</text>
+              <text x="120" y="90" fill="#6e7681" font-size="9" font-family="sans-serif" text-anchor="middle">10.0.1.0/24 — us-east-1a</text>
+              <rect x="35" y="100" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="75" y="120" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">ALB</text>
+              <rect x="130" y="100" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="170" y="120" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">NAT Gateway</text>
+              <rect x="35" y="145" width="170" height="20" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="120" y="159" fill="#8b949e" font-size="9" font-family="sans-serif" text-anchor="middle">Route: 0.0.0.0/0 → IGW</text>
+
+              <rect x="240" y="55" width="200" height="120" rx="8" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="340" y="75" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Public Subnet</text>
+              <text x="340" y="90" fill="#6e7681" font-size="9" font-family="sans-serif" text-anchor="middle">10.0.2.0/24 — us-east-1b</text>
+              <rect x="255" y="100" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="295" y="120" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">ALB (AZ-b)</text>
+              <rect x="355" y="100" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="395" y="120" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">Bastion Host</text>
+              <rect x="255" y="145" width="170" height="20" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="340" y="159" fill="#8b949e" font-size="9" font-family="sans-serif" text-anchor="middle">Route: 0.0.0.0/0 → IGW</text>
+
+              <!-- Private subnets -->
+              <rect x="20" y="190" width="200" height="130" rx="8" fill="rgba(88,166,255,0.06)" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="120" y="210" fill="#58a6ff" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Private Subnet</text>
+              <text x="120" y="225" fill="#6e7681" font-size="9" font-family="sans-serif" text-anchor="middle">10.0.3.0/24 — us-east-1a</text>
+              <rect x="35" y="235" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="75" y="253" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">EKS Node</text>
+              <rect x="130" y="235" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="170" y="253" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">RDS Primary</text>
+              <rect x="35" y="275" width="170" height="20" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="120" y="289" fill="#8b949e" font-size="9" font-family="sans-serif" text-anchor="middle">Route: 0.0.0.0/0 → NAT GW</text>
+
+              <rect x="240" y="190" width="200" height="130" rx="8" fill="rgba(88,166,255,0.06)" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="340" y="210" fill="#58a6ff" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Private Subnet</text>
+              <text x="340" y="225" fill="#6e7681" font-size="9" font-family="sans-serif" text-anchor="middle">10.0.4.0/24 — us-east-1b</text>
+              <rect x="255" y="235" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="295" y="253" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">EKS Node</text>
+              <rect x="355" y="235" width="80" height="30" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="395" y="253" fill="#c9d1d9" font-size="9" font-family="sans-serif" text-anchor="middle">RDS Replica</text>
+              <rect x="255" y="275" width="170" height="20" rx="4" fill="#1c2128" stroke="#30363d"/>
+              <text x="340" y="289" fill="#8b949e" font-size="9" font-family="sans-serif" text-anchor="middle">Route: 0.0.0.0/0 → NAT GW</text>
+
+              <!-- Security group legend -->
+              <rect x="460" y="55" width="230" height="265" rx="8" fill="rgba(163,113,247,0.06)" stroke="#a371f7" stroke-width="1.5"/>
+              <text x="575" y="78" fill="#a371f7" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle">Security Groups</text>
+              <text x="470" y="100" fill="#8b949e" font-size="9" font-family="sans-serif">ALB SG: inbound 80,443 from 0.0.0.0/0</text>
+              <text x="470" y="118" fill="#8b949e" font-size="9" font-family="sans-serif">EKS Node SG: inbound from ALB SG</text>
+              <text x="470" y="136" fill="#8b949e" font-size="9" font-family="sans-serif">RDS SG: inbound 5432 from Node SG</text>
+              <line x1="575" y1="148" x2="575" y2="160" stroke="#30363d" stroke-width="1"/>
+              <text x="470" y="178" fill="#c9d1d9" font-size="9" font-family="sans-serif" font-weight="bold">Security Group Rules:</text>
+              <text x="470" y="196" fill="#8b949e" font-size="9" font-family="sans-serif">• Inbound: whitelist who can connect</text>
+              <text x="470" y="214" fill="#8b949e" font-size="9" font-family="sans-serif">• Outbound: default allows all</text>
+              <text x="470" y="232" fill="#8b949e" font-size="9" font-family="sans-serif">• Stateful: return traffic auto-allowed</text>
+              <text x="470" y="250" fill="#8b949e" font-size="9" font-family="sans-serif">• Reference other SGs (not just CIDRs)</text>
+              <line x1="575" y1="260" x2="575" y2="272" stroke="#30363d" stroke-width="1"/>
+              <text x="470" y="290" fill="#c9d1d9" font-size="9" font-family="sans-serif" font-weight="bold">NACLs (Network ACLs):</text>
+              <text x="470" y="308" fill="#8b949e" font-size="9" font-family="sans-serif">• Stateless — rule both directions</text>
+            </svg>
+          </div>
+
+          <h2>Public vs Private Subnets</h2>
+          <table class="compare-table">
+            <thead><tr><th>Property</th><th>Public Subnet</th><th>Private Subnet</th></tr></thead>
+            <tbody>
+              <tr><td>Route to internet</td><td>Direct via Internet Gateway (IGW)</td><td>Outbound only via NAT Gateway</td></tr>
+              <tr><td>Has public IP?</td><td>Yes (Elastic IP or auto-assign)</td><td>No public IPs</td></tr>
+              <tr><td>What lives here</td><td>ALB, NAT Gateway, Bastion Host</td><td>EC2 app servers, EKS nodes, RDS databases</td></tr>
+              <tr><td>Internet can reach?</td><td>Yes (with security group rules)</td><td>No — only reachable via internal routing</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body">
+              <div class="callout-title">Interview: Why put EKS nodes in private subnets?</div>
+              <div class="callout-text">
+                <strong>Answer:</strong> Security. Your application pods should never be directly reachable from the internet. Traffic flows: Internet → ALB (public subnet) → EKS nodes (private subnet). NAT Gateway allows nodes to pull container images (egress-only). This is the standard production architecture.<br><br>
+                Adding: "We also set security groups so only the ALB security group can reach the node group on port 80/443."
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-iam]').click()">← IAM</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-vpc')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-ec2]').click()">Next: EC2 →</button>
+        </div>
+      </div>
+
+      <!-- EC2 -->
+      <div class="lesson-panel" data-panel="aws-ec2">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>EC2 — Elastic Compute Cloud</h1>
+            <p>Virtual machines in the cloud. The backbone of AWS compute.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>Instance Types — The Pattern</h2>
+          <table class="compare-table">
+            <thead><tr><th>Family</th><th>Optimized For</th><th>Example Types</th><th>DevOps Use Case</th></tr></thead>
+            <tbody>
+              <tr><td><strong>t3/t4g</strong></td><td>Burstable general purpose</td><td>t3.micro, t3.small, t3.medium</td><td>Dev/test, small EKS nodes, bastion hosts</td></tr>
+              <tr><td><strong>m6i/m7i</strong></td><td>Balanced CPU + memory</td><td>m6i.large, m6i.xlarge</td><td>Production app servers, EKS worker nodes</td></tr>
+              <tr><td><strong>c6i/c7i</strong></td><td>Compute optimized</td><td>c6i.xlarge, c6i.2xlarge</td><td>CPU-heavy workloads, build servers</td></tr>
+              <tr><td><strong>r6i/r7i</strong></td><td>Memory optimized</td><td>r6i.xlarge, r6i.2xlarge</td><td>In-memory databases, Redis, large JVM apps</td></tr>
+              <tr><td><strong>i3/i4i</strong></td><td>Storage optimized</td><td>i3.xlarge, i4i.xlarge</td><td>High-IOPS databases, Elasticsearch</td></tr>
+            </tbody>
+          </table>
+
+          <h2>User Data — Bootstrap Scripts</h2>
+          <div class="code-block">
+<span class="cb-comment">#!/bin/bash
+# Runs on first boot — use to configure EC2 instances</span>
+yum update -y
+yum install -y docker
+
+systemctl start docker
+systemctl enable docker
+
+<span class="cb-comment"># Add ec2-user to docker group</span>
+usermod -aG docker ec2-user
+
+<span class="cb-comment"># Install kubectl</span>
+curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+<span class="cb-comment"># Configure AWS CLI (uses instance role — no keys needed)</span>
+aws eks update-kubeconfig --region us-east-1 --name my-cluster</div>
+
+          <h2>Purchasing Options — Cost Optimization</h2>
+          <table class="compare-table">
+            <thead><tr><th>Option</th><th>Discount vs On-Demand</th><th>Commitment</th><th>Best For</th></tr></thead>
+            <tbody>
+              <tr><td><strong>On-Demand</strong></td><td>No discount (baseline)</td><td>None</td><td>Variable workloads, spiky traffic</td></tr>
+              <tr><td><strong>Reserved Instances</strong></td><td>Up to 72% off</td><td>1-3 years</td><td>Stable baseline capacity (e.g., always-on EKS nodes)</td></tr>
+              <tr><td><strong>Savings Plans</strong></td><td>Up to 66% off</td><td>1-3 years</td><td>Flexible — applies across instance types/regions</td></tr>
+              <tr><td><strong>Spot Instances</strong></td><td>Up to 90% off</td><td>None (can be interrupted)</td><td>Batch jobs, CI/CD runners, stateless workloads</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">Production EKS Node Strategy</div>
+              <div class="callout-text">Use a <strong>mixed node group</strong>: On-Demand instances for your baseline (1-2 per AZ) to guarantee capacity, and Spot instances for burst capacity (Karpenter auto-selects cheapest available spot type). This cuts EKS compute cost by 50-70% while maintaining reliability.</div>
+            </div>
+          </div>
+
+          <h2>Key EC2 Concepts for Interviews</h2>
+          <div class="arch-row">
+            <div class="arch-box">
+              <div class="ab-title">AMI</div>
+              <ul>
+                <li>Amazon Machine Image — the OS template</li>
+                <li>Amazon Linux 2023 for EKS nodes</li>
+                <li>Build custom AMIs with Packer</li>
+                <li>Immutable infra: bake don't configure</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Auto Scaling Group</div>
+              <ul>
+                <li>Maintain min/max/desired instance count</li>
+                <li>Scale based on CPU, custom metrics</li>
+                <li>Replace unhealthy instances automatically</li>
+                <li>EKS managed node groups use ASGs</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">EBS Volumes</div>
+              <ul>
+                <li>Block storage attached to EC2</li>
+                <li>gp3 = default, best price/performance</li>
+                <li>io2 = provisioned IOPS (databases)</li>
+                <li>Snapshots for backup to S3</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-vpc]').click()">← VPC</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-ec2')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-s3]').click()">Next: S3 →</button>
+        </div>
+      </div>
+
+      <!-- S3 -->
+      <div class="lesson-panel" data-panel="aws-s3">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>S3 — Simple Storage Service</h1>
+            <p>11 nines durability. Infinite scale. The backbone of data in AWS.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~20 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>S3 Storage Classes</h2>
+          <table class="compare-table">
+            <thead><tr><th>Class</th><th>Retrieval</th><th>Cost</th><th>DevOps Use Case</th></tr></thead>
+            <tbody>
+              <tr><td><strong>S3 Standard</strong></td><td>Instant</td><td>Highest storage cost</td><td>Artifacts, Docker layer cache, active data</td></tr>
+              <tr><td><strong>S3 Intelligent-Tiering</strong></td><td>Instant (auto moves objects)</td><td>Monitoring fee + tiered</td><td>Unknown access patterns — auto-optimizes cost</td></tr>
+              <tr><td><strong>S3 Standard-IA</strong></td><td>Instant</td><td>Lower storage, retrieval fee</td><td>Infrequently accessed backups</td></tr>
+              <tr><td><strong>S3 Glacier Instant</strong></td><td>Instant</td><td>Very low</td><td>Compliance archive, rarely accessed logs</td></tr>
+              <tr><td><strong>S3 Glacier Deep Archive</strong></td><td>12 hours</td><td>Cheapest</td><td>7-year compliance retention</td></tr>
+            </tbody>
+          </table>
+
+          <h2>S3 in DevOps Workflows</h2>
+          <div class="code-block">
+<span class="cb-comment"># Terraform remote state in S3</span>
+terraform {
+  backend "s3" {
+    bucket         = "my-company-tfstate"
+    key            = "production/eks/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-state-lock"  <span class="cb-comment"># Prevents concurrent apply</span>
+    encrypt        = true
+  }
+}
+
+<span class="cb-comment"># Upload build artifacts from CI</span>
+aws s3 cp dist/ s3://my-app-artifacts/${GITHUB_SHA}/ --recursive
+
+<span class="cb-comment"># Sync static website</span>
+aws s3 sync build/ s3://my-app-static-site/ --delete
+
+<span class="cb-comment"># Cross-account access with bucket policy</span>
+aws s3api put-bucket-policy --bucket my-bucket \
+  --policy file://cross-account-policy.json</div>
+
+          <h2>S3 Security Checklist</h2>
+          <div class="callout warning">
+            <div class="callout-icon">🔒</div>
+            <div class="callout-body">
+              <div class="callout-title">S3 Security Must-Haves</div>
+              <div class="callout-text">
+                ✅ <strong>Block Public Access</strong> — enable on all buckets unless serving a public website<br>
+                ✅ <strong>Bucket versioning</strong> — for Terraform state and critical data<br>
+                ✅ <strong>Server-side encryption</strong> — SSE-S3 (default) or SSE-KMS for compliance<br>
+                ✅ <strong>Access logging</strong> — log all bucket access to another bucket<br>
+                ✅ <strong>S3 Object Lock</strong> — WORM protection for compliance archives<br>
+                ❌ <strong>Never</strong> make S3 buckets public unless explicitly required (static website)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-ec2]').click()">← EC2</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-s3')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-eks]').click()">Next: EKS →</button>
+        </div>
+      </div>
+
+      <!-- EKS -->
+      <div class="lesson-panel" data-panel="aws-eks">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>EKS — Elastic Kubernetes Service</h1>
+            <p>AWS-managed Kubernetes. The most common production K8s deployment model.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~40 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>EKS Architecture</h2>
+          <table class="compare-table">
+            <thead><tr><th>Component</th><th>Managed By</th><th>Your Responsibility</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Control Plane</strong><br>(API server, etcd, scheduler)</td><td>AWS — fully managed, multi-AZ, auto-patched</td><td>Choose K8s version, schedule upgrades</td></tr>
+              <tr><td><strong>Worker Nodes</strong><br>(EC2 instances running pods)</td><td>You (via Managed Node Groups or Karpenter)</td><td>Instance type, IAM role, scaling, node upgrades</td></tr>
+              <tr><td><strong>Networking</strong><br>(VPC CNI, pod IPs)</td><td>AWS VPC CNI — pods get real VPC IPs</td><td>VPC CIDR planning, security groups</td></tr>
+              <tr><td><strong>Load Balancing</strong><br>(ALB, NLB ingress)</td><td>AWS Load Balancer Controller (addon)</td><td>Install controller, define Ingress resources</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Create EKS Cluster with eksctl</h2>
+          <div class="code-block">
+<span class="cb-comment"># cluster.yaml — production-ready config</span>
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: production
+  region: us-east-1
+  version: "1.29"
+
+vpc:
+  subnets:
+    private:
+      us-east-1a: { id: subnet-0abc123 }
+      us-east-1b: { id: subnet-0def456 }
+    public:
+      us-east-1a: { id: subnet-0ghi789 }
+      us-east-1b: { id: subnet-0jkl012 }
+
+managedNodeGroups:
+  - name: workers
+    instanceType: m6i.xlarge
+    minSize: 2
+    maxSize: 10
+    desiredCapacity: 3
+    privateNetworking: true   <span class="cb-comment"># Nodes in private subnets</span>
+    iam:
+      withAddonPolicies:
+        albIngress: true
+        cloudWatch: true
+        ebs: true
+
+<span class="cb-comment"># Create cluster (takes ~15 minutes)</span>
+eksctl create cluster -f cluster.yaml</div>
+
+          <h2>Essential EKS Add-ons</h2>
+          <div class="arch-row">
+            <div class="arch-box">
+              <div class="ab-title">AWS Load Balancer Controller</div>
+              <ul>
+                <li>Provisions ALB for Ingress resources</li>
+                <li>Provisions NLB for LoadBalancer Services</li>
+                <li>Replaces deprecated in-tree ELB controller</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">EBS CSI Driver</div>
+              <ul>
+                <li>Dynamic PersistentVolume provisioning</li>
+                <li>Mount EBS volumes into pods</li>
+                <li>Required for stateful workloads on EKS</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Karpenter</div>
+              <ul>
+                <li>Replaces Cluster Autoscaler</li>
+                <li>Provisions nodes in &lt;60 seconds</li>
+                <li>Selects cheapest/best-fit instance type</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">CoreDNS + kube-proxy</div>
+              <ul>
+                <li>CoreDNS: service discovery in cluster</li>
+                <li>kube-proxy: network rules on nodes</li>
+                <li>Both managed as EKS addons</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-s3]').click()">← S3</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-eks')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-ecr]').click()">Next: ECR →</button>
+        </div>
+      </div>
+
+      <!-- ECR -->
+      <div class="lesson-panel" data-panel="aws-ecr">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>ECR — Elastic Container Registry</h1>
+            <p>Private Docker registry for your container images, tightly integrated with EKS.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~15 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>ECR Workflow</h2>
+          <div class="code-block">
+<span class="cb-comment"># 1. Authenticate Docker to ECR</span>
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin \
+  123456789.dkr.ecr.us-east-1.amazonaws.com
+
+<span class="cb-comment"># 2. Build and tag image</span>
+docker build -t my-app:${GITHUB_SHA} .
+docker tag my-app:${GITHUB_SHA} \
+  123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:${GITHUB_SHA}
+
+<span class="cb-comment"># 3. Push to ECR</span>
+docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:${GITHUB_SHA}
+
+<span class="cb-comment"># 4. EKS pulls automatically (node IAM role grants ECR read access)</span>
+<span class="cb-comment"># In your Deployment spec:</span>
+image: 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:${GITHUB_SHA}</div>
+
+          <h2>ECR Features</h2>
+          <div class="arch-row">
+            <div class="arch-box">
+              <div class="ab-title">Image Scanning</div>
+              <ul>
+                <li>Scan on push for CVEs (Basic or Enhanced)</li>
+                <li>Enhanced scanning uses Amazon Inspector</li>
+                <li>Block pipeline on CRITICAL findings</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Lifecycle Policies</div>
+              <ul>
+                <li>Auto-delete old untagged images</li>
+                <li>Keep last N tagged images</li>
+                <li>Prevents registry from growing unbounded</li>
+              </ul>
+            </div>
+            <div class="arch-box">
+              <div class="ab-title">Cross-Account Access</div>
+              <ul>
+                <li>ECR resource-based policies</li>
+                <li>Share images across AWS accounts</li>
+                <li>ECR Public for open-source images</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body">
+              <div class="callout-title">Why use ECR instead of Docker Hub?</div>
+              <div class="callout-text">
+                <strong>Interview answer:</strong><br>
+                1. <strong>IAM authentication</strong> — no stored Docker Hub credentials in CI<br>
+                2. <strong>No pull rate limits</strong> — Docker Hub throttles anonymous pulls<br>
+                3. <strong>Same VPC</strong> — EKS node pulls from ECR without hitting the internet<br>
+                4. <strong>Integrated scanning</strong> — Amazon Inspector scans images for vulnerabilities<br>
+                5. <strong>Cost</strong> — No egress fees within the same region
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-eks]').click()">← EKS</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-ecr')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-iac]').click()">Next: IaC →</button>
+        </div>
+      </div>
+
+      <!-- IaC -->
+      <div class="lesson-panel" data-panel="aws-iac">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>Infrastructure as Code: CloudFormation & Terraform</h1>
+            <p>Define AWS infrastructure in code — versioned, repeatable, auditable.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-red">Critical</span><span class="badge badge-green">~35 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>CloudFormation vs Terraform</h2>
+          <table class="compare-table">
+            <thead><tr><th>Aspect</th><th>CloudFormation</th><th>Terraform</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Maintained by</strong></td><td>AWS — native, always up-to-date</td><td>HashiCorp / OpenTofu community</td></tr>
+              <tr><td><strong>State management</strong></td><td>AWS manages state — no state file to secure</td><td>State file in S3 + DynamoDB lock</td></tr>
+              <tr><td><strong>Multi-cloud</strong></td><td>AWS only</td><td>AWS, GCP, Azure, 1000+ providers</td></tr>
+              <tr><td><strong>Language</strong></td><td>YAML/JSON (verbose)</td><td>HCL (concise, reusable modules)</td></tr>
+              <tr><td><strong>Drift detection</strong></td><td>Built-in CloudFormation Drift Detection</td><td><code>terraform plan</code> shows drift</td></tr>
+              <tr><td><strong>Industry trend</strong></td><td>Common in AWS-only shops</td><td>Dominant in multi-cloud DevOps roles</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Terraform: EKS Cluster Module</h2>
+          <div class="code-block">
+<span class="cb-comment"># main.tf — Production EKS with Terraform</span>
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
+
+  cluster_name    = "production"
+  cluster_version = "1.29"
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  <span class="cb-comment"># Managed node group</span>
+  eks_managed_node_groups = {
+    workers = {
+      instance_types = ["m6i.xlarge"]
+      min_size       = 2
+      max_size       = 10
+      desired_size   = 3
+    }
+  }
+
+  <span class="cb-comment"># Enable IRSA</span>
+  enable_irsa = true
+}
+
+<span class="cb-comment"># Remote state backend</span>
+terraform {
+  backend "s3" {
+    bucket         = "my-tfstate-bucket"
+    key            = "production/eks/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-state-lock"
+    encrypt        = true
+  }
+}
+
+<span class="cb-comment"># Deploy workflow</span>
+terraform init      <span class="cb-comment"># Download providers</span>
+terraform plan      <span class="cb-comment"># Preview changes (always run first!)</span>
+terraform apply     <span class="cb-comment"># Apply (prompts for confirmation)</span>
+terraform destroy   <span class="cb-comment"># Tear down (dangerous — confirm carefully)</span></div>
+
+          <div class="callout warning">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-body">
+              <div class="callout-title">Never run terraform apply without terraform plan first</div>
+              <div class="callout-text">Always review the plan output. Watch for <strong>forces replacement</strong> — this means the resource will be destroyed and recreated. For databases and EKS clusters, this can cause downtime. Use <code>-target</code> to apply specific resources when needed.</div>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-ecr]').click()">← ECR</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-iac')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-monitoring]').click()">Next: CloudWatch →</button>
+        </div>
+      </div>
+
+      <!-- MONITORING -->
+      <div class="lesson-panel" data-panel="aws-monitoring">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>CloudWatch & AWS Observability</h1>
+            <p>Metrics, logs, alarms, and dashboards. Knowing what's happening in production.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-blue">Core</span><span class="badge badge-green">~25 min</span></div>
+        </div>
+        <div class="content-body">
+          <h2>CloudWatch Core Services</h2>
+          <table class="compare-table">
+            <thead><tr><th>Service</th><th>What It Does</th><th>DevOps Use Case</th></tr></thead>
+            <tbody>
+              <tr><td><strong>CloudWatch Metrics</strong></td><td>Time-series data for AWS resources</td><td>CPU utilization, request count, error rate, disk I/O</td></tr>
+              <tr><td><strong>CloudWatch Alarms</strong></td><td>Trigger actions when metrics breach thresholds</td><td>Page on-call when p99 latency &gt; 2s, SNS → PagerDuty</td></tr>
+              <tr><td><strong>CloudWatch Logs</strong></td><td>Centralized log storage and query</td><td>Application logs from pods via Fluent Bit, VPC Flow Logs</td></tr>
+              <tr><td><strong>CloudWatch Dashboards</strong></td><td>Visual metrics panels</td><td>Custom operational dashboard for your services</td></tr>
+              <tr><td><strong>Container Insights</strong></td><td>EKS/ECS metrics and logs</td><td>Pod CPU/memory, node status, container restarts</td></tr>
+              <tr><td><strong>X-Ray / ADOT</strong></td><td>Distributed tracing</td><td>Trace requests across microservices, find latency bottlenecks</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Shipping EKS Logs to CloudWatch</h2>
+          <div class="code-block">
+<span class="cb-comment"># Deploy Fluent Bit as DaemonSet to ship pod logs</span>
+helm repo add fluent https://fluent.github.io/helm-charts
+helm upgrade --install fluent-bit fluent/fluent-bit \
+  --namespace logging \
+  --create-namespace \
+  --set config.outputs="[OUTPUT]
+    Name cloudwatch_logs
+    Match *
+    region us-east-1
+    log_group_name /aws/eks/production/apps
+    log_stream_prefix pod-
+    auto_create_group On"</div>
+
+          <div class="code-block">
+<span class="cb-comment"># Create alarm: alert when pod error rate > 5%</span>
+aws cloudwatch put-metric-alarm \
+  --alarm-name "high-error-rate" \
+  --metric-name "HTTPCode_Target_5XX_Count" \
+  --namespace "AWS/ApplicationELB" \
+  --statistic Sum \
+  --period 60 \
+  --threshold 50 \
+  --comparison-operator GreaterThanThreshold \
+  --evaluation-periods 2 \
+  --alarm-actions arn:aws:sns:us-east-1:123456789:pagerduty-alert</div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-iac]').click()">← IaC</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-monitoring')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-lab]').click()">Next: Lab →</button>
+        </div>
+      </div>
+
+      <!-- LAB -->
+      <div class="lesson-panel" data-panel="aws-lab">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🔬 Lab: Deploy EKS in a Production VPC</h1>
+            <p>Full hands-on: VPC with public/private subnets → EKS cluster → ALB → app running.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-orange">Lab</span><span class="badge badge-green">~90 min</span></div>
+        </div>
+        <div class="content-body">
+          <div class="callout warning">
+            <div class="callout-icon">💰</div>
+            <div class="callout-body">
+              <div class="callout-title">AWS Costs — Estimated $3–$5 for this lab</div>
+              <div class="callout-text">An EKS control plane costs $0.10/hour (~$2.40/day). 2x t3.medium nodes add ~$0.08/hour. <strong>Run the cleanup commands at the end to avoid ongoing charges.</strong> A free alternative is to use <a href="https://eksctl.io/usage/minimum-iam-policies/" target="_blank">AWS Free Tier with a local minikube</a> for practice.</div>
+            </div>
+          </div>
+
+          <h2>Step 1: Prerequisites</h2>
+          <div class="code-block">
+<span class="cb-comment"># Install required tools</span>
+<span class="cb-comment"># AWS CLI v2</span>
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip && sudo ./aws/install
+aws configure  <span class="cb-comment"># Enter: Access Key, Secret Key, region (us-east-1), output (json)</span>
+
+<span class="cb-comment"># eksctl</span>
+curl --silent --location "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+
+<span class="cb-comment"># kubectl</span>
+curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+sudo install kubectl /usr/local/bin/kubectl
+
+<span class="cb-comment"># helm</span>
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</div>
+
+          <h2>Step 2: Create VPC + EKS Cluster</h2>
+          <div class="code-block">
+<span class="cb-comment"># cluster.yaml</span>
+cat &gt; cluster.yaml &lt;&lt;'EOF'
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: academy-demo
+  region: us-east-1
+  version: "1.29"
+managedNodeGroups:
+  - name: workers
+    instanceType: t3.medium
+    minSize: 2
+    maxSize: 4
+    desiredCapacity: 2
+    iam:
+      withAddonPolicies:
+        albIngress: true
+        cloudWatch: true
+        ebs: true
+EOF
+
+<span class="cb-comment"># Create cluster (~15 minutes)</span>
+eksctl create cluster -f cluster.yaml
+
+<span class="cb-comment"># Verify</span>
+kubectl get nodes</div>
+
+          <h2>Step 3: Deploy Sample App + ALB Ingress</h2>
+          <div class="code-block">
+<span class="cb-comment"># Install AWS Load Balancer Controller</span>
+helm repo add eks https://aws.github.io/eks-charts
+helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=academy-demo \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller
+
+<span class="cb-comment"># Deploy app with Ingress</span>
+kubectl apply -f - &lt;&lt;'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+      - name: app
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-svc
+spec:
+  selector:
+    app: demo
+  ports:
+  - port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: demo-svc
+            port:
+              number: 80
+EOF
+
+<span class="cb-comment"># Get ALB URL (takes 2-3 minutes to provision)</span>
+kubectl get ingress demo-ingress -w</div>
+
+          <h2>Step 4: Cleanup (Important!)</h2>
+          <div class="code-block">
+<span class="cb-comment"># Delete all resources to stop billing</span>
+kubectl delete ingress demo-ingress  <span class="cb-comment"># Delete ALB first (otherwise eksctl delete hangs)</span>
+eksctl delete cluster --name academy-demo --region us-east-1</div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-monitoring]').click()">← CloudWatch</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-lab')">✓ Mark Complete & Continue</button>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-lesson=aws-quiz]').click()">Next: Quiz →</button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="lesson-panel" data-panel="aws-quiz">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1>🧠 AWS Knowledge Check</h1>
+            <p>Test your understanding of IAM, VPC, EKS, and core AWS services.</p>
+          </div>
+          <div class="lesson-badges"><span class="badge badge-purple">Quiz</span></div>
+        </div>
+        <div class="content-body">
+          <div id="aws-quiz-container"></div>
+        </div>
+        <div class="lesson-footer">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-lesson=aws-lab]').click()">← Lab</button>
+          <button class="complete-lesson-btn" onclick="Progress.complete('aws-quiz')">✓ Module Complete</button>
+          <button class="btn btn-primary" onclick="window.location='interview.html'">Interview Prep →</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/terminal.js"></script>
+<script>
+createQuiz('aws-quiz', [
+  {
+    question: "Your EC2 instance needs to read from S3. What is the correct approach?",
+    options: [
+      "Hardcode AWS access keys in the application environment variables",
+      "Attach an IAM Role to the EC2 instance with the required S3 read policy",
+      "Create an IAM User and store credentials in a .env file on the server",
+      "Use the root account credentials for reliable access"
+    ],
+    correct: 1,
+    explanation: "IAM Roles attached to EC2 instances provide temporary credentials via the Instance Metadata Service (IMDS). The application calls AWS SDK which automatically fetches and rotates these credentials. Never use long-term access keys on EC2 — they're a security risk if the instance is compromised. Root account credentials should never be used for programmatic access."
+  },
+  {
+    question: "Why should EKS worker nodes be placed in private subnets?",
+    options: [
+      "Private subnets are cheaper than public subnets",
+      "EKS doesn't work in public subnets",
+      "Nodes in private subnets are not directly reachable from the internet — traffic must flow through the ALB, reducing attack surface",
+      "Private subnets have better network performance"
+    ],
+    correct: 2,
+    explanation: "Security principle of defense in depth: the internet-facing ALB in the public subnet accepts inbound traffic and forwards to nodes in private subnets. Nodes can still pull images (ECR) and call AWS APIs via NAT Gateway (egress-only). This means a port scan from the internet cannot directly reach your pods."
+  },
+  {
+    question: "What is the purpose of a NAT Gateway in a VPC?",
+    options: [
+      "It allows internet traffic to reach resources in private subnets",
+      "It allows resources in private subnets to initiate outbound connections to the internet, but blocks inbound connections",
+      "It replaces the Internet Gateway for public subnets",
+      "It provides DNS resolution for private subnets"
+    ],
+    correct: 1,
+    explanation: "NAT Gateway = outbound-only internet access for private subnets. EKS nodes in private subnets need outbound access to pull Docker images from ECR (even within the same region, unless using VPC endpoints), call AWS APIs, and download OS patches. NAT Gateway allows this while ensuring the internet cannot directly reach those nodes."
+  },
+  {
+    question: "What is IRSA (IAM Roles for Service Accounts) in EKS?",
+    options: [
+      "A way to give all pods on a node the same IAM permissions",
+      "A mechanism that lets individual Kubernetes pods assume specific IAM roles with least-privilege access",
+      "An IAM policy that grants EKS admin access",
+      "A tool for rotating IAM access keys"
+    ],
+    correct: 1,
+    explanation: "IRSA lets pods assume IAM roles independently of the node's IAM role. Without IRSA, every pod on a node inherits the node's IAM permissions (too broad). With IRSA: a specific ServiceAccount is annotated with an IAM role ARN, and only pods using that ServiceAccount get those permissions. This implements least-privilege at the pod level."
+  },
+  {
+    question: "You're setting up Terraform for a team. Where should you store the state file and why?",
+    options: [
+      "In the git repository so everyone has access to it",
+      "On a developer's local machine (whoever runs apply)",
+      "In S3 with DynamoDB for state locking — remote state prevents conflicts and the lock prevents simultaneous applies",
+      "In the same AWS region as your resources, in an EC2 instance"
+    ],
+    correct: 2,
+    explanation: "S3 + DynamoDB is the standard Terraform remote backend for teams. S3 stores the state file (encrypted, versioned). DynamoDB provides locking — if two engineers run terraform apply simultaneously, the second one waits until the lock is released. Without locking, concurrent applies can corrupt state. Never commit state files to git — they contain sensitive resource IDs and sometimes secrets."
+  },
+  {
+    question: "What is the difference between a Security Group and a NACL in AWS VPC?",
+    options: [
+      "Security Groups are for EC2, NACLs are for RDS",
+      "Security Groups are stateful (return traffic auto-allowed) and apply to instances; NACLs are stateless and apply to subnets",
+      "NACLs are stronger than Security Groups and override them",
+      "There is no practical difference — choose either one"
+    ],
+    correct: 1,
+    explanation: "Security Groups: stateful (if you allow inbound 80, the response traffic is automatically allowed outbound — you don't need an outbound rule). Apply to instances/ENIs. Default: deny all inbound, allow all outbound. NACLs: stateless (you must explicitly allow both inbound AND outbound). Apply to subnets. Default: allow all. In practice: Security Groups are the primary security tool; NACLs add a subnet-level layer for compliance requirements."
+  },
+  {
+    question: "Your EKS deployment is pulling from Docker Hub and pods are getting ImagePullBackOff errors. What's the likely cause and better solution?",
+    options: [
+      "Docker Hub is down — wait for it to come back",
+      "Docker Hub has pull rate limits for anonymous/free users; migrate images to ECR for unlimited pulls within AWS with IAM authentication",
+      "Kubernetes doesn't support Docker Hub images",
+      "The images need to be rebuilt for ARM architecture"
+    ],
+    correct: 1,
+    explanation: "Docker Hub rate-limits: anonymous pulls get 100/6hr, free accounts 200/6hr. A production EKS cluster with many nodes can hit this instantly during a rollout or node replacement. Solution: mirror your images to ECR (private, no rate limits, same-region = no egress cost, IAM auth = no credentials to manage). Command: docker pull nginx:alpine → docker tag → docker push ECR. Also consider EKS's ability to cache images on nodes."
+  },
+  {
+    question: "What does `terraform plan` do and why is it critical?",
+    options: [
+      "It creates a deployment plan that runs automatically at midnight",
+      "It shows a preview of what changes Terraform will make — additions, modifications, and destructions — without changing anything",
+      "It validates HCL syntax only",
+      "It backs up the current state before applying changes"
+    ],
+    correct: 1,
+    explanation: "terraform plan is your safety net. It reads current state, compares to desired config, and shows exactly what will be created (+), modified (~), or destroyed (-). The most dangerous output: 'forces replacement' — this means destroy + recreate. For stateful resources (RDS, EKS), replacement = downtime. Always pipe plan output to a file (terraform plan -out=plan.tfplan) and have it reviewed before apply in production. 'terraform apply' without reviewing plan = flying blind."
+  }
+]);
+</script>
+</body>
+</html>
